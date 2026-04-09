@@ -1,0 +1,10 @@
+.vercel
+node_modules/
+dist/
+.pnpm-workspace-state.yaml
+.modules.yaml
+.next/
+out/
+build/
+*.log
+node_modules

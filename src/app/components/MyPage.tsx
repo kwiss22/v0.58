@@ -1,0 +1,935 @@
+// 마이페이지
+
+import {
+  User,
+  ChevronRight,
+  FileText,
+  Bookmark,
+  LogOut,
+  MessageCircle,
+  Heart,
+  Eye,
+  AlertTriangle,
+  Trash2,
+  BookmarkX,
+} from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useUser } from '@/app/contexts/UserContext';
+import { useAppNavigation } from '@/app/contexts/AppNavigationContext';
+import { useSavedDoctors } from '@/hooks/useSavedDoctors';
+import { toast } from 'sonner';
+import { DoctorProfileModal } from '@/app/components/DoctorProfileModal';
+import { getDoctorById } from '@/constants/doctor-data';
+
+interface MyPost {
+  id: string;
+  userId: string;
+  userRole: 'patient' | 'caregiver';
+  department: string;
+  disease?: string;
+  title: string;
+  summary: string;
+  likeCount: number;
+  comments: number;
+  views: number;
+  timeAgo: string;
+  isLiked?: boolean;
+  status?: 'active' | 'deleted_by_report';
+  deleteReason?: string;
+  deletedAt?: string;
+}
+
+interface Comment {
+  id: string;
+  postId: string;
+  postTitle: string;
+  content: string;
+  timeAgo: string;
+  likes: number;
+  status?: 'active' | 'deleted_by_report';
+  deleteReason?: string;
+  deletedAt?: string;
+}
+
+interface SavedDoctor {
+  id: string;
+  name: string;
+  department: string;
+  hospital: string;
+  specialty: string;
+  rating: number;
+  savedDate: string;
+}
+
+export function MyPage() {
+  const { isGuest, isMember, setRole } = useUser();
+  const { navigateToPreviousTab } = useAppNavigation();
+  const { isSaved, toggleSave, savedDoctors: savedDoctorsList, removeDoctor } = useSavedDoctors();
+  const [nickname, setNickname] = useState('Maverick Hur');
+  const [activeTab, setActiveTab] = useState<'posts' | 'comments' | 'doctors'>('posts');
+  const [selectedDoctor, setSelectedDoctor] = useState<SavedDoctor | null>(null);
+
+  // 내가 쓴 글 데이터 (삭제 가능하도록 state로 관리)
+  const [myPosts, setMyPosts] = useState<MyPost[]>([
+    {
+      id: '1',
+      userId: 'current_user',
+      userRole: 'patient',
+      department: '내과',
+      disease: '역류성식도염',
+      title: '3주째 속쓰림... 스트레스인 줄 알았는데 역류성식도염이었어요',
+      summary: 'AI가 추천해준 내과 명의 선생님께 진료받고 약 처방받았어요. 벌써 많이 나아진 것 같습니다!',
+      likeCount: 218,
+      comments: 15,
+      views: 892,
+      timeAgo: '5시간 전',
+      status: 'active',
+    },
+    {
+      id: '2',
+      userId: 'current_user',
+      userRole: 'patient',
+      department: '외과',
+      disease: '손목터널증후군',
+      title: '손목 통증 2달째... 마우스 쓸 때마다 찌릿찌릿',
+      summary: '손목터널증후군 진단받았어요. 수술까지는 안 하고 물리치료 중입니다.',
+      likeCount: 189,
+      comments: 22,
+      views: 645,
+      timeAgo: '1일 전',
+      status: 'deleted_by_report',
+      deleteReason: '허위 정보',
+      deletedAt: '2026.03.10',
+    },
+    {
+      id: '3',
+      userId: 'current_user',
+      userRole: 'patient',
+      department: '피부과',
+      disease: '여드름',
+      title: '여드름 심해져서 자존감 바닥... AI 추천 피부과 다녀왔어요',
+      summary: 'AI가 추천해준 여드름 전문 피부과에서 치료 시작했습니다. 희망이 보여요!',
+      likeCount: 267,
+      comments: 31,
+      views: 1024,
+      timeAgo: '2일 전',
+      status: 'active',
+    },
+    {
+      id: '4',
+      userId: 'current_user',
+      userRole: 'caregiver',
+      department: '소아청소년과',
+      disease: '열성경련',
+      title: '아이가 갑자기 경기를 해서 응급실 다녀온 후기',
+      summary: '새벽 2시에 아이가 갑자기 경련을 일으켜서 너무 놀랐어요. AI 챗봇이 즉시 응급실 가라고 알려줬고 덕분에 빠른 조치가 됐습니다.',
+      likeCount: 342,
+      comments: 48,
+      views: 2103,
+      timeAgo: '3일 전',
+      status: 'active',
+    },
+    {
+      id: '5',
+      userId: 'current_user',
+      userRole: 'patient',
+      department: '정형외과',
+      disease: '허리디스크',
+      title: '회사원 5년차, 허리디스크 판정받고 운동 시작한 지 6개월',
+      summary: '하루종일 앉아서 일하다 보니 결국 디스크까지 왔어요. AI 추천 정형외과에서 정확한 진단 후 도수치료+운동 병행 중.',
+      likeCount: 501,
+      comments: 63,
+      views: 3456,
+      timeAgo: '5일 전',
+      status: 'active',
+    },
+    {
+      id: '6',
+      userId: 'current_user',
+      userRole: 'patient',
+      department: '이비인후과',
+      disease: '비염',
+      title: '만성 비염 10년... 드디어 수술 결정했습니다',
+      summary: '매년 봄·가을마다 고생하다가 이번에 비중격만곡증과 함께 수술하기로 했어요. AI 챗봇 덕분에 적절한 타이밍을 알 수 있었습니다.',
+      likeCount: 178,
+      comments: 29,
+      views: 987,
+      timeAgo: '1주일 전',
+      status: 'active',
+    },
+    {
+      id: '7',
+      userId: 'current_user',
+      userRole: 'patient',
+      department: '정신건강의학과',
+      disease: '불안장애',
+      title: '공황장애인 줄 알았는데 불안장애였어요, 치료 시작한 후기',
+      summary: '갑자기 심장이 쿵쾅거리고 숨이 막히는 증상이 반복됐어요. AI가 정신건강의학과 방문을 권유해서 진료받고 약물치료 + CBT 시작.',
+      likeCount: 423,
+      comments: 55,
+      views: 2789,
+      timeAgo: '1주일 전',
+      status: 'active',
+    },
+    {
+      id: '8',
+      userId: 'current_user',
+      userRole: 'caregiver',
+      department: '내분비내과',
+      disease: '당뇨',
+      title: '부모님 당뇨 관리, 자식 입장에서 챙기는 법 공유해요',
+      summary: '70대 아버지 당뇨 진단 후 어떻게 도와드려야 할지 막막했는데 AI가 식단·운동·투약 관리 가이드를 상세히 알려줬어요.',
+      likeCount: 615,
+      comments: 71,
+      views: 4102,
+      timeAgo: '2주일 전',
+      status: 'active',
+    },
+    {
+      id: '9',
+      userId: 'current_user',
+      userRole: 'patient',
+      department: '안과',
+      disease: '녹내장',
+      title: '30대에 녹내장 진단... 몰랐던 사실들 정리해드려요',
+      summary: '젊어서 안심했는데 갑자기 녹내장 초기 진단을 받았어요. 조기 발견이 정말 중요하다는 걸 AI 덕분에 미리 알게 됐어요.',
+      likeCount: 389,
+      comments: 44,
+      views: 1876,
+      timeAgo: '2주일 전',
+      status: 'active',
+    },
+    {
+      id: '10',
+      userId: 'current_user',
+      userRole: 'patient',
+      department: '순환기내과',
+      disease: '고혈압',
+      title: '고혈압 약 평생 먹어야 한다는 말에 충격받았던 날',
+      summary: '건강검진에서 처음 고혈압 발견. 처음엔 약 먹기 싫었지만 AI 상담으로 고혈압 합병증 위험을 알고 나서 치료를 결심했어요.',
+      likeCount: 247,
+      comments: 33,
+      views: 1542,
+      timeAgo: '3주일 전',
+      status: 'active',
+    },
+  ]);
+
+  // 내가 쓴 댓글 데이터 (삭제 가능하도록 state로 관리)
+  const [myComments, setMyComments] = useState<Comment[]>([
+    {
+      id: '1',
+      postId: 'post123',
+      postTitle: '밤새 열나던 아이, 새벽에 응급실 가야하나 고민했는데...',
+      content: '저희 아이도 비슷한 증상이었는데 응급실 가서 다행이었어요. 빨리 치료받으시길 바랍니다!',
+      timeAgo: '3시간 전',
+      likes: 12,
+      status: 'active',
+    },
+    {
+      id: '2',
+      postId: 'post456',
+      postTitle: '손목 통증으로 고생하시는 분들께',
+      content: '저도 손목터널증후군이었는데 물리치료 꾸준히 받으니 좋아졌어요. 포기하지 마세요!',
+      timeAgo: '1일 전',
+      likes: 8,
+      status: 'active',
+    },
+    {
+      id: '3',
+      postId: 'post789',
+      postTitle: '역류성식도염 극복 후기, AI 상담이 도움됐어요',
+      content: '저는 식이요법이랑 같이 병행했더니 효과가 더 좋았어요. 자극적인 음식 줄이는 게 핵심인 것 같습니다!',
+      timeAgo: '2일 전',
+      likes: 19,
+      status: 'active',
+    },
+    {
+      id: '4',
+      postId: 'post101',
+      postTitle: '허리디스크 비수술 치료 성공 후기',
+      content: '저도 도수치료 받고 있는데 정말 효 있더라고요. 어느 병원 다니세요? 좋은 선생님 추천 받고 싶어요.',
+      timeAgo: '2일 전',
+      likes: 5,
+      status: 'active',
+    },
+    {
+      id: '5',
+      postId: 'post202',
+      postTitle: '30대 고혈압 진단, 약 먹어야 하나요?',
+      content: '저도 같은 상황이었는데 의사 선생님 말씀 따르는 게 맞아요. AI 챗봇도 전문의 상담을 꼭 받으라고 하더라고요.',
+      timeAgo: '3일 전',
+      likes: 24,
+      status: 'active',
+    },
+    {
+      id: '6',
+      postId: 'post303',
+      postTitle: '비염 수술 후기, 솔직 리뷰',
+      content: '저도 3년 전에 했는데 삶의 질이 완전 달라졌어요. 수술 전 걱정이 많았는데 괜찮았습니다!',
+      timeAgo: '4일 전',
+      likes: 31,
+      status: 'active',
+    },
+    {
+      id: '7',
+      postId: 'post404',
+      postTitle: '당뇨 환자 보호자입니다, 도움말 부탁드려요',
+      content: '저도 부모님 모시면서 비슷한 고민 했어요. AI 식단 기능 추천드려요, 정말 편하거든요.',
+      timeAgo: '5일 전',
+      likes: 9,
+      status: 'active',
+    },
+    {
+      id: '8',
+      postId: 'post505',
+      postTitle: '공황장애 극복 과정 솔직 공유',
+      content: '정말 공감돼요. 저도 처음엔 약 먹기 무서웠는데 적절한 치료가 정말 중요하더라고요. 힘내세요!',
+      timeAgo: '6일 전',
+      likes: 47,
+      status: 'active',
+    },
+    {
+      id: '9',
+      postId: 'post606',
+      postTitle: '녹내장 초기 발견, 관리는 어떻게 하시나요?',
+      content: '저도 비슷한 상황이에요. 안압 관리가 제일 중요하다고 들었어요. AI 챗봇이 정기 검진 리마인더도 보내줘서 편해요.',
+      timeAgo: '1주일 전',
+      likes: 13,
+      status: 'active',
+    },
+    {
+      id: '10',
+      postId: 'post707',
+      postTitle: '아토피 피부염, 스테로이드 없이 관리하는 법',
+      content: '보습이 정말 핵심인 것 같아요. 저는 세라마이드 성분 제품으로 바꾼 뒤 많이 좋아졌어요!',
+      timeAgo: '1주일 전',
+      likes: 22,
+      status: 'active',
+    },
+    {
+      id: '11',
+      postId: 'post808',
+      postTitle: '소아청소년과 명의 추천 해주세요',
+      content: 'AI 챗봇에서 검색하면 지역별로 추천해줘요. 저희 애는 세브란스 ○○ 선생님께 잘 다니고 있어요.',
+      timeAgo: '1주일 전',
+      likes: 6,
+      status: 'active',
+    },
+    {
+      id: '12',
+      postId: 'post909',
+      postTitle: '갑상선 결절, 조직검사 결과 기다리는 중',
+      content: '저도 같은 경험 있어요. 불안한 마음 충분히 이해해요. AI 상담으로 궁금한 점 미리 물어봐두면 좋아요.',
+      timeAgo: '9일 전',
+      likes: 15,
+      status: 'active',
+    },
+    {
+      id: '13',
+      postId: 'post1010',
+      postTitle: '무릎 연골 닳았다는 진단, 나이가 문제일까요',
+      content: '재활운동이 정말 중요하더라고요. AI가 연령별 맞춤 운동법도 알려줘서 도움 많이 받았어요.',
+      timeAgo: '10일 전',
+      likes: 28,
+      status: 'active',
+    },
+    {
+      id: '14',
+      postId: 'post1111',
+      postTitle: '두근거림이 반복됩니다, 부정맥일까요',
+      content: '저도 똑같았어요. AI가 순환기내과 방문 권유했는데 결국 경미한 부정맥이었어요. 조기 발견 중요해요!',
+      timeAgo: '11일 전',
+      likes: 33,
+      status: 'active',
+    },
+    {
+      id: '15',
+      postId: 'post1212',
+      postTitle: '우울증 치료 중인데 주변에 알리는 게 맞을까요',
+      content: '가까운 가족에게는 알리는 편이 치료에 도움이 된다고 해요. 혼자 짊어지지 마세요, 응원합니다.',
+      timeAgo: '12일 전',
+      likes: 61,
+      status: 'active',
+    },
+    {
+      id: '16',
+      postId: 'post1313',
+      postTitle: '소화불량이 한 달째 지속됩니다',
+      content: '저도 그랬는데 위내시경 해보니 만성 위염이었어요. 빨리 검사받아보시는 게 좋을 것 같아요!',
+      timeAgo: '2주일 전',
+      likes: 18,
+      status: 'active',
+    },
+    {
+      id: '17',
+      postId: 'post1414',
+      postTitle: '편두통 약 내성 생기면 어떡하나요',
+      content: 'AI한테 물어봤더니 트립탄 계열 약은 월 10일 이하 복용 권장이라고 알려줬어요. 전문의 상담 꼭 받으세요.',
+      timeAgo: '2주일 전',
+      likes: 11,
+      status: 'active',
+    },
+    {
+      id: '18',
+      postId: 'post1515',
+      postTitle: '신장내과 첫 방문 후기 공유합니다',
+      content: '혈뇨 증상으로 무서웠는데 정확한 진단 받고 나니 오히려 마음이 편해졌어요. 두려워 말고 병원 가세요!',
+      timeAgo: '16일 전',
+      likes: 26,
+      status: 'active',
+    },
+    {
+      id: '19',
+      postId: 'post1616',
+      postTitle: '임신 중 철분 부족, 빈혈 관리법',
+      content: '저도 임신 중에 빈혈로 고생했어요. AI가 식품별 철분 함량 표 알려줬는데 정말 유용했습니다!',
+      timeAgo: '17일 전',
+      likes: 38,
+      status: 'active',
+    },
+    {
+      id: '20',
+      postId: 'post1717',
+      postTitle: '류마티스 관절염 진단받고 나서 달라진 것들',
+      content: '식단 조절이 생각보다 효과가 크더라고요. AI가 항염증 식품 목록을 추천해줬는데 많이 참고하고 있어요.',
+      timeAgo: '18일 전',
+      likes: 44,
+      status: 'active',
+    },
+  ]);
+
+  // 저장 해제 핸들러
+  const handleUnsaveDoctor = (e: React.MouseEvent, doctorId: string) => {
+    e.stopPropagation();
+    if (confirm('저장을 해제하시겠습니까?')) {
+      removeDoctor(doctorId);
+      toast.success('저장이 해제되었습니다.');
+    }
+  };
+
+  const handleSaveNickname = () => {
+    if (nickname.length < 2 || nickname.length > 10) {
+      alert('닉네임은 2~10자로 입력해주세요.');
+      return;
+    }
+    alert('닉네임이 저장되었습니다!');
+  };
+
+  const handleAnnouncementClick = () => {
+    alert('공지사항 페이지로 이동합니다.');
+  };
+
+  const handleTermsClick = () => {
+    alert('이용약관 페이지로 이동합니다.');
+  };
+
+  const handlePrivacyClick = () => {
+    alert('개인정보 처리방침 페이지로 이동합니다.');
+  };
+
+  const handleFeedbackClick = () => {
+    alert('의견 보내기 페이지로 이동합니다.');
+  };
+
+  const handleWithdrawal = () => {
+    if (confirm('정말 탈퇴하시겠습니까?')) {
+      alert('탈퇴가 완료되었습니다.');
+      setRole('guest');
+    }
+  };
+
+  const handleLogout = () => {
+    if (confirm('로그아웃 하시겠습니까?')) {
+      alert('로그아웃되었습니다.');
+      setRole('guest');
+    }
+  };
+
+  const handleDoctorClick = (doctor: SavedDoctor) => {
+    setSelectedDoctor(doctor);
+  };
+
+  // 게시글 삭제 핸들러
+  const handleDeletePost = (e: React.MouseEvent, postId: string) => {
+    e.stopPropagation();
+    if (confirm('게시글을 삭제하시겠습니까?')) {
+      setMyPosts(prevPosts => prevPosts.filter(p => p.id !== postId));
+      toast.success('게시글이 삭제되었습니다.');
+    }
+  };
+
+  // 댓글 삭제 핸들러
+  const handleDeleteComment = (e: React.MouseEvent, commentId: string) => {
+    e.stopPropagation();
+    if (confirm('댓글을 삭제하시겠습니까?')) {
+      setMyComments(prevComments => prevComments.filter(c => c.id !== commentId));
+      toast.success('댓글이 삭제되었습니다.');
+    }
+  };
+
+  // localStorage에서 신고된 게시글/댓글 불러와서 status 업데이트
+  useEffect(() => {
+    try {
+      const reports = JSON.parse(localStorage.getItem('aiga_reports') || '[]');
+      const deletedPosts = JSON.parse(localStorage.getItem('aiga_deleted_posts') || '[]');
+      const deletedComments = JSON.parse(localStorage.getItem('aiga_deleted_comments') || '[]');
+
+      // 게시글 status 업데이트
+      setMyPosts(prevPosts =>
+        prevPosts.map(post => {
+          if (deletedPosts.includes(post.id)) {
+            const report = reports.find((r: any) => r.type === 'post' && r.targetId === post.id);
+            return {
+              ...post,
+              status: 'deleted_by_report',
+              deleteReason: report?.reasonLabel || report?.detail || '운영 정책 위반',
+              deletedAt: report?.deletedAt || new Date().toLocaleDateString('ko-KR').replace(/\. /g, '.').replace(/\.$/, ''),
+            };
+          }
+          return post;
+        })
+      );
+
+      // 댓글 status 업데이트
+      setMyComments(prevComments =>
+        prevComments.map(comment => {
+          if (deletedComments.includes(comment.id)) {
+            const report = reports.find((r: any) => r.type === 'comment' && r.targetId === comment.id);
+            return {
+              ...comment,
+              status: 'deleted_by_report',
+              deleteReason: report?.reasonLabel || report?.detail || '운영 정책 위반',
+              deletedAt: report?.deletedAt || new Date().toLocaleDateString('ko-KR').replace(/\. /g, '.').replace(/\.$/, ''),
+            };
+          }
+          return comment;
+        })
+      );
+    } catch (error) {
+      console.error('신고 데이터 로드 실패:', error);
+    }
+  }, []);
+
+  return (
+    <div className="h-screen flex flex-col bg-white">
+      {/* Header - Fixed */}
+      <div className="flex-shrink-0">
+        <div className="max-w-2xl mx-auto bg-blue-600 px-4 py-4 flex items-center justify-between">
+          <h1 className="text-xl font-semibold text-white">마이페이지</h1>
+        </div>
+      </div>
+
+      {/* 비회원 화면 */}
+      {isGuest && (
+        <div className="flex-1 overflow-y-auto flex items-center justify-center p-4">
+          <div className="max-w-md w-full text-center space-y-6">
+            {/* Icon */}
+            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto">
+              <User className="w-12 h-12 text-gray-400" />
+            </div>
+
+            {/* Title */}
+            <div className="space-y-2">
+              <h2 className="text-2xl font-bold text-gray-900">
+                로그인이 필요합니다
+              </h2>
+              <p className="text-gray-600">
+                나만의 건강 관리를 시작하세요!
+              </p>
+            </div>
+
+            {/* Login Buttons */}
+            <div className="space-y-3">
+              <button
+                onClick={() => setRole('member')}
+                className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-medium py-4 rounded-xl transition-colors"
+              >
+                카카오톡으로 3초 만에 시작
+              </button>
+              <button className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-4 rounded-xl transition-colors">
+                네이버로 시작하기
+              </button>
+            </div>
+
+            {/* Guest Mode */}
+            <button 
+              onClick={navigateToPreviousTab}
+              className="text-sm text-gray-500 hover:text-gray-700"
+            >
+              나중에 하기 &gt;
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 회원 화면 */}
+      {isMember && (
+        <div className="flex-1 overflow-y-auto">
+          <div className="max-w-2xl mx-auto p-6 space-y-6 pb-24">
+            {/* Email Display with Logout */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
+                  <User className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-sm text-gray-700">fassionmap@kakao.com</span>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <LogOut className="w-5 h-5 text-gray-600" />
+              </button>
+            </div>
+
+            {/* Nickname Setting */}
+            <div className="space-y-3">
+              <label className="block text-sm font-medium text-gray-900">
+                닉네임 <span className="text-red-500">(필수)</span>
+              </label>
+              <input
+                type="text"
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
+                placeholder="닉네임을 입력하세요"
+                maxLength={10}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <p className="text-xs text-gray-500">
+                최소 2자, 최대 10자(한글,영문,숫자,_만 가능)
+              </p>
+              <button
+                onClick={handleSaveNickname}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition-colors"
+              >
+                저장하기
+              </button>
+            </div>
+
+            {/* 내 활동 Section Title */}
+            <div className="pt-2">
+              <h3 className="text-sm font-bold text-gray-900 mb-3">내 활동</h3>
+            </div>
+
+            {/* Tab Navigation */}
+            <div className="bg-white rounded-xl overflow-hidden border border-gray-200">
+              <div className="flex border-b border-gray-200">
+                <button
+                  onClick={() => setActiveTab('posts')}
+                  className={`flex-1 py-3 text-sm font-medium transition-colors relative ${
+                    activeTab === 'posts'
+                      ? 'text-blue-600'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  게시글 ({myPosts.length})
+                  {activeTab === 'posts' && (
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
+                  )}
+                </button>
+                <button
+                  onClick={() => setActiveTab('comments')}
+                  className={`flex-1 py-3 text-sm font-medium transition-colors relative ${
+                    activeTab === 'comments'
+                      ? 'text-blue-600'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  댓글 ({myComments.length})
+                  {activeTab === 'comments' && (
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
+                  )}
+                </button>
+                <button
+                  onClick={() => setActiveTab('doctors')}
+                  className={`flex-1 py-3 text-sm font-medium transition-colors relative ${
+                    activeTab === 'doctors'
+                      ? 'text-blue-600'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  저장한 의료진 ({savedDoctorsList.length})
+                  {activeTab === 'doctors' && (
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
+                  )}
+                </button>
+              </div>
+
+              {/* Tab Content */}
+              <div className="h-[360px] overflow-y-auto">
+                {/* 게시글 탭 */}
+                {activeTab === 'posts' && (
+                  <div className="divide-y divide-gray-100">
+                    {myPosts.length > 0 ? (
+                      myPosts.map((post) => {
+                        const isDeleted = post.status === 'deleted_by_report';
+                        return (
+                          <div
+                            key={post.id}
+                            className={`transition-colors ${isDeleted ? 'bg-gray-50 cursor-default' : 'hover:bg-gray-50 cursor-pointer'}`}
+                          >
+                            {/* 삭제 안내 배너 */}
+                            {isDeleted && (
+                              <div className="mx-4 mt-4 px-3 py-2.5 bg-red-50 border border-red-200 rounded-lg">
+                                <div className="flex items-start gap-2 mb-1">
+                                  <AlertTriangle className="w-3.5 h-3.5 text-red-500 flex-shrink-0 mt-0.5" />
+                                  <p className="text-xs text-red-700 font-medium">
+                                    운영 정책 위반으로 삭제된 게시글입니다
+                                  </p>
+                                </div>
+                                <p className="text-xs text-red-600 pl-5">
+                                  사유: {post.deleteReason} · {post.deletedAt}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* 게시글 본문 */}
+                            <div className={`p-4 ${isDeleted ? 'opacity-40' : ''}`}>
+                              {/* 상단 행: 배지 + 시간 + 삭제 버튼 */}
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded">
+                                  {post.department}
+                                </span>
+                                <span className="text-xs text-gray-400 flex-1">{post.timeAgo}</span>
+                                {!isDeleted && (
+                                  <button
+                                    onClick={(e) => handleDeletePost(e, post.id)}
+                                    className="flex-shrink-0 p-1 text-gray-300 hover:text-red-500 rounded transition-colors"
+                                    title="게시글 삭제"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                )}
+                              </div>
+                              <h3 className="font-medium text-gray-900 mb-2 line-clamp-2 leading-snug">
+                                {post.title}
+                              </h3>
+                              <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                                {post.summary}
+                              </p>
+                              <div className="flex items-center gap-4 text-xs text-gray-500">
+                                <div className="flex items-center gap-1">
+                                  <Heart className="w-3.5 h-3.5" />
+                                  <span>{post.likeCount}</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <MessageCircle className="w-3.5 h-3.5" />
+                                  <span>{post.comments}</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <Eye className="w-3.5 h-3.5" />
+                                  <span>{post.views}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })
+                    ) : (
+                      <div className="flex flex-col items-center justify-center py-12">
+                        <FileText className="w-12 h-12 text-gray-300 mb-3" />
+                        <p className="text-sm text-gray-500">작성한 글이 없습니다</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* 댓글 탭 */}
+                {activeTab === 'comments' && (
+                  <div className="divide-y divide-gray-100">
+                    {myComments.length > 0 ? (
+                      myComments.map((comment) => {
+                        const isDeleted = comment.status === 'deleted_by_report';
+                        return (
+                          <div key={comment.id} className={`transition-colors ${isDeleted ? 'bg-gray-50 cursor-default' : 'hover:bg-gray-50 cursor-pointer'}`}>
+                            {/* 삭제 안내 배너 */}
+                            {isDeleted && (
+                              <div className="mx-4 mt-4 px-3 py-2.5 bg-red-50 border border-red-200 rounded-lg">
+                                <div className="flex items-start gap-2 mb-1">
+                                  <AlertTriangle className="w-3.5 h-3.5 text-red-500 flex-shrink-0 mt-0.5" />
+                                  <p className="text-xs text-red-700 font-medium">
+                                    운영 정책 위반으로 삭제된 댓글입니다
+                                  </p>
+                                </div>
+                                <p className="text-xs text-red-600 pl-5">
+                                  사유: {comment.deleteReason} · {comment.deletedAt}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* 댓글 본문 */}
+                            <div className={`p-4 ${isDeleted ? 'opacity-40' : ''}`}>
+                              {/* 상단 행: 원글 정보 + 삭제 버튼 */}
+                              <div className="flex items-start gap-2 mb-2">
+                                <span className="text-xs text-gray-500 flex-shrink-0 mt-0.5">원글:</span>
+                                <span className="text-xs text-gray-700 font-medium line-clamp-1 flex-1">
+                                  {comment.postTitle}
+                                </span>
+                                <span className="text-xs text-gray-400 flex-shrink-0">{comment.timeAgo}</span>
+                                {!isDeleted && (
+                                  <button
+                                    onClick={(e) => handleDeleteComment(e, comment.id)}
+                                    className="flex-shrink-0 p-1 text-gray-300 hover:text-red-500 rounded transition-colors"
+                                    title="댓글 삭제"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                )}
+                              </div>
+                              <p className="text-sm text-gray-900 mb-2 leading-relaxed">
+                                {comment.content}
+                              </p>
+                              <div className="flex items-center gap-1 text-xs text-gray-500">
+                                <Heart className="w-3.5 h-3.5" />
+                                <span>공감 {comment.likes}</span>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })
+                    ) : (
+                      <div className="flex flex-col items-center justify-center py-12">
+                        <MessageCircle className="w-12 h-12 text-gray-300 mb-3" />
+                        <p className="text-sm text-gray-500">작성한 댓글이 없습니다</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* 저장한 의료진 탭 */}
+                {activeTab === 'doctors' && (
+                  <div className="divide-y divide-gray-100">
+                    {savedDoctorsList.length > 0 ? (
+                      savedDoctorsList.map((doctor) => (
+                        <div
+                          key={doctor.id}
+                          onClick={() => handleDoctorClick(doctor)}
+                          className="p-4 hover:bg-gray-50 transition-colors cursor-pointer"
+                        >
+                          {/* 상단 행: 이름 + 배지 + 저장 해제 버튼 */}
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="font-bold text-gray-900">{doctor.name}</h3>
+                            <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded">
+                              {doctor.department}
+                            </span>
+                            <div className="flex-1" />
+                            <button
+                              onClick={(e) => handleUnsaveDoctor(e, doctor.id)}
+                              className="flex-shrink-0 flex items-center gap-1 px-2 py-1 text-xs text-gray-400 hover:text-red-500 hover:bg-red-50 border border-gray-200 hover:border-red-200 rounded-md transition-colors"
+                              title="저장 해제"
+                            >
+                              <BookmarkX className="w-3.5 h-3.5" />
+                              <span>저장 해제</span>
+                            </button>
+                          </div>
+                          <p className="text-sm text-gray-600 mb-1">{doctor.hospital}</p>
+                          <p className="text-xs text-gray-500 mb-2">{doctor.specialty}</p>
+                          <div className="flex items-center gap-3 text-xs text-gray-500">
+                            <div className="flex items-center gap-1">
+                              <span className="text-yellow-500">★</span>
+                              <span>{doctor.rating}</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="flex flex-col items-center justify-center py-12">
+                        <Bookmark className="w-12 h-12 text-gray-300 mb-3" />
+                        <p className="text-sm text-gray-500">저장한 의료진이 없습니다</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Customer Support */}
+            <div>
+              <h3 className="text-sm font-bold text-gray-900 mb-3">고객지원</h3>
+              <div className="space-y-2">
+                <button
+                  onClick={handleAnnouncementClick}
+                  className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors rounded-lg"
+                >
+                  <div className="flex items-center gap-3">
+                    <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span className="text-sm text-gray-900">공지사항</span>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                </button>
+
+                <button
+                  onClick={handleTermsClick}
+                  className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors rounded-lg"
+                >
+                  <div className="flex items-center gap-3">
+                    <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="text-sm text-gray-900">이용약관</span>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                </button>
+
+                <button
+                  onClick={handlePrivacyClick}
+                  className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors rounded-lg"
+                >
+                  <div className="flex items-center gap-3">
+                    <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    <span className="text-sm text-gray-900">개인정보 처리방침</span>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                </button>
+
+                <button
+                  onClick={handleFeedbackClick}
+                  className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors rounded-lg"
+                >
+                  <div className="flex items-center gap-3">
+                    <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    <span className="text-sm text-gray-900">의견 보내기</span>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                </button>
+              </div>
+            </div>
+
+            {/* Withdrawal Button */}
+            <button
+              onClick={handleWithdrawal}
+              className="w-full text-center py-3 text-sm text-gray-500 hover:text-gray-700 underline transition-colors"
+            >
+              탈퇴하기
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Doctor Profile Modal */}
+      {selectedDoctor && (
+        <DoctorProfileModal
+          doctor={{
+            name: selectedDoctor.name,
+            specialty: selectedDoctor.specialty,
+            hospital: selectedDoctor.hospital,
+            experience: '15년차',
+            rating: selectedDoctor.rating,
+            reviewCount: 128,
+            id: selectedDoctor.id,
+            verified: getDoctorById(selectedDoctor.id)?.verified,
+          }}
+          isOpen={true}
+          onClose={() => setSelectedDoctor(null)}
+        />
+      )}
+    </div>
+  );
+}
