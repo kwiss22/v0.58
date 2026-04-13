@@ -81,15 +81,14 @@ export function DoctorSearchSpec() {
             <h4 className="text-xs font-bold text-gray-900 mb-2 mt-4">💬 입력 상태별 화면</h4>
             <div className="space-y-2">
               {[
-                { state: '포커스 + 입력 없음', action: '아무것도 표시하지 않음 (추후 구현 예정)', badge: '⏳ 추후 구현', color: 'bg-gray-50 border-gray-200' },
-                { state: '포커스 + 입력 중', action: '연관검색어 드롭다운 표시 (마지막 단어 기준)', badge: '✅ 구현 완료', color: 'bg-green-50 border-green-200' },
-                { state: '검색 실행', action: '드롭다운 닫힘 → 결과 목록 표시', badge: '✅ 구현 완료', color: 'bg-green-50 border-green-200' },
-                { state: '결과 0건', action: '안내 문구 + AI 챗봇 유도 배너 표시', badge: '✅ 구현 완료', color: 'bg-green-50 border-green-200' },
+                { state: '포커스 + 입력 없음', action: '아무것도 표시하지 않음' },
+                { state: '포커스 + 입력 중', action: '연관검색어 드롭다운 표시 (마지막 단어 기준)' },
+                { state: '검색 실행', action: '드롭다운 닫힘 → 결과 목록 표시' },
+                { state: '결과 0건', action: '안내 문구 + AI 챗봇 유도 배너 표시' },
               ].map((item, i) => (
-                <div key={i} className={`border rounded-lg px-3 py-2.5 ${item.color}`}>
-                  <div className="flex items-center justify-between gap-2 mb-1">
+                <div key={i} className="border border-green-200 bg-green-50 rounded-lg px-3 py-2.5">
+                  <div className="mb-1">
                     <span className="text-xs font-bold text-gray-900">{item.state}</span>
-                    <span className="text-[10px] font-bold bg-white px-2 py-0.5 rounded-full border border-gray-200 whitespace-nowrap">{item.badge}</span>
                   </div>
                   <p className="text-xs text-gray-600">→ {item.action}</p>
                 </div>
@@ -285,7 +284,7 @@ export function DoctorSearchSpec() {
                 <Table
                   headers={['상황', '동작']}
                   rows={[
-                    ['최초 페이지 진입', 'localStorage에 권한 정보 없을 때 자동 표시'],
+                    ['최초 페이지 진입', '이 브라우저에 위치 허용 여부를 아직 저장하지 않았을 때 자동 표시'],
                     ['"거리순" 정렬 클릭', '권한이 거부되어 있을 때 재표시'],
                     ['재진입 시', '이전 선택 기억 — 모달 미표시'],
                   ]}
@@ -324,7 +323,7 @@ export function DoctorSearchSpec() {
                 <div className="mt-3 space-y-1">
                   <p className="text-xs text-gray-600">• 보라색 라디오 버튼 (#7C3AED)</p>
                   <p className="text-xs text-gray-600">• 상단 우측 X 버튼으로 닫기 가능</p>
-                  <p className="text-xs text-gray-600">• localStorage 키: <code className="bg-gray-100 px-1 rounded">aiga_location_permission</code></p>
+                  <p className="text-xs text-gray-600">• 데모에서 쓰는 저장 이름: <code className="bg-gray-100 px-1 rounded">aiga_location_permission</code> (개발 문서용 표기)</p>
                 </div>
               </div>
 
@@ -420,22 +419,28 @@ export function DoctorSearchSpec() {
               </div>
             ))}
           </div>
+          <p className="text-xs text-indigo-900 bg-indigo-50 border border-indigo-200 rounded-lg px-3 py-2 mt-2">
+            👉 &quot;로그인 유도 안내&quot;에서 로그인(가입) 버튼 탭 시 이후의 진행 흐름은 마이페이지 화면정의서에 정리된 [공통 로그인/회원가입 플로우 정책]을 공통으로 따름.
+          </p>
         </Section>
 
-        {/* ───── 5. 회원 / 비회원 기능 차이 ───── */}
-        <Section id="auth" title="5. 회원 / 비회원 기능 차이" color="emerald">
+        {/* ───── 5. 비회원(Base) 기준 기능 요약 ───── */}
+        <Section id="auth" title="5. 비회원(Base) 기준 기능 요약" color="emerald">
           {/* 🆕 비회원 사용량 제한 추가 */}
           <div className="bg-pink-50 border-2 border-pink-400 rounded-xl px-4 py-3 mb-4">
             <h3 className="text-sm font-black text-pink-900 mb-3">🆕 비회원 사용량 제한</h3>
-            
+            <p className="text-xs text-pink-900 bg-white/80 border border-pink-200 rounded-lg px-3 py-2 mb-3 leading-relaxed">
+              <strong>전역 통합:</strong> 아래 검색·프로필·게시글 열람 한도는 <strong>명의 찾기 탭만의 독립 카운터가 아닙니다.</strong> 홈 탭, 통합 검색 전체 창, 커뮤니티 탭과 <strong>같은 남은 횟수</strong>를 씁니다(프로토타입: 이 브라우저에 저장). 어느 화면에서든 1회를 쓰면 모든 화면의 잔여 횟수·배너·잠금 안내에 같이 반영됩니다.
+            </p>
             <div className="space-y-3">
               <div className="bg-white rounded-lg p-3 border border-pink-200">
                 <h4 className="text-xs font-bold text-gray-900 mb-2">📊 사용량 한도</h4>
                 <Table
                   headers={['항목', '한도', '초기화 시점']}
                   rows={[
-                    ['검색 실행', '하루 3회', '매일 자정 (00:00)'],
-                    ['프로필 조회', '하루 3회', '매일 자정 (00:00)'],
+                    ['검색 실행', '하루 3회', '매일 자정 (00:00) — 통합 검색과 동일 카운트'],
+                    ['프로필 조회', '하루 3회', '매일 자정 (00:00) — 홈·통합검색 등 프로필 열람과 동일 카운트'],
+                    ['게시글 본문 열람', '하루 5회', '매일 자정 (00:00) — 홈·커뮤니티·통합검색 글 상세와 동일 카운트'],
                   ]}
                 />
               </div>
@@ -524,6 +529,9 @@ export function DoctorSearchSpec() {
                     </div>
                   </div>
                 </div>
+                <p className="text-xs text-indigo-900 bg-indigo-50 border border-indigo-200 rounded-lg px-2.5 py-2 mt-2">
+                  👉 위 모달 내 가입·로그인 관련 버튼 탭 시 이후의 진행 흐름은 마이페이지 화면정의서에 정리된 [공통 로그인/회원가입 플로우 정책]을 공통으로 따름.
+                </p>
                 <div className="mt-3 space-y-1">
                   <p className="text-xs text-gray-600">• <strong>검색 한도 초과 시</strong>: 검색창 클릭 → 모달 팝업</p>
                   <p className="text-xs text-gray-600">• <strong>프로필 한도 초과 시</strong>: 의사 카드 클릭 → 모달 팝업</p>
@@ -546,25 +554,23 @@ export function DoctorSearchSpec() {
           </div>
 
           <Table
-            headers={['기능', '비회원', '회원', '비고']}
+            headers={['기능', '비회원(Base)', '비고']}
             rows={[
-              ['검색 · 필터링', '✅ 가능 (하루 3회)', '✅ 무제한', '검색 실행 시 횟수 차감'],
-              ['의사 카드 목록 열람', '✅ 가능', '✅ 가능', '—'],
-              ['의사 프로필 상세 열람', '✅ 가능 (하루 3회)', '✅ 무제한', '카드 클릭 시 횟수 차감'],
-              ['AI 소셜리뷰 확인', '✅ 가능', '✅ 가능', '—'],
-              ['다른 환자 리뷰 읽기', '✅ 가능', '✅ 가능', '—'],
-              ['의사 즐겨찾기', '❌ 로그인 유도', '✅ 가능', '저장 시 마이페이지에 반영'],
-              ['리뷰쓰기', '❌ 로그인 유도', '✅ 가능', '—'],
-              ['거리 정보 표시', '위치 권한에 따라', '위치 권한에 따라', '회원/비회원 구분 없이 GPS 권한 기준'],
+              ['검색 · 필터링', '✅ 가능 (하루 3회)', '검색 실행 시 횟수 차감 — 통합 검색·홈 등과 전역 동일 카운터'],
+              ['의사 카드 목록 열람', '✅ 가능', '—'],
+              ['의사 프로필 상세 열람', '✅ 가능 (하루 3회)', '카드 클릭 시 횟수 차감 — 홈·통합검색 등과 전역 동일 카운터'],
+              ['AI 소셜리뷰 확인', '✅ 가능', '—'],
+              ['다른 환자 리뷰 읽기', '✅ 가능', '—'],
+              ['의사 즐겨찾기', '❌ 로그인 유도', '회원 확장 기능'],
+              ['리뷰쓰기', '❌ 로그인 유도', '회원 확장 기능'],
+              ['거리 정보 표시', '위치 권한에 따라', 'GPS 권한 기준'],
             ]}
           />
+          <p className="text-xs text-emerald-900 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2 mt-2">
+            회원 전용 확장(Delta)은 회원 탭(`DoctorSearchSpecBiz`)에서만 관리합니다.
+          </p>
         </Section>
 
-        {/* 푸터 */}
-        <div className="border-t border-gray-200 pt-5 text-center text-[10px] text-gray-400">
-          Aiga 명의 찾기 화면 정의서 (UI/UX) · 최초 작성 2026.03.27 · 최종 수정 2026.03.27 · 버전 v0.6<br />
-          본 문서는 프로토타입 기준이며, 실제 서비스 연동 및 기획 확정에 따라 내용이 변경될 수 있습니다.
-        </div>
       </div>
     </div>
   );

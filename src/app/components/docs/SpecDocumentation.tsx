@@ -3,10 +3,14 @@ import { HomeTabSpecBiz } from './HomeTabSpecBiz';
 import { CommonComponentsSpec } from './CommonComponentsSpec';
 import { CommonComponentsSpecBiz } from './CommonComponentsSpecBiz';
 import { DoctorSearchSpec } from './DoctorSearchSpec';
+import { DoctorSearchSpecBiz } from './DoctorSearchSpecBiz';
 import { SearchScenarioSpec } from './SearchScenarioSpec';
+import { SearchScenarioSpecBiz } from './SearchScenarioSpecBiz';
 import { CommunityTabSpec } from './CommunityTabSpec';
+import { CommunityTabSpecBiz } from './CommunityTabSpecBiz';
 import { MyPageSpec } from './MyPageSpec';
 import { UpdateSummary } from './UpdateSummary';
+import { AigaChatbotSpec } from './AigaChatbotSpec';
 import { useUser } from '../../contexts/UserContext';
 import { useAppNavigation } from '../../contexts/AppNavigationContext';
 
@@ -54,6 +58,16 @@ export function SpecDocumentation() {
               }`}
             >
               📱 홈
+            </button>
+            <button
+              onClick={() => setSpecTab('aiga-chatbot-spec')}
+              className={`px-2 py-1 text-xs font-bold border-b-2 transition-colors whitespace-nowrap ${
+                specTab === 'aiga-chatbot-spec'
+                  ? 'border-sky-600 text-sky-700'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              🤖 AIGA 챗봇
             </button>
             <button
               onClick={() => setSpecTab('doctor')}
@@ -113,12 +127,18 @@ export function SpecDocumentation() {
       <div>
         {specTab === 'update' ? (
           <UpdateSummary />
+        ) : specTab === 'aiga-chatbot-spec' ? (
+          <AigaChatbotSpec />
         ) : specTab === 'search-spec' ? (
-          <SearchScenarioSpec onTestSearch={openGlobalSearch} />
+          role === 'member' ? (
+            <SearchScenarioSpecBiz onTestSearch={openGlobalSearch} />
+          ) : (
+            <SearchScenarioSpec onTestSearch={openGlobalSearch} />
+          )
         ) : specTab === 'doctor' ? (
-          <DoctorSearchSpec />
+          role === 'member' ? <DoctorSearchSpecBiz /> : <DoctorSearchSpec />
         ) : specTab === 'community' ? (
-          <CommunityTabSpec />
+          role === 'member' ? <CommunityTabSpecBiz /> : <CommunityTabSpec />
         ) : specTab === 'mypage-spec' ? (
           <MyPageSpec />
         ) : role === 'member' ? (

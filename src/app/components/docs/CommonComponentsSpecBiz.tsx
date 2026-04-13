@@ -1,1053 +1,216 @@
-// 공통 컴포넌트 기획서 — UI/UX
+// 공통 컴포넌트 정의서 — 회원(Delta) 전용
 
-export function CommonComponentsSpecBiz({ onTestSearch }: { onTestSearch?: (keyword: string) => void }) {
+export function CommonComponentsSpecBiz(_props: { onTestSearch?: (keyword: string) => void }) {
   return (
     <div className="bg-gray-50 font-sans">
-      {/* 문서 헤더 */}
-      <div className="bg-gradient-to-r from-purple-600 to-violet-700 text-white px-8 py-10">
+      <div className="bg-gradient-to-r from-violet-600 to-purple-700 text-white px-8 py-10">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-2 mb-3">
-            <span className="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">공통 컴포넌트 기획서 v0.6</span>
-            <span className="bg-white/10 text-purple-100 text-xs px-3 py-1 rounded-full">2026.03.27</span>
+            <span className="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">공통 컴포넌트 정의서 v0.6</span>
+            <span className="bg-white/10 text-purple-100 text-xs px-3 py-1 rounded-full">회원 탭 (Delta)</span>
           </div>
-          <h1 className="text-3xl font-black mb-2">🔗 Aiga — 재사용 UI 컴포넌트</h1>
-          <p className="text-purple-200 text-sm">여러 화면에서 공통으로 사용되는 팝업, 알림 등의 UI 요소 정의</p>
-          <div className="mt-4 bg-white/10 rounded-xl px-4 py-3 text-sm text-purple-100 space-y-1">
-            <p className="font-bold text-white">📋 이 문서의 목적</p>
-            <p>• 사용자가 여러 화면에서 일관되게 경험하는 UI 요소들을 정의합니다</p>
-            <p>• 각 UI 요소가 어떤 상황에서 나타나고, 사용자에게 어떤 기능을 제공하는지 설명합니다</p>
-            <p>• 회원과 비회원의 경험 차이, 예외 상황 처리 방식을 명확히 합니다</p>
-          </div>
+          <h1 className="text-3xl font-black mb-2">🔗 공통 UI 컴포넌트 — 회원 확장</h1>
+          <p className="text-purple-200 text-sm">
+            비회원은 <strong className="text-white">기본 맛보기</strong>·제약이 있고, 회원은 <strong className="text-white">같은 화면 위에서</strong> 저장·작성·연속 탐색이 열립니다.
+          </p>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-10 space-y-12">
-
-        {/* ───── 1. 팝업 UI ───── */}
-        <BizSection id="modals" title="1. 팝업 UI (모달)" icon="📱">
-
-          <BizSubSection label="1" title="의사 프로필 상세 팝업">
-            <div className="mb-4 bg-purple-50 border border-purple-200 rounded-xl p-4">
-              <p className="text-sm font-bold text-purple-800 mb-1">🔗 재사용 팝업</p>
-              <p className="text-sm text-purple-900">홈, 명의찾기, 커뮤니티 화면에서 의사 카드를 클릭하면 표시</p>
-            </div>
-
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">📍 어디서 볼 수 있나요?</h4>
-            <div className="space-y-2">
-              <div className="bg-gray-50 rounded-lg p-3">
-                <p className="text-sm font-bold text-gray-900">홈 화면</p>
-                <p className="text-xs text-gray-600">"주요 질환 인기 명의" 섹션에서 의사 카드 클릭 시</p>
-              </div>
-              <div className="bg-gray-50 rounded-lg p-3">
-                <p className="text-sm font-bold text-gray-900">명의찾기 화면</p>
-                <p className="text-xs text-gray-600">검색 결과 목록에서 의사 카드 클릭 시</p>
-              </div>
-              <div className="bg-gray-50 rounded-lg p-3">
-                <p className="text-sm font-bold text-gray-900">커뮤니티 화면</p>
-                <p className="text-xs text-gray-600">게시글에 태그된 의사 이름 클릭 시</p>
-              </div>
-            </div>
-
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">✨ 제공하는 정보</h4>
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 space-y-3">
-              <div>
-                <p className="font-bold text-blue-900 text-sm mb-1">프로필 영역</p>
-                <p className="text-xs text-blue-800">의사 이름, 소속 병원, 진료과, 전문분야</p>
-              </div>
-              <div>
-                <p className="font-bold text-blue-900 text-sm mb-1">경력 섹션 (항상 표시)</p>
-                <p className="text-xs text-blue-800">총 경력 연수, 주요 경력 사항</p>
-              </div>
-              <div>
-                <p className="font-bold text-blue-900 text-sm mb-1">학력 섹션 (항상 표시)</p>
-                <p className="text-xs text-blue-800">학위, 졸업 학교</p>
-              </div>
-              <div>
-                <p className="font-bold text-blue-900 text-sm mb-1">논문 (1~3편: 항상 표시 / 4편↑: 아코디언)</p>
-                <p className="text-xs text-blue-800">발표 논문 목록 (현재는 샘플 데이터) — 4편 이상 시 건수 표시 + 접기/펼치기</p>
-              </div>
-              <div>
-                <p className="font-bold text-blue-900 text-sm mb-1">의료진 인증 · 정보 수정 요청 (논문 ↔ AI 소셜리뷰 사이)</p>
-                <p className="text-xs text-blue-800">
-                  <strong>의사 정보 수정 요청</strong>은 비회원·회원 <strong>모두 항상 동일하게 노출</strong>. 모달(최소 10자·제출·토스트), 오버레이는 <strong>서비스(앱) 영역</strong> 한정.{' '}
-                  <strong>의료진 인증 요청</strong> 노출·비활성 등 운영 규칙·플로우는 <strong>별도 의사 인증 화면정의서</strong>(데모: 회원 토스트).
-                </p>
-              </div>
-              <div>
-                <p className="font-bold text-blue-900 text-sm mb-1">AI 소셜리뷰</p>
-                <p className="text-xs text-blue-800">
-                  틸 제목 + 4지표(친절·배려, 치료 만족, 쉬운 설명, 추천 의향) 원형 UI·점수.
-                </p>
-              </div>
-              <div>
-                <p className="font-bold text-blue-900 text-sm mb-1">AIGA 리뷰</p>
-                <p className="text-xs text-blue-800">
-                  환자 리뷰 목록·평균 요약·첨부 이미지(ImageLightbox). 임시저장 배너(회원), 하단 <strong>리뷰쓰기</strong>(비회원 Lock).
-                </p>
-              </div>
-            </div>
-
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">🎯 사용자가 할 수 있는 행동</h4>
-            <BizTable
-              headers={['기능', '회원', '비회원', '설명']}
-              rows={[
-                ['의사 정보 보기', '✅', '✅', '모든 사용자가 의사의 상세 정보 열람 가능'],
-                ['AI 소셜리뷰 보기', '✅', '✅', '4지표(친절·배려, 치료 만족, 쉬운 설명, 추천 의향) 확인'],
-                ['다른 환자 리뷰 읽기 (AIGA 리뷰)', '✅', '✅', '리뷰 목록·첨부 이미지(ImageLightbox)'],
-                ['의료진 인증 요청', '✅', '✅(비활성)', '공통 노출. 비회원: 비활성·Lock·로그인 유도. 회원: 데모 토스트. 운영 규칙은 별도 의사 인증 화면정의서'],
-                ['의사 정보 수정 요청', '✅', '✅', '비회원·회원 항상 노출. 상세는 별도 의사 인증 화면정의서'],
-                ['리뷰쓰기', '✅', '❌', '비회원은 버튼이 회색 비활성화 상태 (Lock 아이콘) + 클릭 시 \"로그인 필요\" 안내 표시'],
-                ['즐겨찾기', '✅', '❌', '비회원은 버튼이 회색 비활성화 상태 (Lock 아이콘) + 클릭 시 \"로그인 필요\" 안내 표시'],
-              ]}
-            />
-
-            {/* ── 비회원 버튼 비활성화 상태 상세 ── */}
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">🔒 비회원 버튼 비활성화 상태 상세</h4>
-            <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4 space-y-4">
-              <p className="text-xs text-red-800 font-bold">비회원이 아래 두 버튼을 클릭하면 LoginRequiredToast 모달이 표시됩니다.</p>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-white border border-red-200 rounded-lg p-3">
-                  <p className="text-xs font-bold text-gray-900 mb-2">📝 리뷰쓰기 버튼 (비회원)</p>
-                  <div className="bg-gray-100 border border-gray-200 rounded-lg px-3 py-2 flex items-center gap-2 mb-2.5">
-                    <span className="text-gray-400 text-sm">🔒</span>
-                    <span className="text-gray-400 text-xs">리뷰쓰기</span>
-                  </div>
-                  <ul className="text-xs text-gray-600 space-y-0.5">
-                    <li>• 버튼 색상: 회색(비활성화)</li>
-                    <li>• 자물쇠(Lock) 아이콘 표시</li>
-                    <li>• 클릭 → LoginRequiredToast 모달</li>
-                  </ul>
-                </div>
-                <div className="bg-white border border-red-200 rounded-lg p-3">
-                  <p className="text-xs font-bold text-gray-900 mb-2">🔖 즐겨찾기 버튼 (비회원)</p>
-                  <div className="bg-gray-100 border border-gray-200 rounded-lg px-3 py-2 flex items-center gap-2 mb-2.5">
-                    <span className="text-gray-400 text-sm">🔒</span>
-                    <span className="text-gray-400 text-xs">즐겨찾기</span>
-                  </div>
-                  <ul className="text-xs text-gray-600 space-y-0.5">
-                    <li>• 버튼 색상: 회색(비활성화)</li>
-                    <li>• 자물쇠(Lock) 아이콘 표시</li>
-                    <li>• 클릭 → LoginRequiredToast 모달</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div className="bg-white border border-red-200 rounded-lg p-3">
-                <p className="text-xs font-bold text-red-800 mb-2">🪟 LoginRequiredToast 모달 동작 방식</p>
-                <ul className="text-xs text-red-700 space-y-1">
-                  <li>• 배경 딤처리(어두운 반투명 오버레이) 적용</li>
-                  <li>• 화면 <strong>중앙</strong>에 카드 형태 모달 표시</li>
-                  <li>• 모달 내부: 안내 문구 + 로그인하기 버튼</li>
-                  <li className="text-red-500 font-bold">⚠️ 단순 하단 토스트 알림이 아닌 중앙 카드 모달임 — 이름(LoginRequiredToast)과 실제 동작 혼동 주의</li>
-                </ul>
-              </div>
-            </div>
-
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">⚠️ 특수 상황</h4>
-            <div className="space-y-2">
-              {[
-                { 
-                  icon: '🖼️',
-                  case: '의사 프로필 사진이 없는 경우', 
-                  action: '기본 사용자 아이콘으로 대체',
-                },
-                { 
-                  icon: '💬',
-                  case: '리뷰가 하나도 없는 경우', 
-                  action: '\"첫 리뷰를 작성해보세요\" 안내 문구 표시',
-                },
-                { 
-                  icon: '🔒',
-                  case: '비회원이 즐겨찾기 버튼 누름', 
-                  action: 'LoginRequiredToast 모달 표시 — 배경 딤처리 + 화면 중앙 카드',
-                },
-                { 
-                  icon: '✍️',
-                  case: '비회원이 리뷰 작성 버튼 누름', 
-                  action: 'LoginRequiredToast 모달 표시 — 배경 딤처리 + 화면 중앙 카드',
-                },
-              ].map((item, i) => (
-                <div key={i} className="bg-white border border-gray-200 rounded-lg p-3">
-                  <div className="flex items-start gap-2 mb-1">
-                    <span className="text-lg">{item.icon}</span>
-                    <div className="flex-1">
-                      <div className="mb-1">
-                        <span className="text-sm font-bold text-gray-900">{item.case}</span>
-                      </div>
-                      <p className="text-xs text-gray-600">→ {item.action}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* ── AIGA 리뷰 카드 이미지 표시 정책 ── */}
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">🖼️ AIGA 리뷰 카드 — 첨부 이미지 표시 정책</h4>
-            <p className="text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-2">(추후 논의 후 적용 예정)</p>
-            <div className="space-y-3">
-              <div className="bg-teal-50 border border-teal-200 rounded-lg p-4">
-                <p className="text-xs font-bold text-teal-800 mb-2">리뷰 카드 내 이미지 그리드 (커뮤니티 목록과 동일 정책)</p>
-                <div className="grid grid-cols-3 gap-2 mb-3">
-                  <div className="bg-white border border-teal-200 rounded-lg p-2.5">
-                    <p className="text-[10px] font-bold text-teal-700 mb-1">1장</p>
-                    <ul className="text-[10px] text-gray-600 space-y-0.5">
-                      <li>• 1열 (전체 너비)</li>
-                      <li>• 높이: <code className="bg-gray-100 px-1 rounded">h-48</code></li>
-                    </ul>
-                  </div>
-                  <div className="bg-white border border-teal-200 rounded-lg p-2.5">
-                    <p className="text-[10px] font-bold text-teal-700 mb-1">2장</p>
-                    <ul className="text-[10px] text-gray-600 space-y-0.5">
-                      <li>• 2열 균등 분할</li>
-                      <li>• 높이: <code className="bg-gray-100 px-1 rounded">h-32</code></li>
-                    </ul>
-                  </div>
-                  <div className="bg-white border border-teal-200 rounded-lg p-2.5">
-                    <p className="text-[10px] font-bold text-teal-700 mb-1">3장 이상</p>
-                    <ul className="text-[10px] text-gray-600 space-y-0.5">
-                      <li>• 3열 균등 분할</li>
-                      <li>• 높이: <code className="bg-gray-100 px-1 rounded">h-24</code></li>
-                      <li>• 3번째 슬롯에 <strong>+N 오버레이</strong></li>
-                    </ul>
-                  </div>
-                </div>
-                <div className="bg-white border border-teal-100 rounded-lg p-3 mb-2">
-                  <p className="text-[10px] font-bold text-gray-700 mb-1">+N 오버레이 상세 규칙</p>
-                  <ul className="text-[10px] text-gray-600 space-y-0.5">
-                    <li>• 노출 조건: 전체 이미지 수 &gt; 3장일 때만 3번째 슬롯에 표시</li>
-                    <li>• 오버레이 텍스트: <code className="bg-gray-100 px-1 rounded">+{'{'}총장수 - 3{'}'}</code> (예: 5장이면 <code className="bg-gray-100 px-1 rounded">+2</code>)</li>
-                    <li>• 스타일: 검정 반투명 배경(<code className="bg-gray-100 px-1 rounded">bg-black/50</code>) + 흰 텍스트</li>
-                    <li>• 클릭 시 ImageLightbox가 3번째 이미지부터 열림</li>
-                  </ul>
-                </div>
-                <div className="bg-white border border-teal-100 rounded-lg p-3">
-                  <p className="text-[10px] font-bold text-gray-700 mb-1">이미지 클릭 동작</p>
-                  <ul className="text-[10px] text-gray-600 space-y-0.5">
-                    <li>• 어느 슬롯을 클릭해도 <strong>ImageLightbox</strong> 뷰어 열림</li>
-                    <li>• 클릭한 이미지의 인덱스부터 시작 (1번 클릭 → 1번째, 2번 클릭 → 2번째 …)</li>
-                    <li>• Lightbox에서는 <strong>첨부된 전체 이미지</strong>를 탐색 가능</li>
-                    <li>• Lightbox는 의사 프로필 팝업 내부에 마운트 (최상위 z-index)</li>
-                  </ul>
-                </div>
-              </div>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <p className="text-xs font-bold text-blue-800 mb-1.5">ImageLightbox 뷰어 동작 (리뷰 카드 공통)</p>
-                <ul className="text-xs text-blue-700 space-y-1">
-                  <li>• 이전 / 다음 화살표 버튼으로 이미지 간 이동</li>
-                  <li>• 상단 카운터: <code className="bg-blue-100 px-1 rounded">N / 전체장수</code></li>
-                  <li>• 하단 썸네일 스트립 (2장 이상일 때만 표시)</li>
-                  <li>• 배경 딤(어두운 오버레이) + X 버튼 또는 배경 클릭으로 닫기</li>
-                  <li>• 키보드 방향키(←/→) 및 ESC 키 지원</li>
-                </ul>
-              </div>
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-                <p className="text-[10px] font-bold text-amber-800 mb-1.5">⚠️ 리뷰 카드(목록) vs ImageLightbox(상세) 역할 구분</p>
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="bg-white border border-amber-100 rounded p-2">
-                    <p className="text-[10px] font-bold text-gray-700 mb-1">리뷰 카드 (목록 역할)</p>
-                    <ul className="text-[10px] text-gray-600 space-y-0.5">
-                      <li>• 최대 3슬롯만 노출</li>
-                      <li>• 초과분은 +N 오버레이로 압축</li>
-                      <li>• 반응형 그리드로 레이아웃</li>
-                    </ul>
-                  </div>
-                  <div className="bg-white border border-amber-100 rounded p-2">
-                    <p className="text-[10px] font-bold text-gray-700 mb-1">ImageLightbox (상세 역할)</p>
-                    <ul className="text-[10px] text-gray-600 space-y-0.5">
-                      <li>• 전체 이미지 개수 제한 없음</li>
-                      <li>• 한 장씩 전체화면 표시</li>
-                      <li>• 하단 썸네일로 빠른 이동</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </BizSubSection>
-
-          <BizSubSection label="2" title="커뮤니티 게시글 상세 팝업">
-            <div className="mb-4 bg-purple-50 border border-purple-200 rounded-xl p-4">
-              <p className="text-sm font-bold text-purple-800 mb-1">🔗 재사용 팝업</p>
-              <p className="text-sm text-purple-900">홈, 커뮤니티 화면에서 게시글 카드를 클릭하면 표시</p>
-            </div>
-
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">📍 어디서 볼 수 있나요?</h4>
-            <div className="space-y-2">
-              <div className="bg-gray-50 rounded-lg p-3">
-                <p className="text-sm font-bold text-gray-900">홈 화면</p>
-                <p className="text-xs text-gray-600">"커뮤니티 추천글" 섹션에서 게시글 카드 클릭 시</p>
-              </div>
-              <div className="bg-gray-50 rounded-lg p-3">
-                <p className="text-sm font-bold text-gray-900">커뮤니티 화면</p>
-                <p className="text-xs text-gray-600">게시글 목록에서 아무 게시글이나 클릭 시</p>
-              </div>
-            </div>
-
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">✨ 제공하는 정보</h4>
-            <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 space-y-2 text-sm">
-              <p>• 게시글 제목과 전체 본문 내용</p>
-              <p>• 작성자 정보 (닉네임, 프로필 사진)</p>
-              <p>• 태그 (예: #무릎통증, #강남병원)</p>
-              <p>• 작성일시, 좋아요 수, 댓글 수</p>
-              <p>• 댓글 및 대댓글 목록</p>
-            </div>
-
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">🎯 사용자가 할 수 있는 행동</h4>
-            <BizTable
-              headers={['기능', '회원', '비회원', '설명']}
-              rows={[
-                ['게시글 읽기', '✅', '✅', '모든 사용자가 전체 내용 열람 가능'],
-                ['댓글 읽기', '✅', '✅', '다른 사용자들의 댓글 확인 가능'],
-                ['댓글 작성', '✅', '❌', '비회원은 입력창이 비활성화되며 "로그인 필요" 안내'],
-                ['커뮤니티 탭 이동', '✅', '✅', '"커뮤니티에서 더 보기" 버튼으로 전체 게시글 보기'],
-              ]}
-            />
-
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">⚠️ 특수 상황</h4>
-            <div className="space-y-2">
-              {[
-                { 
-                  icon: '💬',
-                  case: '댓글이 하나도 없는 경우', 
-                  action: '"첫 댓글을 작성해보세요" 안내 문구 (PostDetailModal·CommunityPostModal)',
-                },
-                { 
-                  icon: '🔒',
-                  case: '비회원이 댓글 입력창 클릭', 
-                  action: '입력창 비활성화 + "로그인이 필요합니다" 안내 + 로그인 버튼',
-                },
-                { 
-                  icon: '📜',
-                  case: '게시글 내용이 매우 긴 경우', 
-                  action: '스크롤로 전체 내용 확인 가능',
-                },
-              ].map((item, i) => (
-                <div key={i} className="bg-white border border-gray-200 rounded-lg p-3">
-                  <div className="flex items-start gap-2 mb-1">
-                    <span className="text-lg">{item.icon}</span>
-                    <div className="flex-1">
-                      <div className="mb-1">
-                        <span className="text-sm font-bold text-gray-900">{item.case}</span>
-                      </div>
-                      <p className="text-xs text-gray-600">→ {item.action}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* ── 첨부 이미지 처리 방식 ── */}
-            <div className="mt-5 border-t border-gray-100 pt-5">
-              <div className="font-medium text-gray-900 text-sm mb-3">🖼️ 첨부 이미지 처리 방식</div>
-              <div className="space-y-3">
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                    <div className="text-xs font-bold text-gray-700 mb-2">업로드 제한 (작성 시)</div>
-                    <ul className="text-xs text-gray-600 space-y-1">
-                      <li>• <strong>최대 장수</strong>: 10장</li>
-                      <li>• <strong>허용 형식</strong>: JPG · PNG · WEBP</li>
-                      <li>• <strong>장당 용량</strong>: 5MB 이하</li>
-                      <li>• 10장 도달 시 업로드 버튼 비활성화</li>
-                      <li>• 카운터 표시: <code className="bg-gray-100 px-1 rounded">N/10</code></li>
-                    </ul>
-                  </div>
-                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                    <div className="text-xs font-bold text-gray-700 mb-2">상세 모달 본문 이미지 표시 방식</div>
-                    <ul className="text-xs text-gray-600 space-y-1">
-                      <li>• <code className="bg-gray-100 px-1 rounded">flex-wrap gap-2</code> 로 전체 이미지 나열</li>
-                      <li>• <strong>개수 제한 없음</strong> — 첨부된 이미지 전부 표시</li>
-                      <li>• 목록 카드와 달리 +N 오버레이 없음</li>
-                      <li>• 이미지 클릭 → <strong>ImageLightbox</strong> 뷰어 오버레이</li>
-                    </ul>
-                  </div>
-                </div>
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                  <div className="text-xs font-bold text-blue-800 mb-1.5">ImageLightbox 뷰어 동작</div>
-                  <ul className="text-xs text-blue-700 space-y-1">
-                    <li>• 이전 / 다음 화살표 버튼으로 이미지 간 이동</li>
-                    <li>• 상단 카운터: <code className="bg-blue-100 px-1 rounded">N / 전체장수</code></li>
-                    <li>• 하단 썸네일 스트립 (2장 이상일 때만 표시)</li>
-                    <li>• 배경 딤(어두운 오버레이) + X 버튼 또는 배경 클릭으로 닫기</li>
-                    <li>• 키보드 방향키(←/→) 및 ESC 키 지원</li>
-                  </ul>
-                </div>
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-                  <p className="text-[10px] font-bold text-amber-800 mb-1.5">⚠️ 목록(카드) vs 상세 모달 이미지 표시 정책 차이</p>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="bg-white border border-amber-100 rounded p-2">
-                      <p className="text-[10px] font-bold text-gray-700 mb-1">커뮤니티 목록 카드</p>
-                      <ul className="text-[10px] text-gray-600 space-y-0.5">
-                        <li>• 최대 3슬롯만 노출</li>
-                        <li>• 초과분: +N 오버레이</li>
-                        <li>• 1/2/3열 반응형 그리드</li>
-                      </ul>
-                    </div>
-                    <div className="bg-white border border-amber-100 rounded p-2">
-                      <p className="text-[10px] font-bold text-gray-700 mb-1">게시글 상세 모달 본문</p>
-                      <ul className="text-[10px] text-gray-600 space-y-0.5">
-                        <li>• 전체 이미지 모두 표시</li>
-                        <li>• +N 오버레이 없음</li>
-                        <li>• flex-wrap 자유 배치</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </BizSubSection>
-
-          <BizSubSection label="3" title="리뷰 작성 팝업">
-            <div className="mb-4 bg-purple-50 border border-purple-200 rounded-xl p-4">
-              <p className="text-sm font-bold text-purple-800 mb-1">🔗 중첩 팝업</p>
-              <p className="text-sm text-purple-900">의사 프로필 팝업 안에서 "리뷰 작성" 버튼을 누르면 위에 한 번 더 표시</p>
-            </div>
-
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">📍 언제 나타나나요?</h4>
-            <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg p-4">
-              <p className="text-sm font-bold text-amber-900 mb-2">진입 흐름</p>
-              <div className="space-y-1 text-xs text-amber-800">
-                <p>1️⃣ 의사 카드 클릭 → 의사 프로필 팝업 열림</p>
-                <p>2️⃣ "리뷰 작성" 버튼 클릭 (회원만 가능)</p>
-                <p>3️⃣ 리뷰 작성 팝업이 의사 프로필 팝업 위에 표시</p>
-              </div>
-            </div>
-
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">✨ 사용자가 입력하는 내용</h4>
-            <div className="bg-gray-50 rounded-xl p-4 space-y-2 text-sm">
-              <p><span className="font-bold text-red-600">• 별점 선택 (필수):</span> 1~5점 중 선택</p>
-              <p><span className="font-bold text-red-600">• 리뷰 내용 (필수):</span> 최소 50자 이상 (최대 글자 수 제한 없음)</p>
-              <p><span className="font-bold text-gray-600">• 사진 첨부 (선택):</span> 최대 10장, JPG·PNG·WEBP, 장당 5MB 이하</p>
-              <p className="text-xs text-gray-500 mt-2">→ 별점과 리뷰 내용(50자 이상) 모두 작성해야 제출 가능. 사진은 선택사항.</p>
-              <div className="mt-3 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
-                <p className="text-xs font-bold text-amber-800 mb-1">📏 글자 수 정책</p>
-                <ul className="text-xs text-amber-700 space-y-0.5">
-                  <li>• <strong>최소 50자</strong>: "좋아요" 같은 의미 없는 한 줄 리뷰 방지, 실질적 정보 보장</li>
-                  <li>• <strong>최대 제한 없음</strong>: 충분히 상세한 경험을 자유롭게 작성 가능하도록 허용</li>
-                </ul>
-              </div>
-            </div>
-
-            {/* ── 이미지 첨부 스펙 ── */}
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">🖼️ 이미지 첨부 (WritePostModal과 동일 UI/UX)</h4>
-            <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-3">
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-white border border-gray-200 rounded-lg p-3">
-                  <p className="text-xs font-bold text-gray-700 mb-2">업로드 제한</p>
-                  <ul className="text-xs text-gray-600 space-y-1">
-                    <li>• <strong>최대 장수</strong>: 10장</li>
-                    <li>• <strong>허용 형식</strong>: JPG · PNG · WEBP</li>
-                    <li>• <strong>장당 용량</strong>: 5MB 이하</li>
-                    <li>• 10장 도달 시 버튼 비활성화</li>
-                    <li>• 카운터 표시: <code className="bg-gray-100 px-1 rounded">N/10</code></li>
-                  </ul>
-                </div>
-                <div className="bg-white border border-gray-200 rounded-lg p-3">
-                  <p className="text-xs font-bold text-gray-700 mb-2">썸네일 그리드</p>
-                  <ul className="text-xs text-gray-600 space-y-1">
-                    <li>• <code className="bg-gray-100 px-1 rounded">flex-wrap</code> 96×96 타일</li>
-                    <li>• 호버 시 어두운 오버레이</li>
-                    <li>• 우측 상단 ✕ 버튼으로 삭제</li>
-                    <li>• 마지막 타일: 점선 "+ 추가" 버튼 (10장 미만 시)</li>
-                  </ul>
-                </div>
-              </div>
-              {/* 이미지 UI 프리뷰 */}
-              <div className="bg-white border border-gray-200 rounded-lg p-3">
-                <p className="text-xs font-bold text-gray-700 mb-2">UI 프리뷰</p>
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-300 bg-gray-50 text-gray-600 text-xs">
-                    <span>🖼</span><span>사진 첨부</span>
-                  </div>
-                  <span className="text-xs text-gray-400">2/10 · JPG·PNG·WEBP, 장당 5MB 이하</span>
-                </div>
-                <div className="flex gap-2 flex-wrap">
-                  <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-gray-200 bg-blue-100 flex items-center justify-center">
-                    <span className="text-xs text-blue-400">사진1</span>
-                    <div className="absolute top-0.5 right-0.5 w-4 h-4 bg-gray-900/70 rounded-full flex items-center justify-center">
-                      <span className="text-white text-[8px]">✕</span>
-                    </div>
-                  </div>
-                  <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-gray-200 bg-green-100 flex items-center justify-center">
-                    <span className="text-xs text-green-400">사진2</span>
-                    <div className="absolute top-0.5 right-0.5 w-4 h-4 bg-gray-900/70 rounded-full flex items-center justify-center">
-                      <span className="text-white text-[8px]">✕</span>
-                    </div>
-                  </div>
-                  <div className="w-16 h-16 rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center gap-0.5 text-gray-400">
-                    <span className="text-base">+</span>
-                    <span className="text-[10px]">추가</span>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <p className="text-xs font-bold text-blue-800 mb-1">⚠️ 이미지는 임시저장에 포함되지 않음</p>
-                <p className="text-xs text-blue-700">X 버튼 닫기 시 이미지는 유지되지 않으며, 복원 다이얼로그에서 불러오기 시 텍스트·별점만 복원됩니다.</p>
-              </div>
-            </div>
-
-            {/* ── 플레이스홀더 & 안내 문구 ── */}
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">💬 플레이스홀더 & 안내 문구</h4>
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 space-y-3">
-              <p className="text-xs text-blue-700 font-bold">※ 실제 서비스 화면에 표시되는 텍스트는 서비스 화면을 참고하세요.</p>
-
-              <div className="space-y-2">
-                <div className="bg-white border border-blue-100 rounded-lg p-3">
-                  <p className="text-xs font-bold text-gray-800 mb-1.5">리뷰 내용 텍스트 영역</p>
-                  <div className="bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 mb-2">
-                    <p className="text-xs text-gray-400">예) 리뷰는 최소 50자 이상이어야 합니다. 욕설, 비방, 무의미한 반복작성 글은 삭제될 수 있습니다.</p>
-                  </div>
-                  <ul className="text-xs text-gray-600 space-y-0.5">
-                    <li>• 플레이스홀더: 실제 서비스 화면 참고</li>
-                    <li>• 글자 수 카운터: 현재 입력 글자 수만 표시 (예: <code className="bg-gray-100 px-1 rounded">23자</code>)</li>
-                    <li>• 50자 미만 시 카운터가 빨간색으로 표시되며 부족한 글자 수 안내 (예: <code className="bg-gray-100 px-1 rounded">23자 (최소 50자 이상 · 27자 더 입력 필요)</code>)</li>
-                    <li>• 50자 이상 달성 시 초록색으로 변경 (예: <code className="bg-gray-100 px-1 rounded">✓ 최소 글자 수 충족</code>)</li>
-                  </ul>
-                </div>
-
-                <div className="bg-white border border-blue-100 rounded-lg p-3">
-                  <p className="text-xs font-bold text-gray-800 mb-1.5">저장하기 버튼 활성화 조건</p>
-                  <ul className="text-xs text-gray-600 space-y-0.5">
-                    <li>• <strong>비활성(회색)</strong>: 별점 항목 중 1개라도 미입력 또는 리뷰 50자 미만</li>
-                    <li>• <strong>활성(파란색)</strong>: 별점 4개 항목 모두 입력 + 리뷰 50자 이상 달성 시 자동 전환</li>
-                    <li>• 비활성 상태에서는 클릭 자체가 동작하지 않음 (경고 없음)</li>
-                    <li>• 버튼 라벨: <code className="bg-gray-100 px-1 rounded">저장하기</code> (취소 버튼 없음 — X 아이콘으로 닫기)</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">🎯 사용자 행동</h4>
-            <div className="space-y-2">
-              {/* 버튼 시각 상태 프리뷰 */}
-              <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
-                <p className="text-xs font-bold text-gray-700 mb-3">🎨 저장하기 버튼 시각 상태</p>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="text-center">
-                    <div className="bg-gray-200 text-gray-400 rounded-lg py-2.5 px-4 text-sm font-semibold mb-1.5 cursor-not-allowed">
-                      저장하기
-                    </div>
-                    <p className="text-[10px] text-gray-500 font-bold">비활성 (회색)</p>
-                    <p className="text-[10px] text-gray-400">조건 미충족 시</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="bg-blue-600 text-white rounded-lg py-2.5 px-4 text-sm font-semibold mb-1.5">
-                      저장하기
-                    </div>
-                    <p className="text-[10px] text-blue-700 font-bold">활성 (파란색)</p>
-                    <p className="text-[10px] text-gray-400">조건 충족 시 자동 전환</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                <p className="text-sm font-bold text-green-900">저장하기 버튼 클릭 (활성 상태)</p>
-                <p className="text-xs text-green-700">→ 리뷰가 저장되고 팝업이 닫힙니다</p>
-              </div>
-              <div className="bg-gray-100 border border-gray-200 rounded-lg p-3">
-                <p className="text-sm font-bold text-gray-500">저장하기 버튼 클릭 (비활성 상태)</p>
-                <p className="text-xs text-gray-400">→ 아무 동작 없음 (경고 없음, 클릭 자체가 막힘)</p>
-              </div>
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                <p className="text-sm font-bold text-gray-900">X 버튼 또는 바깥 영역 클릭</p>
-                <p className="text-xs text-gray-600">→ 작성 중이던 내용은 저장되지 않고 팝업이 닫힙니다</p>
-              </div>
-            </div>
-
-            {/* 확정된 정책 */}
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">✅ 확정된 정책</h4>
-            <div className="space-y-2">
-              {[
-                { item: '별점 미입력 또는 리뷰 50자 미만 시', decision: '저장하기 버튼 비활성화 (회색) — 경고 alert 없음, 클릭 자체 차단' },
-                { item: '버튼 구성', decision: '저장하기 버튼 1개만 표시. 취소 버튼 없음 — 닫기는 우측 상단 X 아이콘 사용' },
-                { item: '최대 글자 수', decision: '제한 없음 — 최소 50자 이상만 충족하면 제출 가능' },
-                { item: '입력 중 닫기 시도', decision: 'X 버튼 클릭 시 경고 없이 현재 입력 내용을 즉시 임시저장 후 팝업 닫힘 — 다음 진입 시 복원 다이얼로그 표시' },
-              ].map((item, i) => (
-                <div key={i} className="bg-green-50 border border-green-200 rounded-lg p-3">
-                  <p className="text-sm font-bold text-green-900">{item.item}</p>
-                  <p className="text-xs text-green-700">✓ {item.decision}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* 임시저장 동작 정의 */}
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">📦 임시저장 동작 정의</h4>
-            <div className="space-y-3">
-
-              {/* 저장 위치 */}
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                <p className="text-xs font-bold text-gray-800 mb-2">🗄️ 저장 위치 (localStorage)</p>
-                <div className="bg-white border border-gray-200 rounded p-3 mb-2">
-                  <p className="text-xs text-gray-500 mb-1">키 형식</p>
-                  <code className="text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded">{'aiga_review_draft_{doctorId}'}</code>
-                  <p className="text-xs text-gray-400 mt-1.5">의사별 독립 저장 — 다른 의사 프로필을 열어도 각자의 임시저장 유지</p>
-                </div>
-                <div className="bg-orange-50 border-l-4 border-orange-400 p-3 rounded-r-lg">
-                  <p className="text-xs font-bold text-orange-800">⚠️ 인증 파일(verificationData)은 임시저장 제외</p>
-                  <p className="text-xs text-orange-700 mt-0.5">저장 항목: 리뷰 내용 · 친절 · 배려 · 치료 만족 · 쉬운 설명 · 추천 의향 점수 · 인증요청 여부(boolean) · 저장시각</p>
-                </div>
-              </div>
-
-              {/* 저장 트리거 */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <p className="text-xs font-bold text-blue-900 mb-3">⚙️ 임시저장 트리거 2가지</p>
-                <div className="space-y-2">
-                  <div className="bg-white border border-blue-200 rounded p-3">
-                    <p className="text-xs font-bold text-blue-800 mb-1.5">① 자동저장 (3초 debounce)</p>
-                    <ul className="space-y-1 text-xs text-gray-700">
-                      <li>• 별점 슬라이더 또는 리뷰 내용 변경 시 3초 뒤 자동 저장</li>
-                      <li>• 헤더 우측에 <code className="bg-gray-100 px-1 rounded">HH:MM 임시저장</code> 타임스탬프 표시</li>
-                      <li>• 저장 직후 2초간 <code className="bg-gray-100 px-1 rounded">저장됨 ✓</code> 표시 후 타임스탬프로 전환</li>
-                    </ul>
-                  </div>
-                  <div className="bg-white border border-blue-200 rounded p-3">
-                    <p className="text-xs font-bold text-blue-800 mb-1.5">② X 버튼 클릭 시 즉시저장</p>
-                    <ul className="space-y-1 text-xs text-gray-700">
-                      <li>• 리뷰 내용 또는 별점 중 하나라도 입력값이 있으면 즉시 localStorage 저장</li>
-                      <li>• 경고 다이얼로그 없이 바로 팝업 닫힘</li>
-                      <li>• 모든 값이 기본값(빈 텍스트 + 별점 0)이면 저장 안 함</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-
-              {/* 복원 다이얼로그 */}
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                <p className="text-xs font-bold text-amber-900 mb-3">🔄 복원 다이얼로그 — 리뷰 작성 팝업 재진입 시</p>
-                <div className="grid grid-cols-2 gap-3 mb-3">
-                  <div className="bg-white border border-amber-200 rounded p-3">
-                    <p className="text-xs font-bold text-amber-800 mb-1.5">표시 조건</p>
-                    <ul className="space-y-1 text-xs text-gray-700">
-                      <li>• 팝업 마운트 시 localStorage 확인</li>
-                      <li>• 해당 의사의 임시저장 데이터가 있을 때</li>
-                      <li>• 내용 또는 별점 중 하나라도 값이 있을 때</li>
-                    </ul>
-                  </div>
-                  <div className="bg-white border border-amber-200 rounded p-3">
-                    <p className="text-xs font-bold text-amber-800 mb-1.5">UI 형태</p>
-                    <ul className="space-y-1 text-xs text-gray-700">
-                      <li>• 팝업 위에 딤(bg-black/40) 레이어</li>
-                      <li>• 흰 카드: rounded-2xl, max-w-xs, shadow-2xl</li>
-                      <li>• 타이틀 <strong>"AIGA"</strong> + 메시지 + 저장시각 미리보기</li>
-                    </ul>
-                  </div>
-                </div>
-                {/* 복원 다이얼로그 프리뷰 */}
-                <div className="bg-white border-2 border-amber-300 rounded-xl overflow-hidden max-w-xs mx-auto shadow-md mb-3">
-                  <div className="px-5 pt-4 pb-3">
-                    <p className="text-xs font-black text-gray-900 mb-1">AIGA</p>
-                    <p className="text-xs text-gray-700 mb-2">기존에 작성 중인 리뷰 데이터가 있습니다.<br />불러오시겠습니까?</p>
-                    <div className="bg-amber-50 border border-amber-200 rounded px-2 py-1.5 text-[10px] text-amber-800">
-                      <span className="font-bold">14:32 저장</span>
-                      <span className="text-amber-600 ml-1">· 진료를 받으면서 느낀 점은…</span>
-                    </div>
-                  </div>
-                  <div className="flex border-t border-gray-100">
-                    <div className="flex-1 py-2.5 text-center text-xs text-gray-500 font-medium">취소(삭제)</div>
-                    <div className="flex-1 py-2.5 text-center text-xs text-blue-600 font-bold border-l border-gray-100">불러오기</div>
-                  </div>
-                </div>
-                <ul className="space-y-1 text-xs text-amber-800">
-                  <li>• <strong>취소(삭제)</strong>: localStorage 데이터 삭제 후 빈 폼으로 시작</li>
-                  <li>• <strong>불러오기</strong>: 리뷰 내용 + 별점 4개 + 인증요청 여부 전체 복원 (인증 파일 제외)</li>
-                </ul>
-              </div>
-
-              {/* 의사 프로필 팝업 내 이어쓰기 배너 */}
-              <div className="bg-white border border-gray-200 rounded-lg p-4">
-                <p className="text-xs font-bold text-gray-800 mb-2">🏥 의사 프로필 팝업 — 이어쓰기 배너</p>
-                <p className="text-xs text-gray-500 mb-2">표시 조건: 회원 로그인 + 해당 의사의 임시저장 데이터 존재</p>
-                <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-center justify-between mb-2">
-                  <span className="text-xs text-amber-700">⏱ 작성 중인 임시저장 리뷰가 있어요</span>
-                  <span className="text-xs font-medium text-amber-700 bg-amber-100 px-3 py-1 rounded-full">이어서 쓰기</span>
-                </div>
-                <ul className="text-xs text-gray-600 space-y-0.5">
-                  <li>• AIGA 리뷰 섹션 상단에 표시</li>
-                  <li>• "이어서 쓰기" 클릭 → ReviewWriteModal 열림 (복원 다이얼로그 자동 표시)</li>
-                  <li>• 비회원에게는 배너 미표시</li>
-                </ul>
-              </div>
-
-              {/* 임시저장 삭제 시점 */}
-              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                <p className="text-xs font-bold text-red-800 mb-1.5">🗑️ 임시저장 자동 삭제 시점</p>
-                <ul className="text-xs text-red-700 space-y-0.5">
-                  <li>• 저장하기 버튼으로 리뷰 제출 성공 시</li>
-                  <li>• 복원 다이얼로그에서 "취소(삭제)" 선택 시</li>
-                </ul>
-              </div>
-            </div>
-          </BizSubSection>
-
-          {/* 주변 병원 찾기 팝업 - 현재 보류 상태로 숨김 처리 */}
-          {/* <BizSubSection label="4" title="주변 병원 찾기 팝업">
-            <div className="mb-4 bg-orange-50 border border-orange-300 rounded-xl p-4">
-              <p className="text-sm font-bold text-orange-800 mb-1">⚠️ 현재 사용 중단</p>
-              <p className="text-sm text-orange-900">홈 화면에서 진입점이 제거되었지만, 향후 명의찾기 탭 등에서 재활용 가능성이 있어 파일은 보존 중입니다.</p>
-            </div>
-
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">✨ 제공하는 기능</h4>
-            <div className="bg-gradient-to-br from-sky-50 to-blue-50 rounded-xl p-4 space-y-3 text-sm">
-              <div>
-                <p className="font-bold text-blue-900 mb-1">병원 유형별 필터</p>
-                <p className="text-xs text-blue-800">전체 / 상급종합병원 / 종합병원 / 원 중 선택</p>
-              </div>
-              <div>
-                <p className="font-bold text-blue-900 mb-1">지도 보기 (화면 좌측)</p>
-                <p className="text-xs text-blue-800">구글맵으로 병원 위치 시각적 확인</p>
-              </div>
-              <div>
-                <p className="font-bold text-blue-900 mb-1">병원 목록 (화면 우측)</p>
-                <p className="text-xs text-blue-800">병원명, 타입, 별점, 거리, 의료진 수, 주소</p>
-              </div>
-            </div>
-
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">🎯 사용자 행동</h4>
-            <div className="space-y-2">
-              <div className="bg-blue-50 rounded-lg p-3">
-                <p className="text-sm font-bold text-blue-900">길찾기 버튼</p>
-                <p className="text-xs text-blue-700">→ 카카오맵 앱(또는 웹)으로 연결되어 길 안내 시작</p>
-              </div>
-              <div className="bg-green-50 rounded-lg p-3">
-                <p className="text-sm font-bold text-green-900">전화하기 버튼</p>
-                <p className="text-xs text-green-700">
-                  <span className="font-bold">• 모바일:</span> 바로 전화 걸기 화면으로 이동<br />
-                  <span className="font-bold">• PC:</span> 전화번호가 클립보드에 복사되고 "복사 완료" 안내
-                </p>
-              </div>
-            </div>
-
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">📍 위치 권한 정책</h4>
-            <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4 space-y-2 text-sm">
-              <p className="font-bold text-indigo-900">✅ 확정된 정책</p>
-              <p className="text-indigo-800">
-                <span className="font-bold">• 권한 동의:</span> 사용자의 현재 위치 기준으로 지도와 거리 표시
-              </p>
-              <p className="text-indigo-800">
-                <span className="font-bold">• 권한 거부:</span> 서울 중심(시청 기준)으로 지도 표시
-              </p>
-              <p className="text-xs text-indigo-600 mt-2">
-                → 위치 권한 요청 팝업은 브라우저 기본 UI 사용
-              </p>
-            </div>
-          </BizSubSection> */}
-
-          <BizSubSection label="4" title="통합 검색 모달 (GlobalSearchModal)">
-            <div className="bg-amber-50 border-2 border-amber-200 rounded-xl p-5">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-lg">🔎</span>
-                <p className="text-sm font-bold text-amber-900">상세 정의서 별도 탭에서 관리</p>
-              </div>
-              <p className="text-sm text-amber-800 mb-4">
-                통합 검색 모달(GlobalSearchModal)은 내용이 많아 전용 탭으로 분리하여 관리합니다.
-              </p>
-              <div className="bg-white rounded-xl border border-amber-200 px-4 py-3.5 flex items-start gap-3">
-                <span className="text-amber-400 mt-0.5 text-base">→</span>
-                <div>
-                  <p className="text-sm font-bold text-gray-900">🔗 공통(통합검색) 탭에서 확인</p>
-                  <ul className="mt-1.5 space-y-0.5 text-xs text-gray-500">
-                    <li>• 개요 (배치 탭, 진입 방식, 검색 범위)</li>
-                    <li>• UI 구조 (헤더·바디·서브 모달)</li>
-                    <li>• 화면 상태 4종 (Empty / 증상어 / 결과없음 / 결과)</li>
-                    <li>• 검색어 분류 로직 (3단계 분기 + Alias 확장)</li>
-                    <li>• 결과 영역 상세 스펙 (명의·병원·커뮤니티·Aiga 배너)</li>
-                    <li>• 검증 시나리오 6종 (클릭 시 실제 모달 실행)</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <BizNote>
-              홈·명의 찾기·커뮤니티 3개 탭에 <strong>공통 배치</strong>됩니다. 검색 아이콘(돋보기) 스펙은 <strong>4. 레이아웃 → 2번 통합 검색 아이콘 (메인 뷰 우상단 고정)</strong>을 참조하세요.
-            </BizNote>
-          </BizSubSection>
-
-        </BizSection>
-
-        {/* ───── 2. 알림 UI ───── */}
-        <BizSection id="toasts" title="2. 알림 UI (토스트)" icon="🔔">
-
-          <BizSubSection label="1" title="로그인 필요 안내">
-            <div className="mb-4 bg-purple-50 border border-purple-200 rounded-xl p-4">
-              <p className="text-sm font-bold text-purple-800 mb-1">🔗 전역 공통 알림</p>
-              <p className="text-sm text-purple-900">앱 전체에서 비회원이 회원 전용 기능을 사용하려 할 때 표시</p>
-            </div>
-
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">📍 언제 나타나나요?</h4>
-            <div className="space-y-2">
-              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                <p className="text-sm font-bold text-red-900">비회원이 즐겨찾기 버튼 클릭</p>
-                <p className="text-xs text-red-700">→ 의사 프로필 팝업에서</p>
-              </div>
-              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                <p className="text-sm font-bold text-red-900">비회원이 리뷰쓰기 버튼 클릭</p>
-                <p className="text-xs text-red-700">→ 의사 프로필 팝업에서</p>
-              </div>
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                <p className="text-sm font-bold text-gray-700">향후 확장 예정</p>
-                <p className="text-xs text-gray-500">→ 명의찾기, 커뮤니티 등 모든 로그인 필요 기능</p>
-              </div>
-            </div>
-
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">🎨 화면에 표시되는 모습</h4>
-            <div className="bg-gradient-to-br from-slate-700 to-slate-800 text-white rounded-xl p-4 text-center">
-              <p className="text-sm mb-3">로그인이 필요한 기능입니다</p>
-              <button className="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-bold pointer-events-none">
-                로그인하기
-              </button>
-            </div>
-            <p className="text-xs text-gray-500 mt-2 text-center">
-              → 화면 하단 중앙에 3초간 표시되며, 버튼 클릭 시 로그인 화면으로 이동
-            </p>
-          </BizSubSection>
-
-        </BizSection>
-
-        {/* ───── 3. 데이터 상태 UI ───── */}
-        <BizSection id="data-states" title="3. 데이터 상태 UI" icon="⏳">
-
-          <div className="mb-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-5">
-            <p className="text-sm font-bold text-blue-900 mb-2">🌐 전역 공통 패턴</p>
-            <p className="text-sm text-blue-800 mb-3">
-              홈, 명의찾기, 커뮤니티 등 모든 화면에서 서버 데이터를 불러올 때 사용자에게 일관된 피드백을 제공합니다.
-            </p>
-            <p className="text-xs text-blue-700">
-              → 각 구역/섹션은 독립적으로 API를 호출하므로, 어떤 구역은 로딩 중이고 어떤 구역은 이미 표시되거나 에러가 발생할 수 있습니다.
-            </p>
-          </div>
-
-          <BizSubSection label="1" title="로딩 중 (Loading)">
-            <h4 className="text-sm font-bold text-gray-900 mb-2">📍 언제 나타나나요?</h4>
-            <div className="bg-gray-50 rounded-xl p-4 space-y-2 text-sm">
-              <p>• 서버에서 데이터를 불러오는 동안</p>
-              <p>• 초기 화면 진입 시</p>
-              <p>• 새로고침 버튼을 눌렀을 때</p>
-              <p>• 필터/정렬 옵션을 변경했을 때</p>
-            </div>
-
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">🎨 화면에 표시되는 모습</h4>
-            <div className="bg-white border-2 border-blue-200 rounded-xl p-8 text-center">
-              <div className="inline-flex flex-col items-center gap-3">
-                <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                <p className="text-sm text-gray-600">불러오는 중...</p>
-              </div>
-            </div>
-            <p className="text-xs text-gray-500 mt-2 text-center">
-              → 파란색 회전 아이콘 + "불러오는 중..." 텍스트
-            </p>
-
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">✨ 사용 예시</h4>
-            <div className="space-y-2">
-              <div className="bg-blue-50 rounded-lg p-3">
-                <p className="text-sm font-bold text-blue-900">홈 화면 - 구역 4 (건강 정보)</p>
-                <p className="text-xs text-blue-700">카드 슬라이드 목록을 불러오는 동안 로딩 표시</p>
-              </div>
-              <div className="bg-blue-50 rounded-lg p-3">
-                <p className="text-sm font-bold text-blue-900">홈 화면 - 구역 5 (인기 명의)</p>
-                <p className="text-xs text-blue-700">질환별 탭의 의사 목록을 불러오는 동안 로딩 표시</p>
-              </div>
-              <div className="bg-blue-50 rounded-lg p-3">
-                <p className="text-sm font-bold text-blue-900">홈 화면 - 구역 6 (커뮤니티 추천글)</p>
-                <p className="text-xs text-blue-700">인기 게시글 목록을 불러오는 동안 로딩 표시</p>
-              </div>
-            </div>
-
-            <BizNote>
-              로딩 시간이 0.5초 이하로 매우 짧은 경우, 깜빡임 방지를 위해 로딩 UI를 표시하지 않을 수 있습니다. (개발 정책 검토 필요)
-            </BizNote>
-          </BizSubSection>
-
-          <BizSubSection label="2" title="에러 발생 (Error)">
-            <h4 className="text-sm font-bold text-gray-900 mb-2">📍 언제 나타나나요?</h4>
-            <div className="bg-red-50 rounded-xl p-4 space-y-2 text-sm">
-              <p className="text-red-900">• 서버 응답이 없거나 오류 발생</p>
-              <p className="text-red-900">• 네트워크 연결 끊김</p>
-              <p className="text-red-900">• API 인증 실패 또는 권한 부족</p>
-              <p className="text-red-900">• 서버 내부 오류 (500 에러 등)</p>
-            </div>
-
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">🎨 화면에 표시되는 모습</h4>
-            <div className="bg-white border-2 border-red-200 rounded-xl p-8 text-center">
-              <div className="inline-flex flex-col items-center gap-3">
-                <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center">
-                  <span className="text-3xl">⚠️</span>
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-gray-900 mb-1">데이터를 불러올 수 없습니다</p>
-                  <p className="text-xs text-gray-600">네트워크 상태를 확인해주세요</p>
-                </div>
-                <button className="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-bold transition-colors pointer-events-none">
-                  다시 시도
-                </button>
-              </div>
-            </div>
-            <p className="text-xs text-gray-500 mt-2 text-center">
-              → 경고 아이콘 + 에러 메시지 + "다시 시도" 버튼
-            </p>
-
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">🎯 사용자 행동</h4>
-            <div className="space-y-2">
-              <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                <p className="text-sm font-bold text-green-900">"다시 시도" 버튼 클릭</p>
-                <p className="text-xs text-green-700">→ 해당 구역의 데이터를 다시 불러오기 시도</p>
-              </div>
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                <p className="text-sm font-bold text-gray-900">다른 구역은 정상 작동</p>
-                <p className="text-xs text-gray-600">→ 에러가 발생한 구역만 영향받고, 나머지 구역은 정상 표시</p>
-              </div>
-            </div>
-          </BizSubSection>
-
-          <BizSubSection label="3" title="데이터 없음 (Empty)">
-            <h4 className="text-sm font-bold text-gray-900 mb-2">📍 언제 나타나나요?</h4>
-            <div className="bg-gray-50 rounded-xl p-4 space-y-2 text-sm">
-              <p>• 서버 응답은 성공했지만 표시할 데이터가 0건</p>
-              <p>• 검색 결과가 없을 때</p>
-              <p>• 필터 조건에 맞는 항목이 없을 때</p>
-              <p>• 아직 작성된 게시글/리뷰가 없을 때</p>
-            </div>
-
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">🎨 화면에 표시되는 모습</h4>
-            <div className="bg-white border-2 border-gray-200 rounded-xl p-8 text-center">
-              <div className="inline-flex flex-col items-center gap-3">
-                <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center">
-                  <span className="text-3xl">📭</span>
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-gray-900 mb-1">표시할 내용이 없습니다</p>
-                  <p className="text-xs text-gray-600">다른 조건으로 검색해보세요</p>
-                </div>
-              </div>
-            </div>
-            <p className="text-xs text-gray-500 mt-2 text-center">
-              → 빈 우편함 아이콘 + 안내 메시지
-            </p>
-
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">✨ 상황별 메시지 예시</h4>
-            <BizTable
-              headers={['상황', '제목 메시지', '부가 설명']}
-              rows={[
-                ['검색 결과 없음', '검색 결과가 없습니다', '다른 검색어를 시도해보세요'],
-                ['필터 결과 없음', '조건에 맞는 항목이 없습니다', '필터를 변경해보세요'],
-                ['리뷰 없음', '아직 작성된 리뷰가 없습니다', '첫 리뷰를 작성해보세요'],
-                ['게시글 없음', '아직 작성된 게시글이 없습니다', '첫 게시글을 작성해보세요'],
-              ]}
-            />
-
-            <BizNote>
-              Empty 상태는 "에러"가 아니라 "정상 응답"입니다. 사용자에게 부정적 느낌보다는 "다음 행동"을 유도하는 메시지로 표현합니다.
-            </BizNote>
-          </BizSubSection>
-
-        </BizSection>
-
-        {/* ───── 4. 레이아웃 컴포넌트 ───── */}
-        <BizSection id="layout" title="4. 레이아웃 컴포넌트 (하단 탭 메뉴)" icon="🧭">
-
-          <BizSubSection label="1" title="하단 탭 메뉴 (BottomTabBar)">
-            <div className="mb-4 bg-purple-50 border border-purple-200 rounded-xl p-4">
-              <p className="text-sm font-bold text-purple-800 mb-1">🔗 전역 고정 컴포넌트</p>
-              <p className="text-sm text-purple-900">모든 주요 화면 하단에 고정되어 표시되는 탭 네비게이션</p>
-            </div>
-
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">📍 어디서 볼 수 있나요?</h4>
-            <div className="bg-gray-50 rounded-xl p-4 space-y-2 text-sm">
-              <p>• 홈·AIGA챗봇·명의 찾기·커뮤니티·MY 각 메인 화면 하단에 동일 바가 붙습니다.</p>
-              <p>• 구현: BottomTabBar — 좌→우 5칸 그리드, 라벨은 프로토타입과 동일.</p>
-            </div>
-
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">🎯 탭 구성</h4>
-            <BizTable
-              headers={['순서·라벨', '화면', '비고']}
-              rows={[
-                ['1 · 홈', '홈 화면 (HomePage)', '재클릭 시 최상단 이동 · 다른 탭 후 재진입 시 스크롤 유지(아래 확정)'],
-                ['2 · AIGA챗봇', 'AI 챗봇 화면 (ChatPage)', '홈 AI 배너 등과 동일한 목적지'],
-                ['3 · 명의 찾기', '명의 찾기 화면 (DoctorSearchPage)', '질환·지역 등 의료진 검색·탐색'],
-                ['4 · 커뮤니티', '커뮤니티 화면 (CommunityPage)', '게시글 피드·글쓰기 등'],
-                ['5 · MY', '마이페이지 (MyPage)', '프로필·설정·활동 등'],
-              ]}
-            />
-
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">✨ 사용자 경험</h4>
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 space-y-3">
-              <div>
-                <p className="font-bold text-blue-900 text-sm mb-1">탭 전환</p>
-                <p className="text-xs text-blue-800">탭을 터치하면 해당 화면으로 즉시 이동</p>
-              </div>
-              <div>
-                <p className="font-bold text-blue-900 text-sm mb-1">활성 표시</p>
-                <p className="text-xs text-blue-800">현재 화면의 탭은 파란색으로 강조, 다른 탭은 회색</p>
-              </div>
-              <div>
-                <p className="font-bold text-blue-900 text-sm mb-1">고정 위치</p>
-                <p className="text-xs text-blue-800">화면 하단에 항상 고정되어 스크롤해도 사라지지 않음</p>
-              </div>
-              <div>
-                <p className="font-bold text-blue-900 text-sm mb-1">홈 탭 — 스크롤 동작 (확정)</p>
-                <p className="text-xs text-blue-800">
-                  • <strong>재클릭</strong>: 이미 홈에 있는 상태에서 홈 탭을 다시 누르면 화면 <strong>최상단</strong>으로 스크롤 이동합니다.
-                </p>
-                <p className="text-xs text-blue-800 mt-1">
-                  • <strong>재진입</strong>: 다른 탭(AIGA 등)으로 이동했다가 홈 탭으로 돌아오면, 떠나기 전에 보던 <strong>스크롤 위치를 유지</strong>합니다.
-                </p>
-              </div>
-            </div>
-
-            <BizNote>
-              탭 전환 시 브라우저의 뒤로가기 버튼으로 이전 탭으로 돌아갈 수 있는지, 아니면 별도의 히스토리 관리가 필요한지 추가 검토가 필요합니다.
-            </BizNote>
-          </BizSubSection>
-
-        </BizSection>
-
+      <div className="max-w-4xl mx-auto px-6 py-10 space-y-8">
+        <section className="bg-violet-50 border border-violet-200 rounded-xl p-4 space-y-2">
+          <p className="text-xs font-bold text-violet-900">📌 문서 작성 원칙 (회원 탭)</p>
+          <ul className="text-xs text-violet-900 leading-relaxed list-disc pl-4 space-y-1">
+            <li>
+              팝업·모달의 <strong>레이아웃, 섹션 순서, 타이포·버튼 배치</strong> 등 시각·구조 스펙은 비회원 문서{' '}
+              <strong>[CommonComponentsSpec]</strong>과 <strong>동일</strong>합니다. 본 문서에서는 &quot;비회원 안내와 동일&quot;로 두고 넘어갑니다.
+            </li>
+            <li>
+              아래에서는 <strong>회원이 되었을 때만</strong> 열리는 기능, 사라지는 제약, 그리고 <strong>다음 화면·계정으로 이어지는 동작</strong>만 상세히 적습니다.
+            </li>
+          </ul>
+        </section>
+
+        <Section title="1. 회원이 되면 달라지는 것 (한눈에)">
+          <ul className="text-xs text-gray-800 leading-relaxed list-disc pl-4 space-y-1.5">
+            <li>
+              <strong>전역 한도·경고 배너·검색창 잠금</strong> 등 &quot;오늘 남은 횟수&quot;에 묶인 안내가 사라지거나, 회원 정책상 적용되지 않아 <strong>목록·검색 영역이 막히지 않고</strong> 이어집니다 (탭별 세부 한도는 각 Base 문서·통합검색 스펙과 정합).
+            </li>
+            <li>
+              <strong>의사 프로필</strong>에서 즐겨찾기·리뷰 작성이 <strong>잠금 없이 즉시</strong> 동작하고, 초안이 있으면 <strong>이어쓰기 배너</strong>로 작성 흐름이 복구됩니다.
+            </li>
+            <li>
+              <strong>커뮤니티 게시글 상세</strong>에서 공감·댓글·답글이 활성화되고, ⋮ 메뉴에 <strong>본인 글 수정/삭제·신고</strong> 등이 열립니다.
+            </li>
+            <li>
+              <strong>로그인 필요</strong> 안내 팝업은 제한 기능을 눌렀을 때 대신 뜨던 경우가 줄고, <strong>실제 액션(저장·작성·전송)</strong>이 바로 실행되는 것이 기본입니다.
+            </li>
+          </ul>
+        </Section>
+
+        <Section title="2. 제약 해제 — 한도·배너·잠금이 풀린 뒤 화면">
+          <Narrative>
+            비회원에게는 홈·명의찾기·커뮤니티·통합검색 등에서 <strong>검색 실행·프로필 열람·게시글 열람</strong>이 같은 전역 카운터와 연동되고, 잔여 1회/0회 배너·검색창 비활성 등이 나올 수 있습니다. 이 동작의 수치·문구·노출 위치는 비회원 탭 및{' '}
+            <strong>SearchScenarioSpec</strong> 등 Base 쪽에 있습니다.
+          </Narrative>
+          <Narrative>
+            <strong>회원이 되면</strong> 그 정책 범위에서 위 제약이 적용되지 않거나 완화되어, 동일한 화면 골격 안에서 <strong>상단 경고/잠금 줄이 사라지고</strong> 스크롤 영역이 위쪽부터 자연스럽게 이어집니다. 사용자 입장에서는 &quot;막혀 있던 입력·탐색&quot;이 끊기지 않고 이어지는 것이 핵심 UX입니다.
+          </Narrative>
+          <p className="text-[11px] text-gray-500 mt-2 border-t border-gray-100 pt-2">
+            시각적 배치(배너 높이·폰트)는 비회원 문서의 동일 컴포넌트 정의와 같으며, 회원 탭에서는 <strong>안 나타나거나 다른 문구로 대체</strong>되는 상태만 구분합니다.
+          </p>
+        </Section>
+
+        <Section title="3. 의사 프로필 상세 팝업 — 회원만의 확장 흐름">
+          <p className="text-[11px] text-gray-600 mb-3">
+            진입 경로(홈·명의찾기·커뮤니티), 프로필·경력·논문·AI 소셜리뷰 블록 구성은 <strong>비회원 안내와 동일</strong>합니다.
+          </p>
+
+          <Subheading>3-1. 즐겨찾기 (저장)</Subheading>
+          <Narrative>
+            비회원: 버튼이 잠금 상태로, 탭 시 로그인 유도로 전환. <strong>회원:</strong> 잠금 없이 탭하면 <strong>즉시 저장 상태로 반영</strong>되고(아이콘·토스트 등 피드백은 프로토타입 기준), 이후{' '}
+            <strong>마이페이지</strong> 등 계정 기반 목록에서 다시 찾을 수 있는 흐름으로 이어집니다. 레이아웃은 비회원과 동일하고, <strong>상태만 &quot;저장됨&quot;으로 열립니다.</strong>
+          </Narrative>
+
+          <Subheading>3-2. 리뷰 쓰기</Subheading>
+          <Narrative>
+            비회원: 하단 리뷰쓰기가 잠금 + 탭 시 로그인 안내. <strong>회원:</strong> 같은 위치에서 탭 시 <strong>로그인 팝업 없이</strong> 리뷰 작성 모달로 진입합니다. 별점·본문 입력·임시저장·제출/취소 등 <strong>단계별 UI</strong>는 비회원 문서의 동일 컴포넌트 설명을 따르되, <strong>모든 단계가 계정 권한으로 수행</strong>됩니다.
+          </Narrative>
+
+          <Subheading>3-3. 임시저장 이어쓰기 배너 (AIGA 리뷰 영역)</Subheading>
+          <ul className="text-xs text-gray-800 leading-relaxed list-disc pl-4 space-y-1 mt-1">
+            <li>
+              <strong>언제 보이나:</strong> 회원이고, 해당 의사에 대해 <strong>저장해 둔 리뷰 초안</strong>이 있을 때, AIGA 리뷰 섹션 상단에 조건부로 표시됩니다.
+            </li>
+            <li>
+              <strong>무엇이 좋아지나:</strong> 긴 글을 한 번에 쓰지 않아도, 다시 프로필을 열었을 때 <strong>&quot;이어쓰기&quot;</strong>로 이전 내용을 복구할 수 있습니다.
+            </li>
+            <li>
+              <strong>탭 시:</strong> 리뷰 작성 UI가 열리고, <strong>불러오기 / 삭제 후 새로 작성</strong> 등 복원 확인이 나올 수 있습니다(비회원 문서의 해당 플로우와 동일 패턴).
+            </li>
+            <li>
+              <strong>숨김:</strong> 초안 없음·삭제 완료·이미 제출 완료 시.
+            </li>
+          </ul>
+
+          <Subheading>3-4. 의료진 인증 요청</Subheading>
+          <Narrative>
+            버튼 노출·영역 위치는 <strong>비회원 안내와 동일</strong>합니다. 회원은 잠금이 아닌 <strong>동작 가능 상태</strong>(데모는 토스트 등)로, 실서비스 노출·검증 규칙은 별도 의사 인증 화면정의서를 따릅니다.
+          </Narrative>
+        </Section>
+
+        <Section title="4. 커뮤니티 게시글 상세 — 회원만의 확장 흐름">
+          <p className="text-[11px] text-gray-600 mb-3">
+            본문·메타·댓글 목록 레이아웃은 <strong>비회원 안내와 동일</strong>합니다.
+          </p>
+          <Subheading>4-1. 공감</Subheading>
+          <Narrative>
+            비회원: 탭 시 로그인 유도. <strong>회원:</strong> 탭할 때마다 <strong>공감 토글</strong>이 적용되고, 다시 탭하면 취소되는 식의 상호작용이 가능합니다. 카드·목록에 보이는 숫자와의 연동 목표는 비회원 문서와 동일하게 기술합니다.
+          </Narrative>
+          <Subheading>4-2. 댓글·답글</Subheading>
+          <Narrative>
+            비회원: 입력 영역 비활성·안내. <strong>회원:</strong> 입력창이 활성화되고 전송 시 목록에 반영됩니다. 댓글 공감 등도 동일 팝업 안에서 계정 기준으로 열립니다.
+          </Narrative>
+          <Subheading>4-3. ⋮ 더보기 메뉴</Subheading>
+          <Narrative>
+            <strong>공유</strong>는 비회원과 동일하게 사용 가능한 범위에서 노출됩니다. 추가로 <strong>본인 글</strong>이면 수정·삭제, <strong>타인 글·댓글</strong>이면 신고 등이 메뉴에 나타나 분기됩니다.
+          </Narrative>
+        </Section>
+
+        <Section title="5. 로그인 필요 안내 팝업">
+          <Narrative>
+            비회원은 제한 기능(즐겨찾기·리뷰·댓글 등)을 눌렀을 때 <strong>로그인 유도</strong>가 먼저 뜨는 것이 기본입니다. <strong>회원</strong>은 동일 버튼에서 <strong>대개 안내 없이 실제 기능</strong>이 실행됩니다. 가입·로그인 버튼을 눌렀을 때의 공통 플로우는 <strong>마이페이지 화면정의서</strong>의 로그인/회원가입 정책을 따릅니다.
+          </Narrative>
+        </Section>
+
+        <Section title="6. 계정과 이어지는 경험">
+          <ul className="text-xs text-gray-800 leading-relaxed list-disc pl-4 space-y-1.5">
+            <li>
+              <strong>즐겨찾기한 의사:</strong> 저장 이후 마이페이지 등에서 &quot;내가 저장한 의사&quot; 류 목록으로 조회하는 흐름(세부는 마이페이지 스펙).
+            </li>
+            <li>
+              <strong>리뷰 초안:</strong> 프로필을 나갔다 들어와도 동일 의사에 한해 이어쓰기 배너로 복귀 가능.
+            </li>
+            <li>
+              <strong>커뮤니티 글쓰기(FAB):</strong> 회원에게만 노출되는 진입에서 글 작성·수정 화면으로 이동하며, 커뮤니티 탭에 초안이 있으면 <strong>불러오기/삭제 후 새로 시작</strong> 확인이 켜집니다(CommunityTabSpecBiz·비회원 공통과 정합).
+            </li>
+            <li>
+              <strong>챗봇 대화 이력·최근 본 의사</strong> 등 장기 보존이 필요한 데이터는 <strong>AI 챗봇·마이페이지</strong> 쪽 정의서를 참조합니다. 공통 컴포넌트 문서에서는 &quot;팝업에서 저장·작성한 결과가 계정으로 귀속된다&quot;는 연결만 명시합니다.
+            </li>
+          </ul>
+        </Section>
+
+        <Section title="7. 회원 확장 요약 (참조용 표)">
+          <p className="text-xs text-gray-600 mb-3">
+            비회원 쪽 상세·수치는 <strong>CommonComponentsSpec</strong>을 기준으로 하고, 아래는 <strong>회원에서 가능해지는 일</strong>만 압축했습니다.
+          </p>
+          <Table
+            headers={['영역', '회원에서 가능해지는 일', '비고']}
+            rows={[
+              ['의사 프로필', '즉시 즐겨찾기·리뷰 작성·초안 이어쓰기', '레이아웃은 비회원과 동일'],
+              ['의료진 인증 요청', '동작 가능(운영 정책·별도 문서)', '버튼 위치 동일'],
+              ['게시글 상세', '공감 토글·댓글/답글·작성자 메뉴', '본문 레이아웃 동일'],
+              ['글쓰기 FAB 등', '작성·초안 복원 흐름', '커뮤니티 회원 Delta와 연계'],
+              ['전역 한도 UI', '제약 완화로 배너·잠금 체감 감소', '탭·통합검색 Base와 정합'],
+            ]}
+          />
+        </Section>
+
+        <Section title="8. 참조 경계">
+          <ul className="text-xs text-gray-700 space-y-1.5 list-disc pl-5">
+            <li>
+              <strong>CommonComponentsSpec</strong>: 공통 UI의 기본 구조, 비회원 잠금·모양, 로딩/에러/Empty, 하단 탭·통합검색 연동.
+            </li>
+            <li>
+              <strong>SearchScenarioSpec</strong>: 통합검색 창 안의 한도·배너·탭 결과(회원은 제약 체감이 달라짐).
+            </li>
+            <li>
+              <strong>마이페이지·챗봇·커뮤니티 회원 탭</strong>: 계정 저장·글쓰기·대화 이력의 상세 규칙.
+            </li>
+          </ul>
+        </Section>
       </div>
     </div>
   );
 }
 
-/* ─── UI/UX 재사용 컴포넌트 ─── */
-
-function BizSection({ id, title, icon, children }: { id: string; title: string; icon: string; children: React.ReactNode }) {
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section id={id}>
-      <div className="flex items-center gap-3 mb-5 pb-3 border-b-2 border-purple-500">
-        <span className="text-2xl">{icon}</span>
-        <h2 className="text-lg font-black text-purple-900">{title}</h2>
-      </div>
-      <div className="space-y-6">{children}</div>
+    <section className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
+      <h2 className="text-base font-black text-gray-900 mb-4 pb-2 border-b border-gray-200">{title}</h2>
+      {children}
     </section>
   );
 }
 
-function BizSubSection({ label, title, children }: { label: string; title: string; children: React.ReactNode }) {
-  return (
-    <div className="bg-white rounded-2xl border-2 border-purple-100 p-5 shadow-sm">
-      <div className="flex items-start gap-3 mb-4">
-        <span className="bg-gradient-to-br from-purple-600 to-violet-600 text-white text-sm font-black px-3 py-1.5 rounded-lg shadow-sm">
-          {label}
-        </span>
-        <h3 className="text-base font-bold text-gray-900 mt-0.5">{title}</h3>
-      </div>
-      {children}
-    </div>
-  );
+function Subheading({ children }: { children: React.ReactNode }) {
+  return <h3 className="text-xs font-bold text-gray-900 mt-4 mb-1.5 first:mt-0">{children}</h3>;
 }
 
-function BizTable({ headers, rows }: { headers: string[]; rows: string[][] }) {
+function Narrative({ children }: { children: React.ReactNode }) {
+  return <p className="text-xs text-gray-800 leading-relaxed">{children}</p>;
+}
+
+function Table({ headers, rows }: { headers: string[]; rows: string[][] }) {
   return (
-    <div className="overflow-x-auto rounded-xl border-2 border-purple-100">
-      <table className="w-full text-sm border-collapse">
+    <div className="overflow-x-auto rounded-lg border border-gray-100">
+      <table className="w-full text-xs border-collapse">
         <thead>
-          <tr className="bg-gradient-to-r from-purple-50 to-violet-50">
+          <tr className="bg-gray-50">
             {headers.map((h, i) => (
-              <th key={i} className="text-left text-xs font-bold text-purple-700 px-4 py-3 border-b-2 border-purple-200">{h}</th>
+              <th key={i} className="text-left text-[10px] font-bold text-gray-500 uppercase tracking-wide px-2.5 py-2 border-b border-gray-100">
+                {h}
+              </th>
             ))}
           </tr>
         </thead>
         <tbody>
           {rows.map((row, ri) => (
-            <tr key={ri} className={ri % 2 === 0 ? 'bg-white' : 'bg-purple-50/30'}>
+            <tr key={ri} className={ri % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}>
               {row.map((cell, ci) => (
-                <td key={ci} className={`px-4 py-3 text-gray-700 align-top border-b border-purple-50 ${ci === 0 ? 'font-semibold text-gray-900' : ''}`}>
+                <td
+                  key={ci}
+                  className={`px-2.5 py-2 text-gray-700 align-top border-b border-gray-50 ${ci === 0 ? 'font-medium text-gray-900 whitespace-nowrap' : ''}`}
+                >
                   {cell}
                 </td>
               ))}
@@ -1055,15 +218,6 @@ function BizTable({ headers, rows }: { headers: string[]; rows: string[][] }) {
           ))}
         </tbody>
       </table>
-    </div>
-  );
-}
-
-function BizNote({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="mt-3 flex items-start gap-2 bg-indigo-50 border-2 border-indigo-200 rounded-xl px-4 py-3">
-      <span className="text-indigo-500 mt-0.5 text-lg">💡</span>
-      <p className="text-xs text-indigo-900">{children}</p>
     </div>
   );
 }

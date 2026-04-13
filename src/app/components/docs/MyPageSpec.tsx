@@ -13,9 +13,8 @@ export function MyPageSpec() {
             <span className="bg-white/10 text-blue-100 text-xs px-3 py-1 rounded-full">UI/UX 화면정의서</span>
           </div>
           <h1 className="text-3xl font-black mb-2">🙋 마이페이지</h1>
-          <p className="text-blue-100 text-sm">
-            구현 소스: <code className="bg-white/10 px-1 rounded">MyPage.tsx</code> · 상단 헤더 색은 서비스와 동일하게{' '}
-            <code className="bg-white/10 px-1 rounded">bg-blue-600</code> (#2563EB 계열)
+          <p className="text-blue-100 text-sm leading-relaxed">
+            로그인 상태에 따라 보이는 내용이 달라지는 <strong>개인 영역</strong>입니다.
           </p>
         </div>
       </div>
@@ -23,114 +22,408 @@ export function MyPageSpec() {
       <div className="max-w-5xl mx-auto px-6 py-8 space-y-6">
         <section className="bg-white rounded-xl border border-gray-200 p-5">
           <h2 className="text-lg font-bold text-gray-900 mb-3">📌 개요</h2>
-          <ul className="space-y-1.5 text-sm text-gray-700">
-            <li>• 상단 제목 고정: <strong>마이페이지</strong> (흰 글씨, 파란 배경 바)</li>
-            <li>• <code className="bg-gray-100 px-1 rounded">useUser()</code> 기준 <strong>비회원(isGuest)</strong> / <strong>회원(isMember)</strong> 본문 분기</li>
-            <li>• 하단 글로벌 내비에서 <strong>MY</strong> 탭이 이 화면에 대응</li>
-            <li>• 회원 본문은 <code className="bg-gray-100 px-1 rounded">max-w-2xl</code> 가운데 정렬, 하단 탭바 여백 고려 <code className="bg-gray-100 px-1 rounded">pb-24</code></li>
+          <ul className="space-y-2 text-sm text-gray-700 leading-relaxed">
+            <li>
+              • <strong>역할:</strong> 이용자 본인의 계정 정보, 닉네임, 커뮤니티 활동(글·댓글·후기), 저장한 명의, 고객지원 링크를 한곳에서 제공합니다.
+            </li>
+            <li>
+              • <strong>로그인 여부:</strong> <strong>로그인 전</strong>에는 로그인 유도 화면만 보이고, <strong>로그인 후</strong>에는 프로필·활동·설정이 보입니다. (스펙 패널 상단의 비회원/회원 전환으로 두 버전을 각각 확인할 수 있습니다.)
+            </li>
+            <li>
+              • <strong>진입:</strong> 하단 글로벌 메뉴에서 <strong>MY</strong>를 누르면 이 화면으로 옵니다.
+            </li>
+            <li>
+              • <strong>레이아웃:</strong> 본문은 모바일에서 읽기 좋은 <strong>최대 너비 안에서 가운데 정렬</strong>되며, 하단 고정 탭 메뉴와 겹치지 않도록 <strong>아래쪽 여백</strong>을 두었습니다.
+            </li>
           </ul>
         </section>
 
         {!isMember ? (
-          <section className="bg-white rounded-xl border border-gray-200 p-5">
-            <h2 className="text-lg font-bold text-gray-900 mb-3">🔓 비회원 화면 정의</h2>
-            <ul className="space-y-1.5 text-sm text-gray-700">
-              <li>• 상단 헤더는 회원과 동일하게 <strong>마이페이지</strong> 유지</li>
-              <li>• 중앙: 유저 아이콘 원 + 제목 <strong>로그인이 필요합니다</strong></li>
-              <li>• 서브: <strong>나만의 건강 관리를 시작하세요!</strong></li>
-              <li>• CTA: <strong>카카오톡으로 3초 만에 시작</strong> (데모에서 회원 전환), <strong>네이버로 시작하기</strong></li>
-              <li>• <strong>나중에 하기</strong> → <code className="bg-gray-100 px-1 rounded">navigateToPreviousTab()</code></li>
-              <li>• 닉네임·내 활동·고객지원·탈퇴 등 회원 전용 블록은 비노출</li>
-            </ul>
+          <section className="bg-white rounded-xl border border-gray-200 p-5 space-y-5">
+            <div>
+              <h2 className="text-lg font-bold text-gray-900 mb-2">🔓 로그인 전 화면 (비회원 마이페이지)</h2>
+              <p className="text-sm text-gray-600 leading-relaxed mb-3">
+                상단 앱 바 제목은 로그인 후와 동일하게 <strong>마이페이지</strong>로 두어 같은 GNB 메뉴임을 인지시킵니다.
+                닉네임·내 활동·고객지원·탈퇴 등 회원 전용 블록은 이 단계에서 보이지 않습니다.
+              </p>
+            </div>
+
+            {/* [비회원 마이페이지 및 공통 로그인/가입 플로우 정책] — OAuth·약관 상태 구현 코드는 이 문서 범위 밖 */}
+            <div className="pt-2 border-t border-gray-200 space-y-3">
+              <h3 className="text-xs font-bold text-gray-800 tracking-wide uppercase">
+                [비회원 마이페이지 및 공통 로그인/가입 플로우 정책]
+              </h3>
+
+              <div className="space-y-3 text-sm text-gray-700 leading-relaxed">
+                <p className="font-semibold text-gray-800">1. 진입 및 UI (비회원 마이페이지)</p>
+                <ul className="space-y-1.5 list-disc pl-5">
+                  <li>
+                    <strong>노출 조건:</strong> <strong>비로그인</strong> 사용자가 하단 <strong>GNB</strong>에서{' '}
+                    <strong>MY</strong> 탭을 탭해 진입할 때 이 화면을 노출합니다.
+                  </li>
+                  <li>
+                    <strong>UI 구성 (중앙):</strong> 기본 프로필 <strong>Empty</strong> 아이콘과 함께{' '}
+                    <strong>「로그인이 필요합니다」</strong>, 부가 문구 <strong>「나만의 건강 관리를 시작하세요!」</strong>를
+                    노출합니다.
+                  </li>
+                  <li>
+                    <strong>소셜 로그인 버튼:</strong>{' '}
+                    <strong>[카카오톡으로 3초 만에 시작]</strong>, <strong>[네이버로 시작하기]</strong>를 세로로 배치해
+                    주요 행동을 유도합니다.
+                  </li>
+                  <li>
+                    <strong>하단 링크:</strong> <strong>[나중에 하기 &gt;]</strong> — 탭 시 <strong>홈 화면</strong> 또는
+                    MY 진입 직전에 보고 있던 <strong>이전 화면</strong>으로 돌아갑니다.
+                  </li>
+                </ul>
+
+                <p className="font-semibold text-gray-800 pt-2">2. [공통 로그인/회원가입 플로우 정책] (SNS 연동)</p>
+                <p className="text-sm text-gray-600 bg-gray-50 border border-gray-100 rounded-lg px-3 py-2">
+                  ※ 이 플로우는 마이페이지뿐 아니라, <strong>게시글 작성·댓글</strong> 등 다른 영역에서 뜨는{' '}
+                  <strong>로그인 유도</strong>에도 동일하게 적용되는 <strong>전역(Global)</strong> 정책입니다.
+                </p>
+                <ul className="space-y-2 list-disc pl-5">
+                  <li>
+                    <strong>[Step 1] 플랫폼 인증:</strong> 카카오/네이버 버튼 탭 시 해당 플랫폼{' '}
+                    <strong>인증 화면</strong>으로 이동해 <strong>정보 제공 동의</strong>를 받습니다.
+                  </li>
+                  <li>
+                    <strong>[Step 2] AIGA 약관 동의 (최초 가입 시):</strong>
+                    <ul className="mt-1.5 list-[circle] pl-5 space-y-1 text-gray-700">
+                      <li>
+                        필수(서비스 이용, 위치기반, 개인정보 등) 및 선택(마케팅 수신) 약관을 노출합니다.
+                      </li>
+                      <li>
+                        <strong>필수 항목을 모두 체크</strong>한 경우에만 <strong>[가입하기]</strong> 버튼을 활성화합니다.
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <strong>[Step 3] 가입·로그인 완료:</strong>
+                    <ul className="mt-1.5 list-[circle] pl-5 space-y-1 text-gray-700">
+                      <li>
+                        가입 완료 화면에 <strong>「ㅇㅇㅇ님, 회원가입이 완료되었습니다.」</strong> 형태의 문구를 노출합니다
+                        (닉네임·표기는 서비스 정책에 따름).
+                      </li>
+                      <li>
+                        완료 화면에서 <strong>[AIGA와 대화하기]</strong>를 탭하면 <strong>메인 홈(챗봇)</strong>으로 이동하고,
+                        <strong> 로그인 상태(세션)</strong>를 유지합니다.
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </section>
         ) : (
-          <section className="bg-white rounded-xl border border-gray-200 p-5 space-y-5">
-            <h2 className="text-lg font-bold text-gray-900">✅ 회원 화면 정의</h2>
+          <section className="bg-white rounded-xl border border-gray-200 p-5 space-y-6">
+            <h2 className="text-lg font-bold text-gray-900">✅ 로그인 후 화면</h2>
 
             <div>
-              <h3 className="text-sm font-bold text-gray-800 mb-2">1) 상단 영역</h3>
-              <ul className="space-y-1 text-sm text-gray-700 list-disc pl-5">
-                <li>프로필 아이콘(그라데이션 원) + 이메일 <code className="bg-gray-100 px-1 rounded text-xs">fassionmap@kakao.com</code> (샘플 고정)</li>
-                <li>우측 <strong>로그아웃</strong> 아이콘 버튼 → 확인 후 게스트 전환</li>
+              <h3 className="text-sm font-bold text-gray-800 mb-2">1) 프로필 요약</h3>
+              <ul className="space-y-2 text-sm text-gray-700 leading-relaxed list-disc pl-5">
+                <li>왼쪽: 원형 프로필 영역(그라데이션 배경 + 사람 아이콘).</li>
+                <li>로그인 계정 라벨 아래 <strong>이메일</strong>을 표시합니다. (데모에서는 샘플 주소)</li>
+                <li>오른쪽: <strong>로그아웃</strong> 아이콘 — 누르면 한 번 확인한 뒤 비로그인 상태로 돌아갑니다.</li>
               </ul>
+
+              {/* [로그아웃 팝업 정책] — 실제 화면 구현·로그아웃 처리는 이 문서 범위 밖 */}
+              <div className="mt-4 pt-4 border-t border-gray-200 space-y-3">
+                <h4 className="text-xs font-bold text-gray-800 tracking-wide">[로그아웃 팝업 정책]</h4>
+                <div className="space-y-2 text-sm text-gray-700 leading-relaxed">
+                  <p>
+                    <strong>노출 조건:</strong> 마이페이지에서 <strong>로그아웃</strong> 버튼(아이콘)을 탭했을 때
+                    노출합니다.
+                  </p>
+                  <p>
+                    <strong>UI 형태:</strong> 화면 배경을 어둡게 하는 <strong>딤(Dim)</strong> 처리 후, 화면{' '}
+                    <strong>중앙</strong>에 <strong>확인용 팝업 창</strong>을 띄웁니다.
+                  </p>
+                  <p className="font-semibold text-gray-800 pt-1">텍스트 내용</p>
+                  <ul className="list-disc pl-5 space-y-1">
+                    <li>「로그아웃 하시겠습니까?」</li>
+                    <li>「로그아웃 후 메인 화면으로 이동합니다.」</li>
+                  </ul>
+                  <p className="font-semibold text-gray-800 pt-1">버튼 및 동작</p>
+                  <ul className="space-y-1.5 list-disc pl-5">
+                    <li>
+                      <strong>[취소]:</strong> 팝업을 닫고 <strong>현재 마이페이지</strong> 화면을 유지합니다.
+                    </li>
+                    <li>
+                      <strong>[확인]:</strong> 로그아웃(세션 종료·비로그인 상태 전환)을 처리한 뒤,{' '}
+                      <strong>메인(홈) 화면</strong>으로 이동합니다.
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </div>
 
             <div>
-              <h3 className="text-sm font-bold text-gray-800 mb-2">2) 닉네임 설정</h3>
-              <ul className="space-y-1 text-sm text-gray-700 list-disc pl-5">
-                <li>라벨: 닉네임 <span className="text-red-500">(필수)</span></li>
-                <li>입력: 최대 10자, 안내 문구 &quot;최소 2자, 최대 10자(한글,영문,숫자,_만 가능)&quot;</li>
-                <li><strong>저장하기</strong> → 2~10자 검증, 미충족 시 alert</li>
+              <h3 className="text-sm font-bold text-gray-800 mb-2">2) 닉네임</h3>
+              <ul className="space-y-2 text-sm text-gray-700 leading-relaxed list-disc pl-5">
+                <li>필수 입력 필드로, 표시 이름에 쓰입니다.</li>
+                <li>가입 시 시스템이 부여한 기본 닉네임이 초기값으로 들어갑니다.</li>
+                <li>
+                  빈 값일 때는 플레이스홀더 <strong>「새 닉네임을 입력하세요」</strong>를 보여 줍니다. (건강·생활과 어울리는
+                  다정한 표현을 권장한다는 안내는 선택 사항으로 복지·커뮤니티 톤에 맞게 쓸 수 있습니다.)
+                </li>
+                <li>
+                  입력란 아래에는 <strong className="text-gray-800">작은 글씨</strong>로 유효성 안내를 두어 본문과 위계를
+                  나눕니다: <strong>최소 2자, 최대 10자</strong>, 허용 문자는 <strong>한글·영문·숫자·밑줄(_)</strong>만.
+                </li>
+                <li>
+                  <strong>저장하기</strong> 버튼은 위 규칙을 만족하고, 마지막으로 <strong>성공 저장된 닉네임과 달라졌을
+                  때만</strong> 활성화됩니다. 탭하면 서버에 중복 여부를 요청합니다.
+                </li>
+                <li>
+                  <strong>중복 닉네임:</strong> 토스트로 <strong>「이미 사용 중인 닉네임 입니다」</strong>를 약 3초간 표시합니다.
+                  입력값은 그대로 두고, 사용자가 내용을 바꾸기 전까지 저장 버튼은 다시 비활성에 가깝게 둡니다.
+                </li>
+                <li>
+                  <strong>저장 성공:</strong> 토스트로 <strong>「닉네임이 변경되었습니다」</strong>를 약 3초간 표시합니다.
+                  이후 앱 내 닉네임이 쓰이는 영역은 서버 응답 기준으로 일괄 반영됩니다.
+                </li>
               </ul>
             </div>
+
+            <section className="rounded-lg border border-red-200 bg-red-50/80 p-4">
+              <h3 className="text-sm font-bold text-red-900 mb-2">중요 노티스 — SNS 로그인·계정 통합</h3>
+              <ul className="space-y-2 text-sm text-red-950/90 leading-relaxed list-disc pl-5">
+                <li>
+                  카카오·네이버 등으로 각각 가입한 사용자가 <strong>동일 이메일(또는 동일하게 식별되는 ID)</strong>를 쓰는
+                  경우가 있을 수 있습니다.
+                </li>
+                <li>
+                  서비스는 이를 <strong>통합 관리</strong>해야 합니다: 각 플랫폼이 발급하는 고유 <strong>uID</strong>를 함께
+                  저장하고, <strong>현재 어떤 채널로 로그인했는지</strong>를 판별해 한 계정으로 묶어 세션·권한·표시 정보를
+                  맞춥니다.
+                </li>
+                <li>
+                  구현 세부(매칭 키, 충돌·탈퇴 처리)는 백엔드 정책에 따르며, 클라이언트는 연동 스펙에 맞는 식별자 전달만
+                  담당합니다. (코드베이스에는 <code className="text-xs bg-white/60 px-1 rounded">snsAccountMerge</code>{' '}
+                  스텁·주석으로 확장 지점을 두었습니다.)
+                </li>
+              </ul>
+            </section>
 
             <div>
               <h3 className="text-sm font-bold text-gray-800 mb-2">3) 내 활동</h3>
-              <p className="text-sm text-gray-600 mb-2">
-                섹션 제목 <strong>내 활동</strong> 아래 흰 카드(<code className="bg-gray-100 px-1 rounded text-xs">rounded-xl border</code>) 안에 탭 + 스크롤 영역.
+              <p className="text-sm text-gray-600 mb-3 leading-relaxed">
+                섹션 제목 아래 <strong>흰 카드</strong> 안에 네 가지 탭을 두고, 탭마다 목록이 바뀝니다. 목록 영역은{' '}
+                <strong>높이를 일정하게 두고 안에서만 스크롤</strong>되어, 위·아래 다른 블록과 레이아웃이 흔들리지 않습니다.
               </p>
-              <ul className="space-y-1 text-sm text-gray-700 list-disc pl-5 mb-3">
-                <li>탭 라벨·카운트: <strong>게시글 (myPosts.length)</strong> | <strong>댓글 (myComments.length)</strong> | <strong>후기 (myReviews.length)</strong> | <strong>저장 (savedDoctorsList.length)</strong></li>
-                <li>저장 탭 = 기존 &quot;저장한 의료진&quot; 데이터(<code className="bg-gray-100 px-1 rounded text-xs">useSavedDoctors</code>), 라벨만 짧게 <strong>저장</strong></li>
-                <li>선택 탭: 파란 글씨 + 하단 파란 인디케이터 막대</li>
-                <li>탭 버튼: 좁은 폭 대비 <code className="bg-gray-100 px-1 rounded text-xs">text-[11px] sm:text-sm</code></li>
-                <li>콘텐츠 스크롤 박스 높이 고정: <code className="bg-gray-100 px-1 rounded">h-[360px] overflow-y-auto</code></li>
+              <ul className="space-y-2 text-sm text-gray-700 leading-relaxed list-disc pl-5 mb-4">
+                <li>
+                  탭 이름과 함께 <strong>각각의 개수</strong>를 괄호에 표시합니다: 게시글 · 댓글 · 후기 · 저장.
+                </li>
+                <li>선택된 탭은 파란색 글씨와 아래 강조선으로 구분합니다.</li>
+                <li>
+                  <strong>저장</strong> 탭은 사용자가 명의 찾기 등에서 <strong>즐겨찾기한 의료진</strong> 목록입니다. (이전 명칭: 저장한 의료진)
+                </li>
               </ul>
 
-              <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wide mb-1.5">3-1. 게시글 탭</h4>
-              <ul className="space-y-1 text-sm text-gray-700 list-disc pl-5 mb-3">
-                <li>행 구분: <code className="bg-gray-100 px-1 rounded text-xs">divide-y divide-gray-100</code></li>
-                <li>행 클릭(삭제된 글 제외) → <strong>PostDetailModal</strong> 오픈, 전달 데이터는 내 글 + 닉네임 매핑(<code className="bg-gray-100 px-1 rounded text-xs">CommunityPost</code> 형태)</li>
-                <li>각 행: 진료과 칩, 상대 시간, 제목·요약 2줄 클램프, 좋아요/댓글/조회 수 아이콘</li>
-                <li>우측 상단 <strong>휴지통</strong>: 클릭 시 이벤트 전파 중단 → 확인 다이얼로그 → 목록 제거 + 토스트</li>
-                <li><code className="bg-gray-100 px-1 rounded text-xs">localStorage</code> 신고/삭제 ID 반영 시: 상단 빨간 안내 배너 + 본문 <code className="bg-gray-100 px-1 rounded text-xs">opacity-40</code>, 클릭 비활성</li>
-                <li>목록 0건: FileText 아이콘 + &quot;작성한 글이 없습니다&quot;</li>
+              <h4 className="text-xs font-bold text-gray-700 mb-2">게시글</h4>
+              <ul className="space-y-2 text-sm text-gray-700 leading-relaxed list-disc pl-5 mb-4">
+                <li>내가 쓴 글을 카드형 목록으로 보여 줍니다. 진료과 뱃지, 올린 지 얼마나 지났는지, 제목·요약 일부, 좋아요·댓글·조회 수를 한눈에 넣습니다.</li>
+                <li>항목을 누르면 <strong>게시글 상세</strong>이 화면 위 레이어(모달)로 열립니다.</li>
+                <li>삭제 아이콘은 목록에서 바로 삭제할 때 사용하며, 확인 후 삭제되었다는 알림이 뜹니다.</li>
+                <li>운영 정책으로 숨겨진 글은 상단에 안내 배너가 붙고, 본문은 흐리게 보이며 눌러도 상세로 가지 않습니다.</li>
+                <li>목록이 없을 때는 아이콘과 짧은 안내 문구로 비어 있음을 알립니다.</li>
               </ul>
 
-              <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wide mb-1.5">3-2. 댓글 탭</h4>
-              <ul className="space-y-1 text-sm text-gray-700 list-disc pl-5 mb-3">
-                <li>원글 제목 한 줄, 댓글 본문, 공감 수, 상대 시간</li>
-                <li>행 클릭(삭제 제외) → <strong>PostDetailModal</strong> (내 글 postId 매칭 → 커뮤니티 제목 매칭 → 없으면 합성 원글)</li>
-                <li>휴지통 → 확인 + 토스트 + 목록 제거</li>
-                <li>신고 삭제 처리 UI는 게시글과 동일 패턴</li>
+              <h4 className="text-xs font-bold text-gray-700 mb-2">댓글</h4>
+              <ul className="space-y-2 text-sm text-gray-700 leading-relaxed list-disc pl-5 mb-4">
+                <li>원글 제목 한 줄, 내가 단 댓글, 공감 수, 시간 순서로 보여 줍니다.</li>
+                <li>항목을 누르면 해당 맥락의 <strong>게시글 상세</strong>로 연결됩니다.</li>
+                <li>삭제·신고 처리 표시 방식은 게시글과 같은 패턴을 따릅니다.</li>
               </ul>
 
-              <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wide mb-1.5">3-3. 후기 탭</h4>
-              <ul className="space-y-1 text-sm text-gray-700 list-disc pl-5 mb-3">
-                <li>카드 스타일: 의사 프로필 모달 내 <strong>AIGA 리뷰 개별 카드</strong>와 동일 — <code className="bg-gray-100 px-1 rounded text-xs">bg-white border border-gray-200 rounded-lg p-4</code>, 카드 간 <code className="bg-gray-100 px-1 rounded text-xs">space-y-3 p-2</code></li>
-                <li>상단: 닉네임(굵게) — 화면에는 현재 닉네임 입력값과 동기 · 방문 인증 시 초록 배지(체크 아이콘 + &quot;방문인증&quot;)</li>
-                <li>우측 상단 <strong>휴지통</strong> → 확인(&quot;후기를 삭제하시겠습니까?&quot;) → 토스트 &quot;후기가 삭제되었습니다.&quot; → 제거</li>
-                <li>날짜 줄: <code className="bg-gray-100 px-1 rounded text-xs">text-xs text-gray-500</code> (예: 수정됨 문구 포함 가능)</li>
-                <li>별점 2×2 그리드: 친절·배려 / 치료 만족 / 쉬운 설명 / 추천 의향 — 노란 별 + 점수, 막대는 <code className="bg-gray-100 px-1 rounded text-xs">#22C55E</code></li>
-                <li>본문: 후기 텍스트, <code className="bg-gray-100 px-1 rounded text-xs">line-clamp-3</code></li>
-                <li>하단: 좌측 의사·진료과·병원 한 줄(회색 작은 글씨), 우측 <strong className="text-blue-600">프로필 보기 &gt;</strong></li>
-                <li>카드 전체 또는 &quot;프로필 보기&quot; 클릭 → <strong>DoctorProfileModal</strong> (후기에 묶인 <code className="bg-gray-100 px-1 rounded text-xs">doctorPayload</code>로 구성)</li>
-                <li>후기 0건: 회색 Star, &quot;아직 작성한 후기가 없어요&quot;, 보조 문구, 파란 버튼 <strong>명의 찾고 후기 남기기</strong> → <code className="bg-gray-100 px-1 rounded text-xs">navigateToDoctorSearch()</code></li>
+              <h4 className="text-xs font-bold text-gray-700 mb-2">후기</h4>
+              <ul className="space-y-2 text-sm text-gray-700 leading-relaxed list-disc pl-5 mb-4">
+                <li>
+                  의사 프로필 화면에 있는 <strong>AIGA 리뷰 카드</strong>와 같은 시각 규칙(네 가지 별점 항목, 초록 진행 막대, 후기 본문, 하단에 의사·과·병원 한 줄)을 사용합니다.
+                </li>
+                <li>방문 인증이 있는 후기에는 닉네임 옆에 <strong>초록색 방문 인증</strong> 뱃지를 붙입니다.</li>
+                <li>카드 전체 또는 <strong>프로필 보기</strong>를 누르면 해당 의사의 <strong>프로필 상세</strong>가 레이어로 열립니다.</li>
+                <li>후기 삭제는 휴지통으로 처리하며, 확인 후 목록에서 사라지고 알림이 뜹니다.</li>
+                <li>
+                  후기가 없을 때는 별 아이콘과 안내 문구, <strong>명의 찾고 후기 남기기</strong> 버튼으로 명의 찾기 탭으로 유도합니다.
+                </li>
               </ul>
 
-              <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wide mb-1.5">3-4. 저장 탭</h4>
-              <ul className="space-y-1 text-sm text-gray-700 list-disc pl-5">
-                <li>저장한 의료진 목록(이름·과·병원·전문·평점, 저장 해제 버튼)</li>
-                <li>행 클릭 → <strong>DoctorProfileModal</strong></li>
-                <li>0건: 북마크 아이콘 + &quot;저장한 의료진이 없습니다&quot;</li>
+              <h4 className="text-xs font-bold text-gray-700 mb-2">저장</h4>
+              <ul className="space-y-2 text-sm text-gray-700 leading-relaxed list-disc pl-5">
+                <li>저장해 둔 의료진 이름·과·병원·평점 등을 목록으로 보여 줍니다.</li>
+                <li>행을 누르면 의사 <strong>프로필 상세</strong>로 연결됩니다.</li>
+                <li>각 행에서 저장을 해제할 수 있습니다.</li>
+                <li>목록이 없을 때는 북마크 아이콘과 안내 문구를 띄웁니다.</li>
               </ul>
             </div>
 
             <div>
-              <h3 className="text-sm font-bold text-gray-800 mb-2">4) 모달·외부 연동</h3>
-              <ul className="space-y-1 text-sm text-gray-700 list-disc pl-5">
-                <li><strong>PostDetailModal</strong>: 게시글/댓글에서 진입 시. 좋아요/댓글 수는 내 게시글 ID에 한해 <code className="bg-gray-100 px-1 rounded text-xs">myPosts</code> state 동기화</li>
-                <li><strong>DoctorProfileModal</strong>: 후기·저장 탭. <code className="bg-gray-100 px-1 rounded text-xs">getDoctorById</code>로 검증 배지 등 보조</li>
-                <li>채팅/명의 찾기 이동은 상세 모달 내 버튼에서 <code className="bg-gray-100 px-1 rounded text-xs">navigateToChat</code> / <code className="bg-gray-100 px-1 rounded text-xs">navigateToDoctorSearch</code></li>
+              <h3 className="text-sm font-bold text-gray-800 mb-2">4) 다른 화면과의 연결</h3>
+              <ul className="space-y-2 text-sm text-gray-700 leading-relaxed list-disc pl-5">
+                <li>게시글·댓글 상세 레이어 안에서 채팅·명의 찾기로 이어지는 버튼이 있으면, 각각 채팅 화면·명의 찾기 탭으로 전환됩니다.</li>
+                <li>후기·저장에서 연 의사 프로필은 동일한 상세 패턴을 사용합니다.</li>
               </ul>
             </div>
 
             <div>
-              <h3 className="text-sm font-bold text-gray-800 mb-2">5) 고객지원 · 하단</h3>
-              <ul className="space-y-1 text-sm text-gray-700 list-disc pl-5">
-                <li>공지사항 / 이용약관 / 개인정보 처리방침 / 의견 보내기 — 행 단위 버튼 + 우측 Chevron (현재 alert 플레이스홀더)</li>
-                <li><strong>탈퇴하기</strong> 텍스트 링크 → 확인 후 게스트 전환</li>
+              <h3 className="text-sm font-bold text-gray-800 mb-2">5) 고객지원 · 탈퇴</h3>
+              <ul className="space-y-2 text-sm text-gray-700 leading-relaxed list-disc pl-5">
+                <li>공지사항, 이용약관, 개인정보 처리방침, 의견 보내기를 한 블록에 모아, 행마다 오른쪽 화살표로 ‘다음 단계가 있다’는 느낌을 줍니다. (연결 동작은 서비스 정책에 맞게 구현)</li>
+                <li>
+                  맨 아래 <strong>탈퇴하기</strong>는 보조적인 회색 톤의 텍스트 링크로 두어, 실수로 누르기 어렵게 하되 찾을 수는 있게 합니다. 확인 후 비로그인 상태가 됩니다.
+                </li>
               </ul>
+
+              {/* [이용약관 / 개인정보처리방침 상세페이지 정책] — 구현 스펙은 별도 화면/컴포넌트 문서에서 다룸 */}
+              <div className="mt-5 pt-4 border-t border-gray-200 space-y-3">
+                <h4 className="text-xs font-bold text-gray-800 tracking-wide">
+                  [이용약관 / 개인정보처리방침 상세페이지 정책]
+                </h4>
+                <div className="space-y-3 text-sm text-gray-700 leading-relaxed">
+                  <p className="font-semibold text-gray-800">1. 화면 이동 동작</p>
+                  <ul className="space-y-1.5 list-disc pl-5">
+                    <li>
+                      <strong>고객지원</strong> 메뉴에서 각 항목(이용약관, 개인정보처리방침 등)을 탭하면 해당{' '}
+                      <strong>상세 페이지</strong>로 이동합니다.
+                    </li>
+                    <li>
+                      기존 상세 페이지 UI 뼈대(<strong>App Bar</strong>, <strong>뒤로 가기</strong> 등)를 동일하게 사용합니다.
+                    </li>
+                  </ul>
+                  <p className="font-semibold text-gray-800 pt-1">2. 내용 영역(Terms Content) 렌더링 세부 규칙</p>
+                  <ul className="space-y-1.5 list-disc pl-5">
+                    <li>
+                      <strong>구조 및 강조:</strong> 제목·소제목을 활용하고, 폰트 크기나 스타일을 달리해 구조적으로 보여 줍니다.
+                    </li>
+                    <li>
+                      <strong>핵심 내용 강조:</strong> 서비스 이용 규칙, 개인정보 수집 항목, 이용 기간 등 사용자가 꼭 이해해야 할 문장은{' '}
+                      <strong>굵게</strong> 하거나 색상을 달리해 시각적으로 구분합니다.
+                    </li>
+                    <li>
+                      <strong>줄바꿈 및 스크롤:</strong> 본문은 화면 너비에 맞게 자연스럽게 줄 바꿈되며, 세로 스크롤로 전체를 읽을 수 있게 합니다.
+                    </li>
+                    <li>
+                      <strong>링크 처리:</strong> 관련 웹사이트 링크는 탭 시 이동 가능하도록 색·밑줄 등으로 일반 본문과 구별합니다.
+                    </li>
+                    <li>
+                      <strong>표(Table) 스크롤:</strong> 표 가로 폭이 기기보다 크면{' '}
+                      <strong>표 영역에만 가로 스크롤</strong>을 두어, 전체 화면 레이아웃이 깨지지 않도록 합니다.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* [공지사항 목록 페이지 정책] — 실제 화면·라우팅·스크롤 구현은 이 문서 범위 밖 */}
+              <div className="mt-5 pt-4 border-t border-gray-200 space-y-3">
+                <h4 className="text-xs font-bold text-gray-800 tracking-wide">[공지사항 목록 페이지 정책]</h4>
+                <div className="space-y-3 text-sm text-gray-700 leading-relaxed">
+                  <p className="font-semibold text-gray-800">1. App Bar (상단 바)</p>
+                  <ul className="space-y-1.5 list-disc pl-5">
+                    <li>
+                      <strong>뒤로 가기 버튼:</strong> 탭 시 이전 화면으로 돌아갑니다.
+                    </li>
+                    <li>
+                      <strong>타이틀:</strong> 상단에 <strong>「공지사항」</strong> 문구를 노출합니다.
+                    </li>
+                  </ul>
+                  <p className="font-semibold text-gray-800 pt-1">2. 공지사항 목록 영역</p>
+                  <ul className="space-y-1.5 list-disc pl-5">
+                    <li>
+                      <strong>Empty State:</strong> 등록된 공지가 없을 때는{' '}
+                      <strong>「등록된 공지사항이 없습니다.」</strong> 안내를 보여 줍니다.
+                    </li>
+                    <li>
+                      <strong>목록 정렬 및 로드:</strong> 최신 공지가 맨 위에 오도록{' '}
+                      <strong>내림차순(최신 우선)</strong>으로 정렬합니다. 데이터가 많아지면{' '}
+                      <strong>무한 스크롤(Infinite Scroll)</strong> 방식으로 이어서 불러오는 동작을 전제로 합니다.
+                    </li>
+                    <li>
+                      <strong>공지 아이템(제목 / 게시일):</strong> 제목이 길 경우{' '}
+                      <strong>최대 줄 수를 제한</strong>하고, 넘치는 부분은 <strong>말줄임표(…)</strong>로 처리합니다 (
+                      <strong>Text Truncation</strong>).
+                    </li>
+                    <li>
+                      개별 항목(제목·게시일이 보이는 행)을 탭하면 해당 공지의{' '}
+                      <strong>상세 내용 화면</strong>으로 이동합니다.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* [회원탈퇴 페이지 및 알림 팝업 정책] — 체크박스/버튼/모달 구현 코드는 이 문서 범위 밖 */}
+              <div className="mt-5 pt-4 border-t border-gray-200 space-y-3">
+                <h4 className="text-xs font-bold text-gray-800 tracking-wide">
+                  [회원탈퇴 페이지 및 알림 팝업 정책]
+                </h4>
+                <div className="space-y-3 text-sm text-gray-700 leading-relaxed">
+                  <p className="font-semibold text-gray-800">1. 진입 및 상단 바 (App Bar)</p>
+                  <ul className="space-y-1.5 list-disc pl-5">
+                    <li>
+                      마이페이지 하단 <strong>탈퇴하기</strong> 텍스트 링크를 탭하면 <strong>회원탈퇴</strong> 화면으로
+                      진입합니다.
+                    </li>
+                    <li>
+                      <strong>뒤로 가기:</strong> 이전 화면으로 돌아갑니다.
+                    </li>
+                    <li>
+                      <strong>타이틀:</strong> 상단에 <strong>「회원탈퇴」</strong>를 표시합니다.
+                    </li>
+                  </ul>
+                  <p className="font-semibold text-gray-800 pt-1">2. 안내 사항 및 확인 (체크박스 영역)</p>
+                  <p>
+                    상단 안내 문구: <strong>「탈퇴 전, 다음 사항을 꼭 확인해 주세요.」</strong>
+                  </p>
+                  <ul className="space-y-1.5 list-disc pl-5">
+                    <li>
+                      <strong>2-a. 콘텐츠 삭제 불가 알림 (체크 필수):</strong> 리뷰에 기여한 글·댓글 등은 탈퇴로
+                      삭제되지 않음을 안내합니다. 삭제를 원하면 <strong>탈퇴 전</strong> 사용자가 직접 삭제하도록
+                      안내합니다.
+                    </li>
+                    <li>
+                      <strong>2-b. 재가입 제한 사항 알림 (체크 필수):</strong> 삭제된 정보는 복구할 수 없으며, 탈퇴
+                      후 <strong>24시간 동안 재가입이 불가</strong>함을 안내합니다.
+                    </li>
+                  </ul>
+                  <p className="font-semibold text-gray-800 pt-1">3. 하단 「탈퇴하기」 버튼 상태 (조건부 활성화)</p>
+                  <ul className="space-y-1.5 list-disc pl-5">
+                    <li>
+                      <strong>Default (비활성화):</strong> 화면 진입 직후에는 버튼을 비활성 상태로 둡니다.
+                    </li>
+                    <li>
+                      <strong>Active (활성화):</strong> 위 <strong>2-a</strong>, <strong>2-b</strong> 확인
+                      항목(체크박스)이 <strong>모두 체크</strong>된 경우에만 버튼을 활성화합니다.
+                    </li>
+                  </ul>
+                  <p className="font-semibold text-gray-800 pt-1">4. 팝업: 탈퇴 완료 알림</p>
+                  <ul className="space-y-1.5 list-disc pl-5">
+                    <li>
+                      하단에서 활성화된 <strong>「탈퇴하기」</strong>를 눌러 탈퇴 처리가{' '}
+                      <strong>성공적으로 완료</strong>되었을 때 노출하는 <strong>모달 팝업</strong>입니다.
+                    </li>
+                    <li>
+                      본문 문구:{' '}
+                      <strong>
+                        「회원 탈퇴가 완료되었습니다. 24시간 이후 재가입 부탁드립니다.」
+                      </strong>
+                    </li>
+                    <li>
+                      <strong>[확인]</strong> 버튼을 탭하면 팝업이 닫히고,{' '}
+                      <strong>서비스 로그인 화면(비로그인 상태)</strong>으로 이동합니다.
+                    </li>
+                  </ul>
+                </div>
+                <section className="rounded-lg border border-red-200 bg-red-50/80 p-3 mt-2">
+                  <h5 className="text-xs font-bold text-red-900 mb-1.5">
+                    ⚠️ 백엔드 / 정책 중요 노티스
+                  </h5>
+                  <p className="text-sm text-red-950/90 leading-relaxed">
+                    탈퇴 처리된 계정(식별자)은 <strong>탈퇴 시점으로부터 24시간 동안 재가입을 차단</strong>해야 합니다.
+                  </p>
+                </section>
+              </div>
             </div>
           </section>
         )}

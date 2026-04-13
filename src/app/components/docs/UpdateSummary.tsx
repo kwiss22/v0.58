@@ -31,7 +31,7 @@ export function UpdateSummary() {
               <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-2">
                 <p className="text-xs font-bold text-red-800 mb-1">❌ 현재 (삭제 예정)</p>
                 <p className="text-xs text-red-900">
-                  "오른쪽 영역: 통합 검색 아이콘 (돋보기) - 터치 시 GlobalSearchModal 오버레이 표시"
+                  "오른쪽 영역: 통합 검색 아이콘 (돋보기) - 터치 시 통합 검색 전체 창 오버레이 표시"
                 </p>
               </div>
               <div className="bg-green-50 border border-green-200 rounded-lg p-3">
@@ -40,7 +40,7 @@ export function UpdateSummary() {
                   "오른쪽 영역: 통합 검색 아이콘 (돋보기)"
                 </p>
                 <ul className="text-xs text-green-900 space-y-1 ml-4">
-                  <li>• 터치 시 <code className="bg-white px-1 rounded">GlobalSearchModal</code> 전체 화면 오버레이 표시</li>
+                  <li>• 터치 시 통합 검색 전체 창(화면을 가득 채우는 검색)이 열림</li>
                   <li>• 명의/병원/게시글을 한 번에 검색할 수 있는 통합 검색 기능 제공</li>
                   <li>• 홈·명의찾기·커뮤니티 탭 공통 노출 (동일한 UI/기능)</li>
                   <li>• 비회원은 하루 3회까지 무료 검색 가능</li>
@@ -60,14 +60,14 @@ export function UpdateSummary() {
                       <tr>
                         <th className="px-2 py-1.5 text-left font-bold">구분</th>
                         <th className="px-2 py-1.5 text-left font-bold">명의찾기 탭 검색</th>
-                        <th className="px-2 py-1.5 text-left font-bold">통합검색 (GlobalSearchModal)</th>
+                        <th className="px-2 py-1.5 text-left font-bold">통합 검색 전체 창</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y">
                       <tr>
                         <td className="px-2 py-1.5 text-gray-600">위치</td>
                         <td className="px-2 py-1.5">명의찾기 탭 내부 검색창</td>
-                        <td className="px-2 py-1.5">우측 상단 돋보기 아이콘 → 전체화면 모달</td>
+                        <td className="px-2 py-1.5">우측 상단 돋보기 아이콘 → 전체 화면 검색 창</td>
                       </tr>
                       <tr>
                         <td className="px-2 py-1.5 text-gray-600">검색 대상</td>
@@ -77,7 +77,7 @@ export function UpdateSummary() {
                       <tr>
                         <td className="px-2 py-1.5 text-gray-600">결과 표시</td>
                         <td className="px-2 py-1.5">현재 화면에서 필터링</td>
-                        <td className="px-2 py-1.5">모달 내부에서 탭으로 구분 표시</td>
+                        <td className="px-2 py-1.5">검색 창 안에서 탭으로 구분 표시</td>
                       </tr>
                       <tr>
                         <td className="px-2 py-1.5 text-gray-600">사용량 제한</td>
@@ -170,14 +170,14 @@ export function UpdateSummary() {
             <div className="border-l-4 border-blue-500 pl-4">
               <h3 className="text-sm font-bold text-gray-900 mb-2">➕ 추가 3: 댓글 신고/수정 기능 (커뮤니티)</h3>
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <p className="text-xs font-bold text-blue-800 mb-2">✅ 커뮤니티 게시글 모달 - 댓글 관련 기능</p>
+                <p className="text-xs font-bold text-blue-800 mb-2">✅ 커뮤니티 게시글 상세 - 댓글 관련 기능</p>
                 <div className="bg-white rounded-lg p-3 border border-blue-200 space-y-3">
                   <div>
                     <p className="text-xs font-bold text-gray-900">🚨 댓글 신고</p>
                     <ul className="text-xs text-gray-700 ml-4 mt-1 space-y-0.5">
                       <li>• 댓글 우측 ••• 메뉴 → "신고하기" 선택</li>
                       <li>• 신고 사유 선택 모달 표시 (욕설/광고/도배/기타)</li>
-                      <li>• localStorage 기반: 신고 5회 누적 시 자동 블라인드 처리</li>
+                      <li>• 데모(이 브라우저 저장): 같은 댓글에 신고가 5번 쌓이면 자동으로 가림 처리</li>
                       <li>• 블라인드 댓글은 "신고가 접수된 댓글입니다" 회색 박스로 표시</li>
                     </ul>
                   </div>
@@ -195,9 +195,9 @@ export function UpdateSummary() {
 
             {/* 추가 4 */}
             <div className="border-l-4 border-blue-500 pl-4">
-              <h3 className="text-sm font-bold text-gray-900 mb-2">➕ 추가 4: 로그인 유도 모달 디자인 통일</h3>
+              <h3 className="text-sm font-bold text-gray-900 mb-2">➕ 추가 4: 로그인 유도 팝업 디자인 통일</h3>
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <p className="text-xs font-bold text-blue-800 mb-2">✅ LoginRequiredToast 컴포넌트</p>
+                <p className="text-xs font-bold text-blue-800 mb-2">✅ 로그인 유도 팝업</p>
                 <div className="bg-white rounded-lg p-3 border border-blue-200 space-y-2">
                   <div>
                     <p className="text-xs font-bold text-gray-900">🎨 디자인 특징</p>
@@ -210,8 +210,8 @@ export function UpdateSummary() {
                   <div>
                     <p className="text-xs font-bold text-gray-900">📍 사용 위치</p>
                     <ul className="text-xs text-gray-700 ml-4 space-y-0.5">
-                      <li>• 의사 프로필 모달: 리뷰 작성, 북마크 시도</li>
-                      <li>• 병원 상세 모달: 리뷰 작성 시도</li>
+                      <li>• 의사 프로필 창: 리뷰 작성, 북마크 시도</li>
+                      <li>• 병원 상세 창: 리뷰 작성 시도</li>
                       <li>• 커뮤니티: 댓글 작성, 게시글 작성 시도</li>
                       <li>• 통합검색: 북마크 시도</li>
                     </ul>
@@ -243,17 +243,17 @@ export function UpdateSummary() {
                       <tr>
                         <td className="px-2 py-1.5 text-gray-900">의사 프로필 조회</td>
                         <td className="px-2 py-1.5 text-gray-700">하루 3회</td>
-                        <td className="px-2 py-1.5 text-gray-700">프로필 모달 대신 로그인 유도 토스트</td>
+                        <td className="px-2 py-1.5 text-gray-700">프로필 대신 로그인 유도 팝업</td>
                       </tr>
                       <tr>
                         <td className="px-2 py-1.5 text-gray-900">커뮤니티 게시글 열람</td>
                         <td className="px-2 py-1.5 text-gray-700">하루 5회</td>
-                        <td className="px-2 py-1.5 text-gray-700">게시글 모달 대신 로그인 유도 토스트</td>
+                        <td className="px-2 py-1.5 text-gray-700">게시글 상세 대신 로그인 유도 팝업</td>
                       </tr>
                     </tbody>
                   </table>
                   <p className="text-xs text-gray-600 mt-2">
-                    ※ localStorage 기반 카운트, 자정 초기화
+                    ※ 데모는 이 브라우저에 남은 횟수를 저장, 매일 자정 초기화
                   </p>
                 </div>
               </div>
@@ -265,7 +265,7 @@ export function UpdateSummary() {
         {/* ━━━━━ 3. 통합검색 ━━━━━ */}
         <section className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
           <div className="bg-gradient-to-r from-violet-500 to-purple-600 px-5 py-4">
-            <h2 className="text-lg font-black text-white">🔍 3. SearchScenarioSpec.tsx (통합검색 모달)</h2>
+            <h2 className="text-lg font-black text-white">🔍 3. SearchScenarioSpec.tsx (통합 검색 전체 창)</h2>
           </div>
           <div className="p-5 space-y-5">
 
@@ -307,7 +307,7 @@ export function UpdateSummary() {
                     <p className="text-xs font-bold text-gray-900">🚫 검색창 차단</p>
                     <ul className="text-xs text-gray-700 ml-4 space-y-0.5">
                       <li>• 플레이스홀더: "오늘 무료 검색을 모두 사용했어요"</li>
-                      <li>• 검색창 읽기 전용 (readOnly)</li>
+                      <li>• 검색창은 입력만 막고 안내 문구는 유지</li>
                       <li>• 회색 배경 + 자물쇠 아이콘 표시</li>
                     </ul>
                   </div>

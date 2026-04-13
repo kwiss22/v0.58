@@ -1,4 +1,4 @@
-// 통합 검색 모달 화면정의서 — 공통 컴포넌트 (명의찾기·커뮤니티·홈 탭 공통)
+// 통합 검색 전체 창 화면정의서 — 홈·명의 찾기·커뮤니티 탭에서 공통으로 사용
 
 import React from 'react';
 
@@ -122,6 +122,13 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
     isDiseaseQuery:  'violet',
   };
 
+  /** 시나리오 카드에 표시하는 분류 이름(기획·검증용) */
+  const branchLabelKr: Record<string, string> = {
+    isSymptomQuery: '증상·상담형 질문',
+    isHospitalQuery: '병원명 검색',
+    isDiseaseQuery: '질환·진료과 검색',
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-2xl mx-auto px-4 py-6 space-y-7">
@@ -132,9 +139,9 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-xl">🔎</span>
-                <p className="text-base font-black text-violet-900">통합 검색 모달</p>
+                <p className="text-base font-black text-violet-900">통합 검색 전체 창</p>
               </div>
-              <p className="text-xs text-violet-600">공통 컴포넌트 · GlobalSearchModal</p>
+              <p className="text-xs text-violet-600">홈·명의 찾기·커뮤니티에서 동일하게 쓰는 검색 화면</p>
             </div>
             <div className="flex flex-col items-end gap-1.5">
               <span className="text-[10px] font-bold bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full">공통</span>
@@ -143,16 +150,20 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
             </div>
           </div>
           <p className="text-xs text-gray-700 leading-relaxed">
-            홈·명의 찾기·커뮤니티에서 <strong>반응형 웹 메인 뷰 우상단 고정 돋보기</strong>로 진입하는 전역 검색 모달입니다.
+            홈·명의 찾기·커뮤니티에서 <strong>화면 오른쪽 위 돋보기</strong>로 진입하는 전체 화면 검색입니다.
             <strong> UI/UX·분기·레이아웃</strong>을 정의하며, 프로토타입의 검색 대상 데이터는 <strong>더미</strong>입니다. 실서비스는 API·인덱스에 따릅니다.
           </p>
+        </div>
+        <div className="bg-blue-50 border border-blue-200 rounded-xl px-3 py-2.5 text-[11px] text-blue-900 leading-relaxed">
+          <strong>운영 원칙:</strong> 이 문서는 통합검색의 <strong>비회원·공통(Base) 화면</strong>만 다룹니다(검색창·탭·목록·비회원 한도 등).
+          <strong> 회원 전용 이용 경험</strong>(한도 안내가 사라진 뒤의 체감, 카드 열기 이후 저장·댓글 등)은 <strong>회원 역할</strong>로 볼 때 열리는 <strong>SearchScenarioSpecBiz</strong> 문서에 모았습니다.
         </div>
 
         {/* ── 1. 개요 ── */}
         <section>
           <SectionHeader emoji="📋" title="1. 개요" color="violet" />
           <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-100">
-            <SpecRow label="컴포넌트명"   value={<code className="text-violet-700 bg-violet-50 px-1.5 py-0.5 rounded text-[11px]">GlobalSearchModal</code>} />
+            <SpecRow label="화면 이름"   value="통합 검색 전체 창 (기획·디자인 기준)" />
             <SpecRow label="배치 탭"      value={
               <div className="flex gap-1.5 flex-wrap">
                 <Tag color="violet">홈</Tag>
@@ -161,9 +172,9 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
                 <span className="text-[11px] text-gray-400">· Chat·My 탭 제외</span>
               </div>
             } />
-            <SpecRow label="진입 방식"    value="각 탭에서 반응형 웹 메인 뷰 우상단 고정 돋보기 탭" sub="프로토타입: home · search · community 탭에서 노출" />
-            <SpecRow label="표시 방식"    value="앱 화면 영역 위 풀스크린 오버레이(어두운 딤 + 모달)" sub="z-index로 탭바 위까지 덮는 UX 목표" />
-            <SpecRow label="닫기"         value="취소 버튼 탭 · ESC 키 · 검색 결과 항목 이동 시 자동 닫힘" />
+            <SpecRow label="진입 방식"    value="각 탭에서 화면 오른쪽 위 돋보기를 눌러 열기" sub="프로토타입: 홈·명의 찾기·커뮤니티 탭에서만 노출" />
+            <SpecRow label="표시 방식"    value="어두운 배경 위에 검색 창이 화면을 가득 채움" sub="아래 탭 메뉴보다 앞에 보이게 하는 것이 목표" />
+            <SpecRow label="닫기"         value="취소 버튼 · ESC 키 · 결과 항목을 눌러 다른 화면으로 갈 때 자동으로 닫힘" />
             <SpecRow label="검색 범위"    value={
               <div className="flex gap-1.5 flex-wrap">
                 <Tag color="teal">명의</Tag>
@@ -180,18 +191,18 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
           <SectionHeader emoji="🧩" title="2. UI 구조" color="teal" />
 
           {/* 헤더 영역 */}
-          <p className="text-xs font-bold text-gray-700 mb-2">헤더 영역 (sticky)</p>
+          <p className="text-xs font-bold text-gray-700 mb-2">헤더 영역 (스크롤해도 위에 고정)</p>
           <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-100 mb-4">
-            <SpecRow label="돋보기 아이콘"  value="lucide-react Search · w-5 h-5 · text-gray-400 · flex-shrink-0" />
-            <SpecRow label="텍스트 입력창"  value='placeholder="명의, 병원, 질환, 게시글 검색" · 자동 포커스 (open 후 80ms)' />
-            <SpecRow label="자동완성"       value="입력 포커스 + 마지막 단어 존재 시 SearchSuggestions 드롭다운 표시" sub="선택 시 마지막 단어를 해당 제안어로 교체" />
-            <SpecRow label="X 버튼"         value="query 존재 시 노출 · 탭 시 입력 초기화" />
+            <SpecRow label="돋보기 아이콘"  value="검색을 나타내는 작은 돋보기 아이콘(회색 톤)" />
+            <SpecRow label="텍스트 입력창"  value="안내 문구: «명의, 병원, 질환, 게시글 검색» — 창이 열리면 곧바로 입력할 수 있게 포커스" />
+            <SpecRow label="자동완성"       value="글을 입력 중이면 연관 검색어 목록이 아래에 펼쳐짐" sub="항목을 고르면 방금 친 단어가 제안어로 바뀜" />
+            <SpecRow label="X 버튼"         value="검색어가 있을 때만 보임 · 누르면 입력 내용만 지움" />
             <SpecRow 
               label="🔒 가입하기 버튼" 
-              value="검색 한도 소진 시 우측 표시 · 황색 배경 (bg-amber-50) · 탭 시 GuestLimitModal 오픈" 
+              value="검색 한도 소진 시 우측 표시 · 황색 배경 · 탭 시 한도 초과 안내 팝업" 
               isNew
             />
-            <SpecRow label="취소 버튼"      value="탭 시 모달 닫기 (onClose)" />
+            <SpecRow label="취소 버튼"      value="누르면 검색 창 전체 닫기" />
           </div>
 
           {/* 🆕 사용량 배너 (비회원 전용) */}
@@ -199,7 +210,7 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
             <p className="text-xs font-bold text-pink-900 mb-2">🆕 사용량 배너 (비회원 전용)</p>
             <div className="bg-white rounded-xl border border-pink-200 divide-y divide-pink-100">
               <SpecRow label="위치" value="검색 헤더 바로 아래 고정" isNew />
-              <SpecRow label="컴포넌트" value="UsageLimitBanner (types=['search'])" isNew />
+              <SpecRow label="안내 UI" value="비회원 무료 이용 한도 안내 배너 — 검색 잔여·소진 문구(헤더 아래)" isNew />
               <SpecRow label="경고 배너" value="⚠️ 오늘 무료 검색 1회 남았어요 [가입하기]" sub="잔여 1회일 때 황색 배경으로 표시" isNew />
               <SpecRow label="한도 소진 배너" value="🔒 오늘 무료 검색을 모두 사용했어요 · 내일 자정에 초기화 · 3회/일" sub="잔여 0회일 때 표시" isNew />
             </div>
@@ -209,7 +220,7 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
           <div className="bg-pink-50 border-2 border-pink-400 rounded-xl p-4 mb-4">
             <p className="text-xs font-bold text-pink-900 mb-2">🆕 탭 바 (결과 있을 때만 표시)</p>
             <div className="bg-white rounded-xl border border-pink-200 divide-y divide-pink-100">
-              <SpecRow label="표시 조건" value="query 존재 + !isSymptomQuery + totalCount > 0" isNew />
+              <SpecRow label="표시 조건" value="검색어가 있고, 증상·상담형이 아니며, 결과가 1건 이상일 때" isNew />
               <SpecRow label="탭 구성" value={
                 <div className="flex gap-1.5">
                   <Tag color="teal">명의 (N명)</Tag>
@@ -217,49 +228,49 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
                   <Tag color="purple">커뮤니티 (N개)</Tag>
                 </div>
               } sub="결과 있는 탭만 동적으로 표시" isNew />
-              <SpecRow label="선택 상태" value="파란색 텍스트 (text-blue-600) · 하단 파란 바 (bg-blue-600 h-0.5)" isNew />
+              <SpecRow label="선택 상태" value="선택된 탭은 파란 글자 + 아래쪽 파란 줄로 강조" isNew />
               <SpecRow label="자동 전환" value="검색어 입력 시 결과 있는 첫 번째 탭으로 자동 이동" isNew />
             </div>
           </div>
 
           {/* 바디 영역 — 수정됨 */}
           <p className="text-xs font-bold text-gray-700 mb-2">
-            바디 영역 (flex-1 overflow-y-auto) 
+            본문 영역 (세로 스크롤) 
             <span className="ml-2 text-[10px] text-red-600 bg-red-50 px-2 py-0.5 rounded-full">수정됨</span>
           </p>
           <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-100 mb-4">
-            <SpecRow label="Aiga 배너"      value="isDiseaseQuery 시 결과 최상단 고정 노출 · 탭 시 ChatPage 이동 + 모달 닫기" />
+            <SpecRow label="Aiga 배너"      value="질환·진료과형 검색일 때 결과 맨 위에 고정 · 누르면 AI 챗봇 탭으로 이동하고 검색 창은 닫힘" />
             <SpecRow 
               label="명의 탭" 
-              value="10개씩 무한 스크롤 · Intersection Observer · 로딩 스피너" 
-              sub="하단 '명의찾기 페이지에서 더 보기' 버튼"
+              value="처음 10명 표시, 아래로 내리면 10명씩 더 불러옴 · 로딩 중에는 돌아가는 표시" 
+              sub="하단 «명의 찾기에서 더 보기» 버튼"
               isModified
             />
             <SpecRow 
               label="병원 탭" 
-              value="10개씩 무한 스크롤 · Intersection Observer · 로딩 스피너" 
-              sub="하단 '소속 명의 보기' 버튼 항상 노출"
+              value="처음 10곳 표시, 아래로 내리면 10곳씩 더 불러옴 · 로딩 중에는 돌아가는 표시" 
+              sub="하단 «소속 명의 보기» 버튼은 항상 노출"
               isModified
             />
             <SpecRow 
               label="커뮤니티 탭" 
-              value="10개씩 무한 스크롤 · Intersection Observer · 로딩 스피너" 
-              sub="하단 '커뮤니티 페이지에서 더 보기' 버튼"
+              value="처음 10개 표시, 아래로 내리면 10개씩 더 불러옴 · 로딩 중에는 돌아가는 표시" 
+              sub="하단 «커뮤니티에서 더 보기» 버튼"
               isModified
             />
             <SpecRow 
-              label="무한 스크롤" 
-              value="PAGE_SIZE = 10 · 하단 sentinel 도달 시 10개씩 추가 로드" 
+              label="더 보기(목록)" 
+              value="한 번에 10건씩 · 목록 맨 아래에 도달하면 10건씩 추가로 불러옴" 
               isModified
             />
           </div>
 
-          {/* 서브 모달 */}
-          <p className="text-xs font-bold text-gray-700 mb-2">서브 모달 (결과 항목 탭 시)</p>
+          {/* 하위 창 */}
+          <p className="text-xs font-bold text-gray-700 mb-2">하위 창 (결과에서 카드를 눌렀을 때)</p>
           <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-100">
-            <SpecRow label="명의 탭"   value="DoctorProfileModal — 명의 프로필 상세" sub="비회원: 프로필 조회 횟수 차감 (하루 3회)" />
-            <SpecRow label="병원 탭"   value="HospitalCardModal — 병원 정보 + 소속 명의" sub="사용량 제한 없음" />
-            <SpecRow label="게시글 탭" value="CommunityPostModal — 게시글 본문 상세" sub="비회원: 게시글 열람 횟수 차감 (하루 5회). 회원: 게시글 공감 토글(재탭 취소). 검색어(q) 변경 시 세션 내 공감 오버라이드 초기화" />
+            <SpecRow label="명의 탭"   value="명의 프로필 상세 창" sub="비회원: 프로필 조회 횟수 차감 (하루 3회, 홈·명의 찾기·통합 검색이 같은 남은 횟수를 씀)" />
+            <SpecRow label="병원 탭"   value="병원 정보 창 (소속 명의 포함)" sub="사용량 제한 없음" />
+            <SpecRow label="게시글 탭" value="게시글 상세(홈·통합검색)" sub="비회원: 게시글 열람 횟수 차감 (하루 5회, 홈·커뮤니티·통합 검색이 같은 남은 횟수를 씀). 회원 경험은 SearchScenarioSpecBiz·CommunityTabSpecBiz 참조" />
           </div>
         </section>
 
@@ -270,37 +281,37 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
           <div className="space-y-2.5">
             <StateCard
               color="gray"
-              title="① Empty State — 검색어 없음"
-              condition="query = '' (초기 진입 또는 X 버튼으로 초기화)"
-              ui="Aiga 안내 배너 노출 ('증상이 있으신가요? · 질문하기' 버튼)"
-              sub="ChatPage 연동 시에만 표시"
+              title="① 검색어 없음 (처음 열었을 때)"
+              condition="검색창이 비어 있음(처음 들어왔거나 X로 지운 뒤)"
+              ui="Aiga 안내 배너 («증상이 있으신가요?» · «질문하기» 버튼)"
+              sub="AI 챗봇과 연결된 경우에만 이 배너가 보임"
             />
             <StateCard
               color="blue"
-              title="② 증상어 감지 화면"
-              condition="isSymptomQuery = true (동사 어미 또는 증상 명사 감지)"
-              ui="Bot 아이콘 + 안내 문구 + 'Aiga에게 질문하기' 버튼 · 검색 결과 미표시"
-              sub="탭 시 ChatPage 이동 · 초기 메시지 = 입력 쿼리"
+              title="② 증상·상담형으로 이해한 경우"
+              condition="«배가 아파요»처럼 증상을 말하는 문장으로 판단될 때"
+              ui="챗봇 안내 + «Aiga에게 질문하기» 버튼 · 명의·병원·게시글 목록은 숨김"
+              sub="버튼을 누르면 AI 챗봇 탭으로 이동하며, 입력했던 말이 첫 메시지로 넘어감"
             />
             <StateCard
               color="gray"
               title="③ 결과 없음"
-              condition="query 존재 + isSymptomQuery = false + totalCount = 0"
-              ui="SearchX 아이콘 + '결과 없음' 문구 + Aiga 챗봇 유도 카드"
+              condition="검색어는 있는데 증상형이 아니고, 찾은 결과가 0건일 때"
+              ui="검색 없음 아이콘 + «결과 없음» 문구 + 챗봇으로 유도하는 카드"
             />
             <StateCard
               color="teal"
-              title="④ 검색 결과"
-              condition="query 존재 + isSymptomQuery = false + totalCount > 0"
-              ui="탭 바 + [Aiga 배너] + 선택된 탭 결과 (무한 스크롤)"
-              sub="탭별로 명의/병원/커뮤니티 결과 표시"
+              title="④ 검색 결과가 있을 때"
+              condition="검색어가 있고 증상형이 아니며, 결과가 1건 이상일 때"
+              ui="탭 줄 + [질환일 때 Aiga 배너] + 선택한 탭의 목록(더 보기 방식)"
+              sub="탭마다 명의·병원·커뮤니티 결과를 나눠 보여줌"
             />
             <StateCard
               color="amber"
-              title="🆕 ⑤ 한도 차단 화면 (비회원 전용)"
-              condition="effectivelyBlocked = true (검색 한도 0회)"
-              ui="중앙 Lock 아이콘 + '오늘 무료 검색을 모두 사용했어요' + 회원가입 버튼"
-              sub="검색창 readOnly 상태 · 우측 🔒 가입하기 버튼 표시"
+              title="🆕 ⑤ 한도까지 쓴 경우 (비회원)"
+              condition="비회원이고, 오늘 무료 검색을 이미 다 썼을 때"
+              ui="가운데 자물쇠 + «오늘 무료 검색을 모두 사용했어요» + 회원가입·로그인 버튼"
+              sub="검색창은 읽기 전용 · 오른쪽에 «가입하기» 버튼 표시"
               isNew
             />
           </div>
@@ -315,7 +326,7 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
             <div className="border-2 border-blue-200 bg-blue-50/50 rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2.5">
                 <span className="text-[11px] font-bold bg-blue-600 text-white px-2 py-0.5 rounded-full">1순위</span>
-                <span className="text-sm font-bold text-blue-900">isSymptomQuery — 증상어</span>
+                <span className="text-sm font-bold text-blue-900">1단계 — 증상·상담형으로 볼 때</span>
               </div>
               <div className="space-y-1.5 text-[11px] text-blue-900">
                 <p><span className="font-semibold">감지 방식 ①</span> — 동사 어미로 끝나는 경우</p>
@@ -330,11 +341,11 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
             <div className="border-2 border-teal-200 bg-teal-50/50 rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2.5">
                 <span className="text-[11px] font-bold bg-teal-600 text-white px-2 py-0.5 rounded-full">2순위</span>
-                <span className="text-sm font-bold text-teal-900">isHospitalQuery — 병원명</span>
+                <span className="text-sm font-bold text-teal-900">2단계 — 병원 이름으로 볼 때</span>
               </div>
               <div className="space-y-1 text-[11px] text-teal-900">
-                <p><span className="font-semibold">조건</span> — ALL_HOSPITALS 내 병원명에 입력어가 포함(includes)되는 경우</p>
-                <p><span className="font-semibold">데이터</span> — DOCTORS DB에서 hospital 필드 집계 (buildHospitalList)</p>
+                <p><span className="font-semibold">조건</span> — 샘플 병원 목록에 적은 말이 들어가는 병원이 있을 때</p>
+                <p><span className="font-semibold">데이터</span> — 데모에서는 의사 정보에 묶인 병원 이름을 모아서 만든 목록(실서비스는 검색 API 기준)</p>
                 <p className="font-semibold mt-1">→ 결과: 병원 탭 + 커뮤니티 탭</p>
               </div>
             </div>
@@ -343,11 +354,11 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
             <div className="border-2 border-violet-200 bg-violet-50/50 rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2.5">
                 <span className="text-[11px] font-bold bg-violet-600 text-white px-2 py-0.5 rounded-full">3순위</span>
-                <span className="text-sm font-bold text-violet-900">isDiseaseQuery — 질환명/의사명</span>
+                <span className="text-sm font-bold text-violet-900">3단계 — 질환·진료과·의사 이름으로 볼 때</span>
               </div>
               <div className="space-y-1 text-[11px] text-violet-900">
-                <p><span className="font-semibold">조건</span> — 위 2개 미해당 + 명의 검색 결과 존재 + 질환명·태그 매칭</p>
-                <p><span className="font-semibold">검색 필드</span> — name · hospital · specialty · diseaseArea · tags</p>
+                <p><span className="font-semibold">조건</span> — 위 두 경우가 아니고, 명의 쪽에 맞는 결과가 있을 때(이름·병원·전문과·질환 분야·태그 등으로 맞춤)</p>
+                <p><span className="font-semibold">맞춰 보는 항목</span> — 의사 이름 · 병원 · 전문과 · 질환 분야 · 태그 등</p>
                 <p className="font-semibold mt-1">→ 결과: 명의 탭 + Aiga 배너 + 커뮤니티 탭</p>
               </div>
             </div>
@@ -380,8 +391,8 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
             </table>
           </div>
           <Note>
-            Alias 확장은 마지막 단어 기준이 아닌 <strong>전체 쿼리 기준</strong>으로 동작합니다 (getSearchTerms 함수).
-            향후 관리 편의를 위해 별도 config 파일로 분리 검토 필요.
+            동의어 확장은 <strong>마지막 단어만</strong>이 아니라 <strong>통째로 친 문장</strong>을 기준으로 적용합니다.
+            실서비스에서는 동의어·별칭 목록을 따로 관리하는 편이 좋습니다.
           </Note>
         </section>
 
@@ -393,35 +404,35 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
           <div className="mb-4">
             <div className="flex items-center gap-2 mb-2">
               <Tag color="teal">명의 탭</Tag>
-              <span className="text-[11px] text-gray-400">isHospitalQuery = false 일 때만 노출</span>
+              <span className="text-[11px] text-gray-400">«병원 이름만 찾는 경우»가 아닐 때만 이 탭을 씀</span>
             </div>
             <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-100">
-              <SpecRow label="아이콘"       value="lucide-react User · text-teal-600" />
-              <SpecRow label="카드 구성"    value="프로필 이미지(w-10 h-10 rounded-full) · 이름 · 병원명·전문과 · 태그 최대 3개" />
+              <SpecRow label="아이콘"       value="사람 실루엣 아이콘(청록색 톤)" />
+              <SpecRow label="카드 구성"    value="동그란 프로필 사진 · 이름 · 병원명·전문과 · 태그 최대 3개" />
               <SpecRow 
                 label="하이라이트" 
                 value={
                   <span>
-                    검색어 일치 부분 <span className="bg-yellow-100 text-yellow-800 rounded px-1">노란색 배경</span> (bg-yellow-100 text-yellow-800)
+                    검색어와 겹치는 글자 <span className="bg-yellow-100 text-yellow-800 rounded px-1">노란 배경</span>으로 강조
                   </span>
                 } 
                 isNew
               />
               <SpecRow 
                 label="카드 클릭" 
-                value="DoctorProfileModal 오픈 · 비회원은 프로필 조회 횟수 차감 (consumeProfileView)" 
-                sub="한도 소진 시 GuestLimitModal 팝업"
+                value="명의 프로필 상세 열림 · 비회원은 전역 프로필 열람 한도에서 1회 차감" 
+                sub="한도 소진 시 한도 초과 안내 팝업"
                 isNew
               />
               <SpecRow 
                 label="무한 스크롤" 
-                value="10개씩 로드 · 하단 sentinel 도달 시 10개 추가" 
-                sub="모두 로드 완료 시 '명의 N명 모두 표시됨' 문구"
+                value="10명씩 불러옴 · 목록 맨 아래에 닿으면 10명 더 불러옴" 
+                sub="다 불러오면 «명의 N명 모두 표시됨» 문구"
                 isModified
               />
               <SpecRow 
                 label="페이지 이동" 
-                value="명의찾기 페이지에서 더 보기 → DoctorSearchPage 이동 + 검색어 전달 + 모달 닫기" 
+                value="«명의 찾기에서 더 보기» → 명의 찾기 탭으로 이동하고 검색어는 넘김 · 통합 검색 창은 닫힘" 
                 isNew
               />
             </div>
@@ -431,11 +442,11 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
           <div className="mb-4">
             <div className="flex items-center gap-2 mb-2">
               <Tag color="blue">병원 탭</Tag>
-              <span className="text-[11px] text-gray-400">isHospitalQuery = true 일 때만 노출</span>
+              <span className="text-[11px] text-gray-400">«병원 이름으로 찾는 경우»에만 이 탭을 씀</span>
             </div>
             <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-100">
-              <SpecRow label="아이콘"       value="lucide-react Building2 · text-blue-600" />
-              <SpecRow label="카드 구성"    value="병원 아이콘(w-10 h-10 rounded-xl bg-blue-50) · 병원명 · 소속 명의 수 · 전문과 태그" />
+              <SpecRow label="아이콘"       value="건물 아이콘(파란색 톤)" />
+              <SpecRow label="카드 구성"    value="병원 아이콘(연한 파란 배경) · 병원명 · 소속 명의 수 · 전문과 태그" />
               <SpecRow 
                 label="하이라이트" 
                 value={
@@ -445,11 +456,11 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
                 } 
                 isNew
               />
-              <SpecRow label="카드 클릭"      value="HospitalCardModal 오픈 (사용량 제한 없음)" />
+              <SpecRow label="카드 클릭"      value="병원 정보 창 열림 (사용량 제한 없음)" />
               <SpecRow 
                 label="무한 스크롤" 
-                value="10개씩 로드 · 하단 sentinel 도달 시 10개 추가" 
-                sub="모두 로드 완료 시 '병원 N개 모두 표시됨' 문구"
+                value="10곳씩 불러옴 · 목록 맨 아래에 닿으면 10곳 더 불러옴" 
+                sub="다 불러오면 «병원 N개 모두 표시됨» 문구"
                 isModified
               />
             </div>
@@ -459,27 +470,27 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
           <div className="mb-4">
             <div className="flex items-center gap-2 mb-2">
               <Tag color="purple">커뮤니티 탭</Tag>
-              <span className="text-[11px] text-gray-400">query 존재 + !isSymptomQuery 시 항상 병행 노출</span>
+              <span className="text-[11px] text-gray-400">검색어가 있고 증상형이 아니면, 다른 탭과 함께 이 탭도 씀</span>
             </div>
             <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-100">
-              <SpecRow label="아이콘"       value="lucide-react MessageCircle · text-purple-400" />
-              <SpecRow label="카드 구성"    value="아이콘(w-10 h-10 rounded-xl bg-purple-50) · 인증 뱃지 · 질환명 태그 · 제목 · 요약 · 좋아요/댓글/시간" />
-              <SpecRow label="검색 필드"    value="title · summary · disease · department · relatedDoctors" />
+              <SpecRow label="아이콘"       value="말풍선 아이콘(보라색 톤)" />
+              <SpecRow label="카드 구성"    value="아이콘(연한 보라 배경) · 인증 뱃지 · 질환명 태그 · 제목 · 요약 · 좋아요/댓글/시간" />
+              <SpecRow label="검색 대상"    value="제목 · 요약 · 질환 · 진료과 · 관련 의사 이름 등 글 안의 텍스트" />
               <SpecRow 
                 label="카드 클릭" 
-                value="CommunityPostModal 오픈 · 비회원은 게시글 열람 횟수 차감 (consumePostView)" 
-                sub="한도 소진 시 GuestLimitModal 팝업"
+                value="게시글 상세 열림 · 비회원은 전역 게시글 열람 한도에서 1회 차감" 
+                sub="한도 소진 시 한도 초과 안내 팝업"
                 isNew
               />
               <SpecRow 
                 label="무한 스크롤" 
-                value="10개씩 로드 · 하단 sentinel 도달 시 10개 추가" 
-                sub="모두 로드 완료 시 '게시글 N개 모두 확인했습니다' 문구"
+                value="10개씩 불러옴 · 목록 맨 아래에 닿으면 10개 더 불러옴" 
+                sub="다 불러오면 «게시글 N개 모두 확인했습니다» 문구"
                 isModified
               />
               <SpecRow 
                 label="페이지 이동" 
-                value="커뮤니티 페이지에서 더 보기 → CommunityPage로 탭 전환 + 모달 닫기 (검색어는 커뮤니티 필터에 전달되지 않음)" 
+                value="«커뮤니티에서 더 보기» → 커뮤니티 탭으로 전환하고 통합 검색 창은 닫힘 (검색어는 커뮤니티 안의 필터에는 자동으로 안 넘어감)" 
                 isNew
               />
             </div>
@@ -489,12 +500,12 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
           <div>
             <div className="flex items-center gap-2 mb-2">
               <Tag color="blue">Aiga 배너</Tag>
-              <span className="text-[11px] text-gray-400">isDiseaseQuery = true 시 결과 최상단 고정</span>
+              <span className="text-[11px] text-gray-400">질환·진료과형 검색일 때만 결과 맨 위에 고정</span>
             </div>
             <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-100">
-              <SpecRow label="구성"     value="Bot 아이콘(bg-blue-600) · 'Aiga에게 {query} 질문하기' · 'AI가 맞춤 명의·병원을 추천해드려요'" />
-              <SpecRow label="배경"     value="gradient from-blue-50 to-indigo-50 · border-blue-100" />
-              <SpecRow label="클릭 액션"  value="ChatPage 이동 · initialMessage = 입력 쿼리 · 모달 닫기" />
+              <SpecRow label="구성"     value="챗봇 아이콘(진한 파랑) · «Aiga에게 ○○ 질문하기» · «AI가 맞춤 명의·병원을 추천해드려요»" />
+              <SpecRow label="배경"     value="연한 파랑~남색 그라데이션, 얇은 파란 테두리" />
+              <SpecRow label="클릭 시"  value="AI 챗봇 탭으로 이동 · 지금 친 검색어가 첫 질문으로 넘어감 · 통합 검색 창은 닫힘" />
             </div>
           </div>
         </section>
@@ -503,31 +514,37 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
         <section>
           <SectionHeader emoji="📍" title="6. 검색 아이콘 배치 (탭별 공통)" color="gray" />
           <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-100 mb-3">
-            <SpecRow label="위치"     value="absolute top-3.5 right-4 z-30 (웹 메인 레이아웃 루트 relative 기준)" sub="본문 스크롤 영역 밖 → 우상단에 고정된 것처럼 동작. 브라우저 viewport 전체 고정(fixed)은 아님" />
-            <SpecRow label="크기"     value="w-9 h-9 · rounded-full" />
-            <SpecRow label="스타일"   value="bg-white · shadow-sm · border-gray-200" />
-            <SpecRow label="호버"     value="bg-blue-50 · border-blue-300" />
-            <SpecRow label="아이콘"   value="lucide-react Search · w-4.5 h-4.5 · text-gray-500" />
+            <SpecRow label="위치"     value="메인 화면 본문 오른쪽 위(스크롤해도 같은 자리에 보이게 배치)" sub="전체 브라우저 창에 딱 붙는 방식은 아님" />
+            <SpecRow label="크기"     value="동그란 버튼 한 칸 크기(손가락으로 누르기 좋게)" />
+            <SpecRow label="스타일"   value="흰 배경 · 얇은 테두리 · 살짝 그림자" />
+            <SpecRow label="마우스 올렸을 때"     value="연한 파란 배경 · 테두리 강조" />
+            <SpecRow label="아이콘"   value="돋보기 아이콘(회색 톤)" />
             <SpecRow label="노출 탭"  value={
               <div className="flex gap-1.5">
-                <Tag color="violet">홈 (home)</Tag>
-                <Tag color="teal">명의찾기 (search)</Tag>
-                <Tag color="purple">커뮤니티 (community)</Tag>
+                <Tag color="violet">홈</Tag>
+                <Tag color="teal">명의 찾기</Tag>
+                <Tag color="purple">커뮤니티</Tag>
               </div>
             } />
-            <SpecRow label="미노출 탭" value="Chat · My (검색 불필요 탭)" />
+            <SpecRow label="미노출 탭" value="AI 챗봇 · MY (검색이 없는 탭)" />
           </div>
           <Note>
-            탭 전환 시 모달이 열려 있었다면 <strong>자동으로 닫힘</strong> (onTabChange 핸들러에서 handleCloseSearch 호출).
+            아래 탭 메뉴로 다른 탭을 고르면, 검색 창이 열려 있었을 때 <strong>자동으로 닫히는 것</strong>이 맞습니다.
           </Note>
         </section>
 
-        {/* 🆕 ── 8. 비회원 사용량 제한 ── */}
+        {/* 🆕 ── 7. 비회원 사용량 제한 ── */}
         <section>
           <div className="bg-pink-50 border-2 border-pink-400 rounded-xl p-5">
-            <SectionHeader emoji="🔒" title="8. 비회원 사용량 제한" color="rose" />
+            <SectionHeader emoji="🔒" title="7. 비회원 사용량 제한" color="rose" />
             
             <div className="space-y-4">
+              <p className="text-[11px] text-rose-900 bg-white border border-rose-200 rounded-lg px-3 py-2 leading-relaxed">
+                <strong>전역 통합:</strong> 여기서 말하는 검색·프로필·게시글 열람 한도는 <strong>통합 검색 창 안에서만 따로 도는 숫자가 아닙니다.</strong> 홈, 명의 찾기, 커뮤니티와 <strong>같은 «오늘 남은 횟수»</strong>를 씁니다(프로토타입: 이 브라우저에 저장된 같은 기준값). 한 화면에서 1회를 쓰면 다른 화면의 안내 배너·검색창 잠금·한도 안내 창에도 같이 반영되는 것이 맞습니다.
+              </p>
+              <p className="text-[11px] text-indigo-900 bg-indigo-50 border border-indigo-200 rounded-lg px-3 py-2">
+                👉 본 절의 한도 차단·가입/로그인 CTA 버튼 탭 시 이후의 진행 흐름은 마이페이지 화면정의서에 정리된 [공통 로그인/회원가입 플로우 정책]을 공통으로 따름.
+              </p>
               {/* 한도 정책 */}
               <div className="bg-white rounded-xl border border-pink-200 p-4">
                 <p className="text-xs font-bold text-gray-900 mb-3">📊 사용량 한도</p>
@@ -573,7 +590,7 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
                   </div>
                 </div>
                 <p className="text-[11px] text-gray-600">• 위치: 검색 헤더 바로 아래</p>
-                <p className="text-[11px] text-gray-600">• 표시 조건: searchRemaining === 1</p>
+                <p className="text-[11px] text-gray-600">• 표시 조건: 오늘 남은 무료 검색이 딱 1회일 때</p>
               </div>
 
               {/* 한도 소진 배너 */}
@@ -593,7 +610,7 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
                   </div>
                 </div>
                 <p className="text-[11px] text-gray-600">• 위치: 검색 헤더 바로 아래</p>
-                <p className="text-[11px] text-gray-600">• 표시 조건: searchRemaining === 0</p>
+                <p className="text-[11px] text-gray-600">• 표시 조건: 오늘 남은 무료 검색이 0회일 때</p>
               </div>
 
               {/* 검색창 잠금 */}
@@ -609,9 +626,9 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
                       🔒 가입하기
                     </button>
                   </div>
-                  <p className="text-[11px] text-gray-600">• 검색창 readOnly 상태</p>
-                  <p className="text-[11px] text-gray-600">• 연관검색어 드롭다운 숨김</p>
-                  <p className="text-[11px] text-gray-600">• effectivelyBlocked = searchBlocked || (isGuest && !canSearch)</p>
+                  <p className="text-[11px] text-gray-600">• 검색창은 입력만 막고, 안내 문구는 그대로 보임</p>
+                  <p className="text-[11px] text-gray-600">• 연관 검색어 목록은 숨김</p>
+                  <p className="text-[11px] text-gray-600">• 비회원이 한도까지 썼거나, 검색이 막힌 다른 이유가 있으면 이 상태</p>
                 </div>
               </div>
 
@@ -628,7 +645,7 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
                     👤 회원가입 · 로그인
                   </button>
                 </div>
-                <p className="text-[11px] text-gray-600">• 표시 조건: effectivelyBlocked = true</p>
+                <p className="text-[11px] text-gray-600">• 표시 조건: 위와 같이 검색이 막혀야 할 때</p>
                 <p className="text-[11px] text-gray-600">• 검색 결과 영역 전체를 대체</p>
               </div>
 
@@ -638,15 +655,15 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
                 <div className="space-y-2">
                   <div className="flex items-start gap-2">
                     <span className="text-[11px] text-gray-500 w-20 flex-shrink-0">명의 카드</span>
-                    <span className="text-[11px] text-gray-700">프로필 조회 가능 시 → DoctorProfileModal 오픈 + 횟수 차감<br/>한도 소진 시 → GuestLimitModal 팝업</span>
+                    <span className="text-[11px] text-gray-700">프로필 조회 가능 시 → 명의 프로필 상세 열림 + 횟수 차감<br/>한도 소진 시 → 한도 초과 안내 팝업</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <span className="text-[11px] text-gray-500 w-20 flex-shrink-0">병원 카드</span>
-                    <span className="text-[11px] text-gray-700">제한 없음 → HospitalCardModal 오픈</span>
+                    <span className="text-[11px] text-gray-700">제한 없음 → 병원 정보 창 열림</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <span className="text-[11px] text-gray-500 w-20 flex-shrink-0">게시글 카드</span>
-                    <span className="text-[11px] text-gray-700">열람 가능 시 → CommunityPostModal 오픈 + 횟수 차감<br/>한도 소진 시 → GuestLimitModal 팝업</span>
+                    <span className="text-[11px] text-gray-700">열람 가능 시 → 게시글 상세 열림 + 횟수 차감<br/>한도 소진 시 → 한도 초과 안내 팝업</span>
                   </div>
                 </div>
               </div>
@@ -654,106 +671,33 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
           </div>
         </section>
 
-        {/* 🆕 ── 9. 탭 구조 + 무한 스크롤 ── */}
+        {/* 🆕 ── 8. 탭/무한스크롤 운영 요약 ── */}
         <section>
           <div className="bg-pink-50 border-2 border-pink-400 rounded-xl p-5">
-            <SectionHeader emoji="📑" title="9. 탭 구조 + 무한 스크롤" color="rose" />
+            <SectionHeader emoji="📑" title="8. 탭/무한스크롤 운영 요약" color="rose" />
             
             <div className="space-y-4">
-              {/* 탭 구조 */}
               <div className="bg-white rounded-xl border border-pink-200 p-4">
-                <p className="text-xs font-bold text-gray-900 mb-3">🗂️ 탭 구조</p>
-                <div className="space-y-2 mb-3">
-                  <div className="flex items-center gap-2 p-2 bg-blue-50 border border-blue-200 rounded-lg">
-                    <div className="flex gap-2">
-                      <span className="px-3 py-1 bg-blue-600 text-white text-xs font-medium rounded-lg border-b-2 border-blue-700">명의 (N명)</span>
-                      <span className="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-lg">병원 (N개)</span>
-                      <span className="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-lg">커뮤니티 (N개)</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="space-y-1 text-[11px]">
-                  <p className="text-gray-700">• <strong>동적 표시</strong>: 결과 있는 탭만 표시</p>
-                  <p className="text-gray-700">• <strong>자동 전환</strong>: 검색어 입력 시 결과 있는 첫 탭으로 이동</p>
-                  <p className="text-gray-700">• <strong>선택 상태</strong>: 파란색 텍스트 + 하단 파란 바 (h-0.5 bg-blue-600)</p>
-                  <p className="text-gray-700">• <strong>카운트 배지</strong>: 각 탭 우측에 결과 수 표시</p>
-                </div>
-              </div>
-
-              {/* 무한 스크롤 */}
-              <div className="bg-white rounded-xl border border-pink-200 p-4">
-                <p className="text-xs font-bold text-gray-900 mb-3">♾️ 무한 스크롤</p>
-                <div className="overflow-x-auto rounded-lg border border-gray-200 mb-3">
-                  <table className="w-full text-[11px]">
-                    <thead>
-                      <tr className="bg-gray-50 border-b border-gray-200">
-                        <th className="px-3 py-2 text-left font-bold text-gray-700">항목</th>
-                        <th className="px-3 py-2 text-left font-bold text-gray-700">값</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className="bg-white border-b border-gray-100">
-                        <td className="px-3 py-2 text-gray-900 font-medium">초기 로드</td>
-                        <td className="px-3 py-2 text-gray-700">10개 (PAGE_SIZE = 10)</td>
-                      </tr>
-                      <tr className="bg-gray-50 border-b border-gray-100">
-                        <td className="px-3 py-2 text-gray-900 font-medium">추가 로드</td>
-                        <td className="px-3 py-2 text-gray-700">10개씩 (하단 sentinel 도달 시)</td>
-                      </tr>
-                      <tr className="bg-white border-b border-gray-100">
-                        <td className="px-3 py-2 text-gray-900 font-medium">감지 방식</td>
-                        <td className="px-3 py-2 text-gray-700">Intersection Observer (rootMargin: 120px)</td>
-                      </tr>
-                      <tr className="bg-gray-50">
-                        <td className="px-3 py-2 text-gray-900 font-medium">로딩 표시</td>
-                        <td className="px-3 py-2 text-gray-700">Loader2 아이콘 회전 애니메이션</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <div className="space-y-1 text-[11px]">
-                  <p className="text-gray-700"><strong>State 관리</strong>: doctorVisible / hospitalVisible / postVisible</p>
-                  <p className="text-gray-700"><strong>Sentinel Ref</strong>: doctorSentinelRef / hospitalSentinelRef / postSentinelRef</p>
-                  <p className="text-gray-700"><strong>완료 문구</strong>:</p>
-                  <p className="text-gray-500 pl-4">- 명의: "명의 N명 모두 표시됨"</p>
-                  <p className="text-gray-500 pl-4">- 병원: "병원 N개 모두 표시됨"</p>
-                  <p className="text-gray-500 pl-4">- 커뮤니티: "게시글 N개 모두 확인했습니다"</p>
-                </div>
-              </div>
-
-              {/* 페이지 이동 버튼 */}
-              <div className="bg-white rounded-xl border border-pink-200 p-4">
-                <p className="text-xs font-bold text-gray-900 mb-3">🔗 페이지 이동 버튼</p>
-                <div className="space-y-2">
-                  <div className="border border-blue-200 bg-blue-50 rounded-lg p-3">
-                    <p className="text-[11px] font-semibold text-blue-900 mb-1">명의 탭 하단</p>
-                    <button className="w-full py-2 text-xs text-blue-600 font-medium border border-blue-200 rounded-lg bg-white flex items-center justify-center gap-1">
-                      👤 명의찾기 페이지에서 더 보기 →
-                    </button>
-                    <p className="text-[10px] text-blue-700 mt-1">→ DoctorSearchPage 이동 + 검색어 전달 + 모달 닫기</p>
-                  </div>
-                  <div className="border border-purple-200 bg-purple-50 rounded-lg p-3">
-                    <p className="text-[11px] font-semibold text-purple-900 mb-1">커뮤니티 탭 하단</p>
-                    <button className="w-full py-2 text-xs text-blue-600 font-medium border border-blue-200 rounded-lg bg-white flex items-center justify-center gap-1">
-                      💬 커뮤니티 페이지에서 더 보기 →
-                    </button>
-                    <p className="text-[10px] text-purple-700 mt-1">→ CommunityPage 탭 전환 + 모달 닫기 (검색어 미연동)</p>
-                  </div>
-                </div>
+                <p className="text-xs font-bold text-gray-900 mb-2">🗂️ 탭/무한스크롤 규칙 (중복 제거 요약)</p>
+                <ul className="space-y-1 text-[11px] text-gray-700 list-disc pl-4">
+                  <li>결과 탭, 카운트 배지, 자동 전환 규칙은 <strong>2. UI 구조</strong> 기준.</li>
+                  <li>목록별 10개 단위 로드/하단 감지/완료 문구는 <strong>5. 결과 영역 상세 스펙</strong> 기준.</li>
+                  <li>«명의찾기에서 더 보기» / «커뮤니티에서 더 보기» 이동 규칙도 <strong>5절</strong>의 정의를 단일 기준으로 사용.</li>
+                </ul>
               </div>
             </div>
           </div>
         </section>
 
-        {/* ── 7. 테스트 시나리오 ── */}
+        {/* ── 9. 테스트 시나리오 ── */}
         <section>
-          <SectionHeader emoji="🧪" title="7. 검증 시나리오" color="amber" />
+          <SectionHeader emoji="🧪" title="9. 검증 시나리오" color="amber" />
 
           {onTestSearch && (
             <div className="mb-4 flex items-center gap-2 bg-violet-50 border border-violet-200 rounded-xl px-4 py-3">
               <span className="text-violet-500">▶</span>
               <p className="text-xs text-violet-700 font-medium">
-                카드를 클릭하면 왼쪽 서비스 화면에서 실제 GlobalSearchModal 결과를 확인할 수 있습니다
+                카드를 누르면 왼쪽 서비스 화면에서 실제 통합 검색 결과를 바로 확인할 수 있습니다
               </p>
             </div>
           )}
@@ -772,7 +716,7 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
                   <span className="text-[11px] font-bold bg-gray-100 text-gray-600 px-2 py-0.5 rounded">{s.label}</span>
                   <code className="text-xs font-bold text-violet-700 bg-violet-50 px-2 py-0.5 rounded">"{s.keyword}"</code>
-                  <Tag color={branchColor[s.branch] as 'blue' | 'teal' | 'violet'}>{s.branch}</Tag>
+                  <Tag color={branchColor[s.branch] as 'blue' | 'teal' | 'violet'}>{branchLabelKr[s.branch] ?? s.branch}</Tag>
                   <span className="ml-auto text-[11px] font-bold text-green-600">{s.status} 검증완료</span>
                   {onTestSearch && (
                     <span className="text-[10px] text-violet-400 font-medium bg-violet-50 px-2 py-0.5 rounded-full border border-violet-100">

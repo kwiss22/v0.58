@@ -25,6 +25,7 @@ import { PostDetailModal } from '@/app/components/PostDetailModal';
 import { getDoctorById } from '@/constants/doctor-data';
 import type { CommunityPost } from '@/constants/community-data';
 import { communityPosts } from '@/constants/community-data';
+import { checkNicknameAvailableMock, isValidNickname } from '@/utils/nicknameValidation';
 
 interface MyPost {
   id: string;
@@ -109,7 +110,7 @@ function MyActivityReviewCard({
           onOpenDoctor(review.doctorPayload);
         }
       }}
-      className="bg-white border border-gray-200 rounded-xl p-4 cursor-pointer text-left w-full shadow-sm transition-all duration-200 hover:shadow-md hover:border-gray-300 active:scale-[0.99] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+      className="bg-white border border-gray-200 rounded-lg p-4 cursor-pointer hover:bg-gray-50 transition-colors text-left w-full"
     >
         <div className="flex items-start justify-between gap-2 mb-2">
           <div className="flex flex-wrap items-center gap-2 min-w-0">
@@ -124,7 +125,7 @@ function MyActivityReviewCard({
           <button
             type="button"
             title="후기 삭제"
-            className="shrink-0 p-1.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+            className="flex-shrink-0 p-1 text-gray-300 hover:text-red-500 rounded transition-colors"
             onClick={(e) => onDelete(e, review.id)}
           >
             <Trash2 className="w-4 h-4" />
@@ -230,7 +231,11 @@ export function MyPage() {
   const { isGuest, isMember, setRole, user } = useUser();
   const { navigateToPreviousTab, navigateToChat, navigateToDoctorSearch } = useAppNavigation();
   const { isSaved, toggleSave, savedDoctors: savedDoctorsList, removeDoctor } = useSavedDoctors();
-  const [nickname, setNickname] = useState('Maverick Hur');
+  const [nickname, setNickname] = useState('팔팔9988');
+  /** 서버(또는 목)에 반영된 마지막 닉네임 — 성공 저장 후 갱신 */
+  const [lastSavedNickname, setLastSavedNickname] = useState('팔팔9988');
+  /** 중복 거절 직후 필드에 그대로 둔 문자열; 이 값과 동일하면 저장 버튼 비활성(정의서 4-b) */
+  const [pendingDuplicateNickname, setPendingDuplicateNickname] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'posts' | 'comments' | 'reviews' | 'saved'>('posts');
   const [selectedDoctor, setSelectedDoctor] = useState<SavedDoctor | null>(null);
   const [selectedDetailPost, setSelectedDetailPost] = useState<CommunityPost | null>(null);
@@ -238,7 +243,7 @@ export function MyPage() {
   const [myReviews, setMyReviews] = useState<MyWrittenReview[]>([
     {
       id: 'myrev-1',
-      authorNickname: 'Maverick Hur',
+      authorNickname: '팔팔9988',
       dateLine: '2026-04-06 · 수정됨',
       visitVerified: true,
       kindness: 4,
@@ -260,7 +265,7 @@ export function MyPage() {
     },
     {
       id: 'myrev-2',
-      authorNickname: 'Maverick Hur',
+      authorNickname: '팔팔9988',
       dateLine: '2026-03-28',
       visitVerified: false,
       kindness: 4,
@@ -432,7 +437,7 @@ export function MyPage() {
   const [myComments, setMyComments] = useState<Comment[]>([
     {
       id: '1',
-      postId: 'post123',
+      postId: '1',
       postTitle: '밤새 열나던 아이, 새벽에 응급실 가야하나 고민했는데...',
       content: '저희 아이도 비슷한 증상이었는데 응급실 가서 다행이었어요. 빨리 치료받으시길 바랍니다!',
       timeAgo: '3시간 전',
@@ -441,7 +446,7 @@ export function MyPage() {
     },
     {
       id: '2',
-      postId: 'post456',
+      postId: '2',
       postTitle: '손목 통증으로 고생하시는 분들께',
       content: '저도 손목터널증후군이었는데 물리치료 꾸준히 받으니 좋아졌어요. 포기하지 마세요!',
       timeAgo: '1일 전',
@@ -450,7 +455,7 @@ export function MyPage() {
     },
     {
       id: '3',
-      postId: 'post789',
+      postId: '3',
       postTitle: '역류성식도염 극복 후기, AI 상담이 도움됐어요',
       content: '저는 식이요법이랑 같이 병행했더니 효과가 더 좋았어요. 자극적인 음식 줄이는 게 핵심인 것 같습니다!',
       timeAgo: '2일 전',
@@ -459,7 +464,7 @@ export function MyPage() {
     },
     {
       id: '4',
-      postId: 'post101',
+      postId: '4',
       postTitle: '허리디스크 비수술 치료 성공 후기',
       content: '저도 도수치료 받고 있는데 정말 효 있더라고요. 어느 병원 다니세요? 좋은 선생님 추천 받고 싶어요.',
       timeAgo: '2일 전',
@@ -468,7 +473,7 @@ export function MyPage() {
     },
     {
       id: '5',
-      postId: 'post202',
+      postId: '5',
       postTitle: '30대 고혈압 진단, 약 먹어야 하나요?',
       content: '저도 같은 상황이었는데 의사 선생님 말씀 따르는 게 맞아요. AI 챗봇도 전문의 상담을 꼭 받으라고 하더라고요.',
       timeAgo: '3일 전',
@@ -477,7 +482,7 @@ export function MyPage() {
     },
     {
       id: '6',
-      postId: 'post303',
+      postId: '6',
       postTitle: '비염 수술 후기, 솔직 리뷰',
       content: '저도 3년 전에 했는데 삶의 질이 완전 달라졌어요. 수술 전 걱정이 많았는데 괜찮았습니다!',
       timeAgo: '4일 전',
@@ -486,7 +491,7 @@ export function MyPage() {
     },
     {
       id: '7',
-      postId: 'post404',
+      postId: '7',
       postTitle: '당뇨 환자 보호자입니다, 도움말 부탁드려요',
       content: '저도 부모님 모시면서 비슷한 고민 했어요. AI 식단 기능 추천드려요, 정말 편하거든요.',
       timeAgo: '5일 전',
@@ -495,7 +500,7 @@ export function MyPage() {
     },
     {
       id: '8',
-      postId: 'post505',
+      postId: '8',
       postTitle: '공황장애 극복 과정 솔직 공유',
       content: '정말 공감돼요. 저도 처음엔 약 먹기 무서웠는데 적절한 치료가 정말 중요하더라고요. 힘내세요!',
       timeAgo: '6일 전',
@@ -504,7 +509,7 @@ export function MyPage() {
     },
     {
       id: '9',
-      postId: 'post606',
+      postId: '9',
       postTitle: '녹내장 초기 발견, 관리는 어떻게 하시나요?',
       content: '저도 비슷한 상황이에요. 안압 관리가 제일 중요하다고 들었어요. AI 챗봇이 정기 검진 리마인더도 보내줘서 편해요.',
       timeAgo: '1주일 전',
@@ -513,7 +518,7 @@ export function MyPage() {
     },
     {
       id: '10',
-      postId: 'post707',
+      postId: '10',
       postTitle: '아토피 피부염, 스테로이드 없이 관리하는 법',
       content: '보습이 정말 핵심인 것 같아요. 저는 세라마이드 성분 제품으로 바꾼 뒤 많이 좋아졌어요!',
       timeAgo: '1주일 전',
@@ -522,7 +527,7 @@ export function MyPage() {
     },
     {
       id: '11',
-      postId: 'post808',
+      postId: '1',
       postTitle: '소아청소년과 명의 추천 해주세요',
       content: 'AI 챗봇에서 검색하면 지역별로 추천해줘요. 저희 애는 세브란스 ○○ 선생님께 잘 다니고 있어요.',
       timeAgo: '1주일 전',
@@ -531,7 +536,7 @@ export function MyPage() {
     },
     {
       id: '12',
-      postId: 'post909',
+      postId: '2',
       postTitle: '갑상선 결절, 조직검사 결과 기다리는 중',
       content: '저도 같은 경험 있어요. 불안한 마음 충분히 이해해요. AI 상담으로 궁금한 점 미리 물어봐두면 좋아요.',
       timeAgo: '9일 전',
@@ -540,7 +545,7 @@ export function MyPage() {
     },
     {
       id: '13',
-      postId: 'post1010',
+      postId: '3',
       postTitle: '무릎 연골 닳았다는 진단, 나이가 문제일까요',
       content: '재활운동이 정말 중요하더라고요. AI가 연령별 맞춤 운동법도 알려줘서 도움 많이 받았어요.',
       timeAgo: '10일 전',
@@ -549,7 +554,7 @@ export function MyPage() {
     },
     {
       id: '14',
-      postId: 'post1111',
+      postId: '4',
       postTitle: '두근거림이 반복됩니다, 부정맥일까요',
       content: '저도 똑같았어요. AI가 순환기내과 방문 권유했는데 결국 경미한 부정맥이었어요. 조기 발견 중요해요!',
       timeAgo: '11일 전',
@@ -558,7 +563,7 @@ export function MyPage() {
     },
     {
       id: '15',
-      postId: 'post1212',
+      postId: '5',
       postTitle: '우울증 치료 중인데 주변에 알리는 게 맞을까요',
       content: '가까운 가족에게는 알리는 편이 치료에 도움이 된다고 해요. 혼자 짊어지지 마세요, 응원합니다.',
       timeAgo: '12일 전',
@@ -567,7 +572,7 @@ export function MyPage() {
     },
     {
       id: '16',
-      postId: 'post1313',
+      postId: '6',
       postTitle: '소화불량이 한 달째 지속됩니다',
       content: '저도 그랬는데 위내시경 해보니 만성 위염이었어요. 빨리 검사받아보시는 게 좋을 것 같아요!',
       timeAgo: '2주일 전',
@@ -576,7 +581,7 @@ export function MyPage() {
     },
     {
       id: '17',
-      postId: 'post1414',
+      postId: '7',
       postTitle: '편두통 약 내성 생기면 어떡하나요',
       content: 'AI한테 물어봤더니 트립탄 계열 약은 월 10일 이하 복용 권장이라고 알려줬어요. 전문의 상담 꼭 받으세요.',
       timeAgo: '2주일 전',
@@ -585,7 +590,7 @@ export function MyPage() {
     },
     {
       id: '18',
-      postId: 'post1515',
+      postId: '8',
       postTitle: '신장내과 첫 방문 후기 공유합니다',
       content: '혈뇨 증상으로 무서웠는데 정확한 진단 받고 나니 오히려 마음이 편해졌어요. 두려워 말고 병원 가세요!',
       timeAgo: '16일 전',
@@ -594,7 +599,7 @@ export function MyPage() {
     },
     {
       id: '19',
-      postId: 'post1616',
+      postId: '9',
       postTitle: '임신 중 철분 부족, 빈혈 관리법',
       content: '저도 임신 중에 빈혈로 고생했어요. AI가 식품별 철분 함량 표 알려줬는데 정말 유용했습니다!',
       timeAgo: '17일 전',
@@ -603,7 +608,7 @@ export function MyPage() {
     },
     {
       id: '20',
-      postId: 'post1717',
+      postId: '10',
       postTitle: '류마티스 관절염 진단받고 나서 달라진 것들',
       content: '식단 조절이 생각보다 효과가 크더라고요. AI가 항염증 식품 목록을 추천해줬는데 많이 참고하고 있어요.',
       timeAgo: '18일 전',
@@ -621,12 +626,23 @@ export function MyPage() {
     }
   };
 
-  const handleSaveNickname = () => {
-    if (nickname.length < 2 || nickname.length > 10) {
-      alert('닉네임은 2~10자로 입력해주세요.');
+  const nicknameDirty = nickname !== lastSavedNickname;
+  const duplicateBlocked =
+    pendingDuplicateNickname !== null && nickname === pendingDuplicateNickname;
+  const canSaveNickname =
+    isValidNickname(nickname) && nicknameDirty && !duplicateBlocked;
+
+  const handleSaveNickname = async () => {
+    if (!canSaveNickname) return;
+    const available = await checkNicknameAvailableMock(nickname);
+    if (!available) {
+      setPendingDuplicateNickname(nickname);
+      toast.error('이미 사용 중인 닉네임 입니다', { duration: 3000 });
       return;
     }
-    alert('닉네임이 저장되었습니다!');
+    setLastSavedNickname(nickname);
+    setPendingDuplicateNickname(null);
+    toast.success('닉네임이 변경되었습니다', { duration: 3000 });
   };
 
   const handleAnnouncementClick = () => {
@@ -762,58 +778,50 @@ export function MyPage() {
   }, []);
 
   return (
-    <div className="h-screen flex flex-col bg-slate-50">
+    <div className="h-screen flex flex-col bg-white">
       {/* Header - Fixed */}
-      <div className="flex-shrink-0 shadow-md shadow-blue-900/10">
-        <div className="max-w-2xl mx-auto bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3.5 sm:py-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-lg sm:text-xl font-semibold text-white tracking-tight">마이페이지</h1>
-            <p className="text-[11px] sm:text-xs text-blue-100/90 mt-0.5 font-normal">나의 활동과 설정</p>
-          </div>
+      <div className="flex-shrink-0">
+        <div className="max-w-2xl mx-auto bg-blue-600 px-4 py-4 flex items-center justify-between">
+          <h1 className="text-xl font-semibold text-white">마이페이지</h1>
         </div>
       </div>
 
       {/* 비회원 화면 */}
       {isGuest && (
-        <div className="flex-1 overflow-y-auto flex items-center justify-center p-4 sm:p-6">
-          <div className="w-full max-w-md text-center space-y-6 rounded-2xl bg-white p-8 sm:p-10 shadow-lg shadow-gray-200/80 border border-gray-100">
+        <div className="flex-1 overflow-y-auto flex items-center justify-center p-4">
+          <div className="max-w-md w-full text-center space-y-6">
             {/* Icon */}
-            <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-gray-50 to-gray-100 rounded-full flex items-center justify-center mx-auto ring-8 ring-gray-50">
-              <User className="w-9 h-9 sm:w-12 sm:h-12 text-gray-400" strokeWidth={1.5} />
+            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto">
+              <User className="w-12 h-12 text-gray-400" />
             </div>
 
             {/* Title */}
             <div className="space-y-2">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 leading-snug">
+              <h2 className="text-2xl font-bold text-gray-900">
                 로그인이 필요합니다
               </h2>
-              <p className="text-sm text-gray-500 leading-relaxed">
+              <p className="text-gray-600">
                 나만의 건강 관리를 시작하세요!
               </p>
             </div>
 
             {/* Login Buttons */}
-            <div className="space-y-3 pt-1">
+            <div className="space-y-3">
               <button
-                type="button"
                 onClick={() => setRole('member')}
-                className="w-full bg-[#FEE500] hover:bg-[#FDD835] text-gray-900 font-semibold py-3.5 sm:py-4 rounded-xl transition-all duration-200 shadow-sm hover:shadow active:scale-[0.98]"
+                className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-medium py-4 rounded-xl transition-colors"
               >
                 카카오톡으로 3초 만에 시작
               </button>
-              <button
-                type="button"
-                className="w-full bg-[#03C75A] hover:bg-[#02b350] text-white font-semibold py-3.5 sm:py-4 rounded-xl transition-all duration-200 shadow-sm hover:shadow active:scale-[0.98]"
-              >
+              <button className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-4 rounded-xl transition-colors">
                 네이버로 시작하기
               </button>
             </div>
 
             {/* Guest Mode */}
-            <button
-              type="button"
+            <button 
               onClick={navigateToPreviousTab}
-              className="text-sm text-gray-400 hover:text-gray-600 transition-colors pt-1"
+              className="text-sm text-gray-500 hover:text-gray-700"
             >
               나중에 하기 &gt;
             </button>
@@ -824,129 +832,123 @@ export function MyPage() {
       {/* 회원 화면 */}
       {isMember && (
         <div className="flex-1 overflow-y-auto">
-          <div className="max-w-2xl mx-auto px-4 py-5 sm:p-6 space-y-5 sm:space-y-6 pb-28">
+          <div className="max-w-2xl mx-auto p-6 space-y-6 pb-24">
             {/* Email Display with Logout */}
-            <div className="flex items-center justify-between rounded-2xl bg-white border border-gray-100 px-4 py-3.5 shadow-sm">
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="w-11 h-11 shrink-0 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center shadow-md shadow-blue-500/25 ring-2 ring-white">
-                  <User className="w-5 h-5 text-white" strokeWidth={2} />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
+                  <User className="w-5 h-5 text-white" />
                 </div>
-                <div className="min-w-0">
-                  <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400">로그인 계정</p>
-                  <span className="text-sm font-medium text-gray-800 truncate block">fassionmap@kakao.com</span>
-                </div>
+                <span className="text-sm text-gray-700">fassionmap@kakao.com</span>
               </div>
               <button
-                type="button"
                 onClick={handleLogout}
-                title="로그아웃"
-                className="shrink-0 w-10 h-10 flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition-colors"
+                className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-lg transition-colors"
               >
-                <LogOut className="w-5 h-5" />
+                <LogOut className="w-5 h-5 text-gray-600" />
               </button>
             </div>
 
             {/* Nickname Setting */}
-            <div className="rounded-2xl bg-white border border-gray-100 p-4 sm:p-5 shadow-sm space-y-3">
-              <div className="flex items-end justify-between gap-2">
-                <label className="text-sm font-semibold text-gray-900">
-                  닉네임 <span className="text-red-500 font-medium">(필수)</span>
-                </label>
-                <span className="text-[11px] tabular-nums text-gray-400">{nickname.length}/10</span>
-              </div>
+            <div className="space-y-3">
+              <label className="block text-sm font-medium text-gray-900">
+                닉네임 <span className="text-red-500">(필수)</span>
+              </label>
               <input
                 type="text"
                 value={nickname}
-                onChange={(e) => setNickname(e.target.value)}
-                placeholder="닉네임을 입력하세요"
+                onChange={e => {
+                  const v = e.target.value;
+                  setNickname(v);
+                  if (pendingDuplicateNickname !== null && v !== pendingDuplicateNickname) {
+                    setPendingDuplicateNickname(null);
+                  }
+                }}
+                placeholder="새 닉네임을 입력하세요"
                 maxLength={10}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50/50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 focus:bg-white transition-shadow"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
-              <p className="text-xs text-gray-500 leading-relaxed">
-                최소 2자, 최대 10자 · 한글, 영문, 숫자, 밑줄(_)만 사용할 수 있어요
+              <p className="text-[11px] leading-snug text-gray-500">
+                최소 2자, 최대 10자 (한글, 영문, 숫자, 밑줄(_)만 가능)
               </p>
               <button
                 type="button"
-                onClick={handleSaveNickname}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-all duration-200 shadow-sm shadow-blue-600/25 hover:shadow-md active:scale-[0.99]"
+                onClick={() => void handleSaveNickname()}
+                disabled={!canSaveNickname}
+                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:hover:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-3 rounded-lg transition-colors"
               >
                 저장하기
               </button>
             </div>
 
             {/* 내 활동 Section Title */}
-            <div className="pt-1">
-              <h3 className="text-base font-bold text-gray-900">내 활동</h3>
-              <p className="text-xs text-gray-500 mt-1">게시글, 댓글, 후기, 저장한 명의를 한곳에서 확인해요</p>
+            <div className="pt-2">
+              <h3 className="text-sm font-bold text-gray-900 mb-3">내 활동</h3>
             </div>
 
             {/* Tab Navigation */}
-            <div className="rounded-2xl overflow-hidden border border-gray-200 bg-white shadow-sm w-full">
-              <div className="flex border-b border-gray-100 bg-gray-50/80">
+            <div className="bg-white rounded-xl overflow-hidden border border-gray-200 w-full">
+              <div className="flex border-b border-gray-200">
                 <button
                   type="button"
-                  aria-selected={activeTab === 'posts'}
                   onClick={() => setActiveTab('posts')}
-                  className={`flex-1 min-w-0 py-3 px-0.5 text-[11px] sm:text-sm relative leading-tight transition-all duration-200 ${
+                  className={`flex-1 min-w-0 py-2.5 px-0.5 text-[11px] sm:text-sm font-medium transition-colors relative leading-tight ${
                     activeTab === 'posts'
-                      ? 'text-blue-600 font-semibold bg-white'
-                      : 'text-gray-500 hover:text-gray-800 hover:bg-white/60 font-medium'
+                      ? 'text-blue-600'
+                      : 'text-gray-500 hover:text-gray-700'
                   }`}
                 >
                   게시글 ({myPosts.length})
                   {activeTab === 'posts' && (
-                    <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-blue-600 rounded-full" />
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
                   )}
                 </button>
                 <button
                   type="button"
-                  aria-selected={activeTab === 'comments'}
                   onClick={() => setActiveTab('comments')}
-                  className={`flex-1 min-w-0 py-3 px-0.5 text-[11px] sm:text-sm relative leading-tight transition-all duration-200 ${
+                  className={`flex-1 min-w-0 py-2.5 px-0.5 text-[11px] sm:text-sm font-medium transition-colors relative leading-tight ${
                     activeTab === 'comments'
-                      ? 'text-blue-600 font-semibold bg-white'
-                      : 'text-gray-500 hover:text-gray-800 hover:bg-white/60 font-medium'
+                      ? 'text-blue-600'
+                      : 'text-gray-500 hover:text-gray-700'
                   }`}
                 >
                   댓글 ({myComments.length})
                   {activeTab === 'comments' && (
-                    <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-blue-600 rounded-full" />
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
                   )}
                 </button>
                 <button
                   type="button"
-                  aria-selected={activeTab === 'reviews'}
                   onClick={() => setActiveTab('reviews')}
-                  className={`flex-1 min-w-0 py-3 px-0.5 text-[11px] sm:text-sm relative leading-tight transition-all duration-200 ${
+                  className={`flex-1 min-w-0 py-2.5 px-0.5 text-[11px] sm:text-sm font-medium transition-colors relative leading-tight ${
                     activeTab === 'reviews'
-                      ? 'text-blue-600 font-semibold bg-white'
-                      : 'text-gray-500 hover:text-gray-800 hover:bg-white/60 font-medium'
+                      ? 'text-blue-600'
+                      : 'text-gray-500 hover:text-gray-700'
                   }`}
                 >
                   후기 ({myReviews.length})
                   {activeTab === 'reviews' && (
-                    <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-blue-600 rounded-full" />
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
                   )}
                 </button>
                 <button
                   type="button"
-                  aria-selected={activeTab === 'saved'}
                   onClick={() => setActiveTab('saved')}
-                  className={`flex-1 min-w-0 py-3 px-0.5 text-[11px] sm:text-sm relative leading-tight transition-all duration-200 ${
+                  className={`flex-1 min-w-0 py-2.5 px-0.5 text-[11px] sm:text-sm font-medium transition-colors relative leading-tight ${
                     activeTab === 'saved'
-                      ? 'text-blue-600 font-semibold bg-white'
-                      : 'text-gray-500 hover:text-gray-800 hover:bg-white/60 font-medium'
+                      ? 'text-blue-600'
+                      : 'text-gray-500 hover:text-gray-700'
                   }`}
                 >
                   저장 ({savedDoctorsList.length})
                   {activeTab === 'saved' && (
-                    <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-blue-600 rounded-full" />
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
                   )}
                 </button>
               </div>
 
               {/* Tab Content */}
-              <div className="h-[360px] overflow-y-auto overscroll-contain bg-white">
+              <div className="h-[360px] overflow-y-auto">
                 {/* 게시글 탭 */}
                 {activeTab === 'posts' && (
                   <div className="divide-y divide-gray-100">
@@ -968,11 +970,11 @@ export function MyPage() {
                                 setSelectedDetailPost(myPostToDetailPost(post, nickname));
                               }
                             }}
-                            className={`transition-colors duration-150 ${isDeleted ? 'bg-gray-50/80 cursor-default' : 'hover:bg-slate-50 cursor-pointer active:bg-slate-100'}`}
+                            className={`transition-colors ${isDeleted ? 'bg-gray-50 cursor-default' : 'hover:bg-gray-50 cursor-pointer'}`}
                           >
                             {/* 삭제 안내 배너 */}
                             {isDeleted && (
-                              <div className="mx-3 sm:mx-4 mt-3 px-3 py-2.5 bg-red-50/90 border border-red-100 rounded-xl">
+                              <div className="mx-4 mt-4 px-3 py-2.5 bg-red-50 border border-red-200 rounded-lg">
                                 <div className="flex items-start gap-2 mb-1">
                                   <AlertTriangle className="w-3.5 h-3.5 text-red-500 flex-shrink-0 mt-0.5" />
                                   <p className="text-xs text-red-700 font-medium">
@@ -986,42 +988,41 @@ export function MyPage() {
                             )}
 
                             {/* 게시글 본문 */}
-                            <div className={`p-4 ${isDeleted ? 'opacity-45' : ''}`}>
+                            <div className={`p-4 ${isDeleted ? 'opacity-40' : ''}`}>
                               {/* 상단 행: 배지 + 시간 + 삭제 버튼 */}
                               <div className="flex items-center gap-2 mb-2">
-                                <span className="px-2 py-0.5 bg-blue-50 text-blue-700 text-xs font-semibold rounded-md border border-blue-100">
+                                <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded">
                                   {post.department}
                                 </span>
-                                <span className="text-xs text-gray-400 flex-1 tabular-nums">{post.timeAgo}</span>
+                                <span className="text-xs text-gray-400 flex-1">{post.timeAgo}</span>
                                 {!isDeleted && (
                                   <button
-                                    type="button"
                                     onClick={(e) => handleDeletePost(e, post.id)}
-                                    className="flex-shrink-0 p-1.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                    className="flex-shrink-0 p-1 text-gray-300 hover:text-red-500 rounded transition-colors"
                                     title="게시글 삭제"
                                   >
                                     <Trash2 className="w-4 h-4" />
                                   </button>
                                 )}
                               </div>
-                              <h3 className="font-semibold text-gray-900 mb-1.5 line-clamp-2 leading-snug tracking-tight">
+                              <h3 className="font-medium text-gray-900 mb-2 line-clamp-2 leading-snug">
                                 {post.title}
                               </h3>
-                              <p className="text-sm text-gray-600 mb-3 line-clamp-2 leading-relaxed">
+                              <p className="text-sm text-gray-600 mb-2 line-clamp-2">
                                 {post.summary}
                               </p>
-                              <div className="flex items-center gap-4 text-xs text-gray-600">
+                              <div className="flex items-center gap-4 text-xs text-gray-500">
                                 <div className="flex items-center gap-1">
-                                  <Heart className="w-3.5 h-3.5 text-rose-400/90" />
-                                  <span className="tabular-nums font-medium">{post.likeCount}</span>
+                                  <Heart className="w-3.5 h-3.5" />
+                                  <span>{post.likeCount}</span>
                                 </div>
                                 <div className="flex items-center gap-1">
-                                  <MessageCircle className="w-3.5 h-3.5 text-gray-400" />
-                                  <span className="tabular-nums font-medium">{post.comments}</span>
+                                  <MessageCircle className="w-3.5 h-3.5" />
+                                  <span>{post.comments}</span>
                                 </div>
                                 <div className="flex items-center gap-1">
-                                  <Eye className="w-3.5 h-3.5 text-gray-400" />
-                                  <span className="tabular-nums font-medium">{post.views}</span>
+                                  <Eye className="w-3.5 h-3.5" />
+                                  <span>{post.views}</span>
                                 </div>
                               </div>
                             </div>
@@ -1029,12 +1030,9 @@ export function MyPage() {
                         );
                       })
                     ) : (
-                      <div className="flex flex-col items-center justify-center py-14 px-6 text-center">
-                        <div className="w-14 h-14 rounded-2xl bg-gray-100 flex items-center justify-center mb-4">
-                          <FileText className="w-7 h-7 text-gray-400" strokeWidth={1.5} />
-                        </div>
-                        <p className="text-sm font-medium text-gray-700">작성한 글이 없습니다</p>
-                        <p className="text-xs text-gray-500 mt-1">커뮤니티에서 첫 글을 남겨보세요</p>
+                      <div className="flex flex-col items-center justify-center py-12">
+                        <FileText className="w-12 h-12 text-gray-300 mb-3" />
+                        <p className="text-sm text-gray-500">작성한 글이 없습니다</p>
                       </div>
                     )}
                   </div>
@@ -1061,11 +1059,11 @@ export function MyPage() {
                                 setSelectedDetailPost(resolvePostForComment(comment, myPosts, nickname));
                               }
                             }}
-                            className={`transition-colors duration-150 ${isDeleted ? 'bg-gray-50/80 cursor-default' : 'hover:bg-slate-50 cursor-pointer active:bg-slate-100'}`}
+                            className={`transition-colors ${isDeleted ? 'bg-gray-50 cursor-default' : 'hover:bg-gray-50 cursor-pointer'}`}
                           >
                             {/* 삭제 안내 배너 */}
                             {isDeleted && (
-                              <div className="mx-3 sm:mx-4 mt-3 px-3 py-2.5 bg-red-50/90 border border-red-100 rounded-xl">
+                              <div className="mx-4 mt-4 px-3 py-2.5 bg-red-50 border border-red-200 rounded-lg">
                                 <div className="flex items-start gap-2 mb-1">
                                   <AlertTriangle className="w-3.5 h-3.5 text-red-500 flex-shrink-0 mt-0.5" />
                                   <p className="text-xs text-red-700 font-medium">
@@ -1089,9 +1087,8 @@ export function MyPage() {
                                 <span className="text-xs text-gray-400 flex-shrink-0">{comment.timeAgo}</span>
                                 {!isDeleted && (
                                   <button
-                                    type="button"
                                     onClick={(e) => handleDeleteComment(e, comment.id)}
-                                    className="flex-shrink-0 p-1.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                    className="flex-shrink-0 p-1 text-gray-300 hover:text-red-500 rounded transition-colors"
                                     title="댓글 삭제"
                                   >
                                     <Trash2 className="w-4 h-4" />
@@ -1101,21 +1098,18 @@ export function MyPage() {
                               <p className="text-sm text-gray-900 mb-2 leading-relaxed">
                                 {comment.content}
                               </p>
-                              <div className="flex items-center gap-1 text-xs text-gray-600">
-                                <Heart className="w-3.5 h-3.5 text-rose-400/90" />
-                                <span className="tabular-nums font-medium">공감 {comment.likes}</span>
+                              <div className="flex items-center gap-1 text-xs text-gray-500">
+                                <Heart className="w-3.5 h-3.5" />
+                                <span>공감 {comment.likes}</span>
                               </div>
                             </div>
                           </div>
                         );
                       })
                     ) : (
-                      <div className="flex flex-col items-center justify-center py-14 px-6 text-center">
-                        <div className="w-14 h-14 rounded-2xl bg-gray-100 flex items-center justify-center mb-4">
-                          <MessageCircle className="w-7 h-7 text-gray-400" strokeWidth={1.5} />
-                        </div>
-                        <p className="text-sm font-medium text-gray-700">작성한 댓글이 없습니다</p>
-                        <p className="text-xs text-gray-500 mt-1">커뮤니티에서 댓글을 남겨보세요</p>
+                      <div className="flex flex-col items-center justify-center py-12">
+                        <MessageCircle className="w-12 h-12 text-gray-300 mb-3" />
+                        <p className="text-sm text-gray-500">작성한 댓글이 없습니다</p>
                       </div>
                     )}
                   </div>
@@ -1123,7 +1117,7 @@ export function MyPage() {
 
                 {/* 후기 탭 */}
                 {activeTab === 'reviews' && (
-                  <div className="space-y-3 p-3 sm:p-4">
+                  <div className="space-y-3 p-2">
                     {myReviews.length > 0 ? (
                       myReviews.map(review => (
                         <MyActivityReviewCard
@@ -1134,16 +1128,14 @@ export function MyPage() {
                         />
                       ))
                     ) : (
-                      <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
-                        <div className="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center mb-4 ring-4 ring-amber-50/50">
-                          <Star className="w-7 h-7 text-amber-400" strokeWidth={1.25} />
-                        </div>
-                        <p className="text-sm font-semibold text-gray-800 mb-1">아직 작성한 후기가 없어요</p>
-                        <p className="text-xs text-gray-500 mb-6 max-w-[240px] leading-relaxed">명의를 찾고 진료 경험을 남기면 다른 환자에게도 큰 도움이 돼요</p>
+                      <div className="flex flex-col items-center justify-center py-10 px-6 text-center">
+                        <Star className="w-12 h-12 text-gray-300 mb-3" strokeWidth={1.25} />
+                        <p className="text-sm font-medium text-gray-700 mb-1">아직 작성한 후기가 없어요</p>
+                        <p className="text-xs text-gray-500 mb-5">명의를 찾고 진료 경험을 남겨보세요</p>
                         <button
                           type="button"
                           onClick={() => navigateToDoctorSearch()}
-                          className="w-full max-w-[280px] py-3 rounded-xl font-semibold text-sm bg-blue-600 text-white hover:bg-blue-700 shadow-md shadow-blue-600/20 transition-all active:scale-[0.98]"
+                          className="w-full max-w-[280px] py-3 rounded-lg font-semibold text-sm bg-blue-600 text-white hover:bg-blue-700 transition-colors"
                         >
                           명의 찾고 후기 남기기
                         </button>
@@ -1159,51 +1151,39 @@ export function MyPage() {
                       savedDoctorsList.map((doctor) => (
                         <div
                           key={doctor.id}
-                          role="button"
-                          tabIndex={0}
                           onClick={() => handleDoctorClick(doctor)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.preventDefault();
-                              handleDoctorClick(doctor);
-                            }
-                          }}
-                          className="p-4 hover:bg-slate-50 active:bg-slate-100 transition-colors duration-150 cursor-pointer"
+                          className="p-4 hover:bg-gray-50 transition-colors cursor-pointer"
                         >
                           {/* 상단 행: 이름 + 배지 + 저장 해제 버튼 */}
-                          <div className="flex items-center gap-2 mb-1.5">
-                            <h3 className="font-bold text-gray-900 tracking-tight">{doctor.name}</h3>
-                            <span className="px-2 py-0.5 bg-blue-50 text-blue-700 text-xs font-semibold rounded-md border border-blue-100">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="font-bold text-gray-900">{doctor.name}</h3>
+                            <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded">
                               {doctor.department}
                             </span>
                             <div className="flex-1" />
                             <button
-                              type="button"
                               onClick={(e) => handleUnsaveDoctor(e, doctor.id)}
-                              className="shrink-0 flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-gray-500 hover:text-red-600 hover:bg-red-50 border border-gray-200 hover:border-red-200 rounded-lg transition-colors"
+                              className="flex-shrink-0 flex items-center gap-1 px-2 py-1 text-xs text-gray-400 hover:text-red-500 hover:bg-red-50 border border-gray-200 hover:border-red-200 rounded-md transition-colors"
                               title="저장 해제"
                             >
                               <BookmarkX className="w-3.5 h-3.5" />
                               <span>저장 해제</span>
                             </button>
                           </div>
-                          <p className="text-sm text-gray-600 mb-0.5">{doctor.hospital}</p>
+                          <p className="text-sm text-gray-600 mb-1">{doctor.hospital}</p>
                           <p className="text-xs text-gray-500 mb-2">{doctor.specialty}</p>
                           <div className="flex items-center gap-3 text-xs text-gray-500">
-                            <div className="flex items-center gap-1 text-amber-600">
-                              <span className="text-amber-400">★</span>
-                              <span className="font-medium text-gray-700">{doctor.rating}</span>
+                            <div className="flex items-center gap-1">
+                              <span className="text-yellow-500">★</span>
+                              <span>{doctor.rating}</span>
                             </div>
                           </div>
                         </div>
                       ))
                     ) : (
-                      <div className="flex flex-col items-center justify-center py-14 px-6 text-center">
-                        <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mb-4">
-                          <Bookmark className="w-7 h-7 text-blue-300" strokeWidth={1.5} />
-                        </div>
-                        <p className="text-sm font-medium text-gray-700">저장한 의료진이 없습니다</p>
-                        <p className="text-xs text-gray-500 mt-1">명의 찾기에서 마음에 드는 선생님을 저장해 보세요</p>
+                      <div className="flex flex-col items-center justify-center py-12">
+                        <Bookmark className="w-12 h-12 text-gray-300 mb-3" />
+                        <p className="text-sm text-gray-500">저장한 의료진이 없습니다</p>
                       </div>
                     )}
                   </div>
@@ -1213,13 +1193,11 @@ export function MyPage() {
 
             {/* Customer Support */}
             <div>
-              <h3 className="text-base font-bold text-gray-900 mb-2">고객지원</h3>
-              <p className="text-xs text-gray-500 mb-3">공지·약관·문의를 모아 두었어요</p>
-              <div className="rounded-2xl border border-gray-100 bg-white shadow-sm divide-y divide-gray-100 overflow-hidden">
+              <h3 className="text-sm font-bold text-gray-900 mb-3">고객지원</h3>
+              <div className="space-y-2">
                 <button
-                  type="button"
                   onClick={handleAnnouncementClick}
-                  className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-slate-50 transition-colors text-left"
+                  className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors rounded-lg"
                 >
                   <div className="flex items-center gap-3">
                     <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1231,9 +1209,8 @@ export function MyPage() {
                 </button>
 
                 <button
-                  type="button"
                   onClick={handleTermsClick}
-                  className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-slate-50 transition-colors text-left"
+                  className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors rounded-lg"
                 >
                   <div className="flex items-center gap-3">
                     <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1245,9 +1222,8 @@ export function MyPage() {
                 </button>
 
                 <button
-                  type="button"
                   onClick={handlePrivacyClick}
-                  className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-slate-50 transition-colors text-left"
+                  className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors rounded-lg"
                 >
                   <div className="flex items-center gap-3">
                     <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1259,9 +1235,8 @@ export function MyPage() {
                 </button>
 
                 <button
-                  type="button"
                   onClick={handleFeedbackClick}
-                  className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-slate-50 transition-colors text-left"
+                  className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors rounded-lg"
                 >
                   <div className="flex items-center gap-3">
                     <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1276,9 +1251,8 @@ export function MyPage() {
 
             {/* Withdrawal Button */}
             <button
-              type="button"
               onClick={handleWithdrawal}
-              className="w-full text-center py-3 text-sm text-gray-400 hover:text-gray-600 transition-colors rounded-xl hover:bg-gray-100/80"
+              className="w-full text-center py-3 text-sm text-gray-500 hover:text-gray-700 underline transition-colors"
             >
               탈퇴하기
             </button>

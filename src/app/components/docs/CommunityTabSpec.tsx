@@ -1,12 +1,10 @@
 // 커뮤니티 탭 화면정의서 — UI/UX (v0.6 · 프로토타입 참고·더미 데이터와 구분)
 
 import { useAppNavigation } from '../../contexts/AppNavigationContext';
-import { useUser } from '../../contexts/UserContext';
 import { Heart, MessageCircle, Shield, BadgeCheck, ThumbsUp, User, Plus, MoreVertical, ArrowLeft, Search, X, Flag, Pencil, Trash2 } from 'lucide-react';
 
 export function CommunityTabSpec() {
   const { setActiveTab, setSpecTab } = useAppNavigation();
-  const { role } = useUser();
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -161,17 +159,9 @@ export function CommunityTabSpec() {
                     <li>• <strong>(공통) 결과가 많을 때</strong>: 페이지네이션 없이 같은 목록 영역에서 연속 표시하며, 사용자 스크롤로 탐색</li>
                     <li>• <strong>(공통) 정렬 유지</strong>: 최신순/인기순 상태를 유지한 채 필터 결과에 재적용</li>
                     <li>• <strong>(공통) 고정/스크롤 분리</strong>: 카테고리 필터, 정렬 헤더, 우상단 통합검색 진입점은 결과 수와 무관하게 유지되며, <strong>게시글 목록 영역만</strong> 결과 수에 따라 스크롤됨</li>
-                    {role === 'member' ? (
-                      <>
-                        <li>• <strong>(회원)</strong>: 결과 0개 안내 문구는 &quot;첫 후기를 남겨보세요!&quot;</li>
-                        <li>• <strong>(회원)</strong>: 임시저장 배너(조건부), 우하단 글쓰기 버튼 노출</li>
-                      </>
-                    ) : (
-                      <>
-                        <li>• <strong>(비회원)</strong>: 결과 0개 안내 문구는 &quot;다른 카테고리를 선택해 보세요.&quot;</li>
-                        <li>• <strong>(비회원)</strong>: 비회원 사용량 배너(조건부), 우하단 글쓰기 버튼 미노출</li>
-                      </>
-                    )}
+                    <li>• <strong>(비회원 Base)</strong>: 결과 0개 안내 문구는 &quot;다른 카테고리를 선택해 보세요.&quot;</li>
+                    <li>• <strong>(비회원 Base)</strong>: 비회원 사용량 배너(조건부), 우하단 글쓰기 버튼 미노출</li>
+                    <li>• <strong>(회원 Delta)</strong>: 결과 0개 문구/글쓰기 버튼/임시저장 배너 등 확장 동작은 회원 탭(CommunityTabSpecBiz) 참조</li>
                   </ul>
                 </div>
 
@@ -206,8 +196,16 @@ export function CommunityTabSpec() {
                 {/* 비회원 사용량 배너 */}
                 <div className="border border-gray-200 rounded-lg overflow-hidden">
                   <div className="bg-gray-100 px-3 py-1.5 text-xs font-bold text-gray-600">② 비회원 사용량 배너 — 비회원 + 조회 횟수 소진/경고 시</div>
-                  <div className="p-3 bg-amber-50">
-                    <p className="text-xs text-amber-700">남은 무료 게시글 조회 횟수 안내 + 로그인 유도. 자세한 스펙은 UsageLimitBanner 컴포넌트 참조.</p>
+                  <div className="p-3 bg-amber-50 space-y-2">
+                    <p className="text-xs text-amber-800 font-semibold">게시글 열람 한도 전역 안내</p>
+                    <p className="text-xs text-amber-700">
+                      비회원이면 피드 상단에 <strong>무료 이용 한도 안내 배너</strong>(황색·연한 주황 톤의 가로 띠)가 조건부로 나타납니다. 이 화면에서는 주로 <strong>오늘 남은 게시글 보기 횟수</strong>를 알려 주며, 잔여 1회 이하일 때는 경고 느낌, 0회일 때는 소진 안내와 가입·로그인 유도 문구를 보여 줍니다. 이미 한도를 다 쓴 뒤 다시 시도하면{' '}
+                      <strong>한도 초과 안내 팝업</strong>(화면 가운데 뜨는 안내 창)으로 이어질 수 있습니다.
+                    </p>
+                    <p className="text-xs text-amber-700">
+                      <strong>중요:</strong> 이 배너에 쓰이는 &quot;오늘 남은 게시글 열람&quot; 수치는 커뮤니티 탭만의 숫자가 아니라, <strong>홈 추천글·통합 검색·커뮤니티 피드 등 어디에서 글 상세를 열든 같은 전역 카운터</strong>와 연동됩니다. 수치·차감 시점·모달 문구의 단일 기준은 통합검색 정의서 「8. 비회원 사용량 제한」과 동일합니다.
+                    </p>
+                    <p className="text-xs text-amber-600">문구·색·간격 등 시각적 세부는 디자인 시안·프로토타입 화면을 기준으로 맞춥니다.</p>
                   </div>
                 </div>
 
@@ -345,14 +343,14 @@ export function CommunityTabSpec() {
                 <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
                   <div className="font-medium text-purple-900 mb-2 text-sm">카드 구성 요소</div>
                   <ul className="space-y-1.5 text-xs text-purple-900">
-                    <li>• <strong>프로필 아이콘</strong>: User 아이콘 (파란색 그라데이션 원형). 클릭 시 유저 프로필 팝업 (UserProfileModal)</li>
+                    <li>• <strong>프로필 아이콘</strong>: User 아이콘 (파란색 그라데이션 원형). 클릭 시 유저 프로필 팝업 (작성자 프로필 창)</li>
                     <li>• <strong>작성자명</strong>: 가입 시 설정 또는 <strong>My 페이지에서 등록한 닉네임</strong> 기준으로 표시</li>
                     <li>• <strong>작성 시간</strong>: "5분 전", "3시간 전", "2일 전" 형식</li>
                     <li>• <strong>(수정됨) 표시</strong>: 작성 후 수정한 경우 회색으로 표시. 호버 시 수정 일시 툴팁</li>
                     <li>• <strong>제목 + 인증 배지</strong>: 병원진료인증(isVerified=true)일 때 VerificationBadge 표시</li>
                     <li>• <strong>질환 태그</strong>: disease 필드가 있을 경우 보라색 칩으로 표시</li>
                     <li>• <strong>본문 미리보기</strong>: 요약 텍스트를 카드에서 <strong>최대 2줄</strong>까지만 표시하고, 길면 뒤는 생략(…) 처리</li>
-                    <li>• <strong>상세 확인</strong>: 카드에서는 미리보기만 보여 주며, <strong>본문 전체는 게시글 상세 화면(PostDetailModal)</strong>에서 확인한다.</li>
+                    <li>• <strong>상세 확인</strong>: 카드에서는 미리보기만 보여 주며, <strong>본문 전체는 게시글 상세 화면(게시글 상세(피드))</strong>에서 확인한다.</li>
                     <li>• <strong>첨부 이미지</strong>: 이미지 수에 따라 그리드·높이 변동
                       <ul className="ml-4 mt-0.5 space-y-0.5 text-xs text-purple-800">
                         <li>- 1장: 1열(전체 너비), <strong>h-48 (192px)</strong></li>
@@ -360,7 +358,7 @@ export function CommunityTabSpec() {
                         <li>- 3장: 3열 그리드, <strong>h-24 (96px)</strong></li>
                         <li>- <strong>4장 이상: 3장까지만 표시</strong>, 3번째 이미지 위에 <code className="bg-purple-100 px-1 rounded">+N</code> 반투명 딤 오버레이 (<code className="bg-purple-100 px-1 rounded">bg-black/50</code>)</li>
                         <li>- 이미지 간격: <code className="bg-purple-100 px-1 rounded">gap-1.5</code></li>
-                        <li>- <strong>탭 동작</strong>: 이미지 단독 탭 → 라이트박스 없음. 카드 전체 탭 → PostDetailModal 이동 (상세에서 라이트박스 제공)</li>
+                        <li>- <strong>탭 동작</strong>: 이미지 단독 탭 → 라이트박스 없음. 카드 전체 탭 → 게시글 상세(피드) 이동 (상세에서 라이트박스 제공)</li>
                       </ul>
                     </li>
                     <li>• <strong>통계</strong>: 공감해요(하트 + 숫자) + 댓글 수 — <span className="text-red-600 font-bold">조회수 없음</span></li>
@@ -374,7 +372,7 @@ export function CommunityTabSpec() {
             <div>
               <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
                 <span className="w-6 h-6 bg-purple-100 text-purple-700 rounded-full flex items-center justify-center text-xs font-bold">7</span>
-                게시글 상세 화면 (PostDetailModal)
+                게시글 상세 화면 (게시글 상세(피드))
               </h3>
               <div className="ml-8">
                 <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4 flex items-start gap-3">
@@ -486,11 +484,14 @@ export function CommunityTabSpec() {
 
           {/* 로그인 유도 공통 안내 */}
           <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6 rounded-r-lg">
-            <p className="text-xs font-bold text-blue-800 mb-1">🔗 비회원 제한 공통 동작 — LoginRequiredToast</p>
+            <p className="text-xs font-bold text-blue-800 mb-1">🔗 비회원 제한 공통 동작 — 로그인 유도 팝업</p>
             <p className="text-xs text-blue-700">
-              아래 인터랙션에서 비회원이 제한 기능을 클릭하면 <strong>LoginRequiredToast</strong> 컴포넌트가 로그인 유도 모달로 표시됩니다.
-              (화면 중앙 딤 처리 + 흰 카드 형태. 토스트가 아닌 모달임에 주의)
-              카카오톡/네이버 로그인 버튼 + "나중에 하기" 버튼 포함. 상세 UI는 공통 탭 참조.
+              아래 인터랙션에서 비회원이 제한 기능을 클릭하면 <strong>로그인 유도 팝업</strong>이 뜹니다.
+              (배경을 살짝 어둡게 하고, 가운데 흰 카드로 안내 — 하단에 잠깐 나오는 알림과 다름)
+              문구·버튼 배치 등은 <strong>공통 탭</strong> 화면정의서를 참고합니다.
+            </p>
+            <p className="text-xs text-indigo-900 bg-indigo-50 border border-indigo-200 rounded-lg px-2.5 py-2 mt-2">
+              👉 버튼 탭 시 이후의 진행 흐름은 마이페이지 화면정의서에 정리된 [공통 로그인/회원가입 플로우 정책]을 공통으로 따름.
             </p>
           </div>
 
@@ -505,9 +506,9 @@ export function CommunityTabSpec() {
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
                   <div className="text-xs font-bold text-gray-500 mb-2">비회원</div>
                   <ul className="space-y-1.5 text-xs text-gray-700">
-                    <li>• 하트 아이콘 회색 + cursor-default (비활성화)</li>
-                    <li>• 클릭 시 LoginRequiredToast 표시</li>
-                    <li>• feature: "공감"</li>
+                    <li>• 하트 아이콘은 회색·비활성 모양 (눌러도 공감되지 않음)</li>
+                    <li>• 클릭 시 로그인 유도 팝업 표시</li>
+                    <li>• 기획상 이 버튼은 &quot;공감&quot; 동작에 해당</li>
                   </ul>
                 </div>
                 <div className="bg-pink-50 border border-pink-200 rounded-lg p-3">
@@ -542,7 +543,7 @@ export function CommunityTabSpec() {
                     <ul className="space-y-1.5 text-xs text-gray-700">
                       <li>• 입력창 비활성화</li>
                       <li>• 플레이스홀더: "로그인 후 댓글을 작성할 수 있습니다"</li>
-                      <li>• 클릭 시 LoginRequiredToast 표시</li>
+                      <li>• 클릭 시 로그인 유도 팝업 표시</li>
                     </ul>
                   </div>
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
@@ -557,7 +558,7 @@ export function CommunityTabSpec() {
                 {/* 댓글 작성자 표시 방식 안내 */}
                 <div className="bg-orange-50 border-l-4 border-orange-400 p-3 rounded-r-lg">
                   <p className="text-xs font-bold text-orange-800 mb-1">📌 댓글 작성자 표시 방식</p>
-                  <p className="text-xs text-orange-700">댓글 작성자명은 가입 시 설정 또는 <strong>My 페이지에서 등록한 닉네임</strong> 기준으로 표시합니다(<code className="bg-orange-100 px-1 rounded">comment.userName</code>). 의사 인증 사용자는 닉네임 옆에 의사 인증 배지 표시.</p>
+                  <p className="text-xs text-orange-700">댓글 작성자명은 가입 시 설정 또는 <strong>My 페이지에서 등록한 닉네임</strong> 기준으로 표시합니다. 의사 인증 사용자는 닉네임 옆에 의사 인증 배지 표시.</p>
                 </div>
                 {/* 댓글 예시 */}
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
@@ -600,8 +601,8 @@ export function CommunityTabSpec() {
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
                   <div className="text-xs font-bold text-gray-500 mb-2">비회원</div>
                   <ul className="space-y-1.5 text-xs text-gray-700">
-                    <li>• 하트 아이콘 회색(text-gray-300) + cursor-default (비활성화)</li>
-                    <li>• 클릭 시 <span className="text-green-700 font-bold">LoginRequiredToast 발동</span> — isGuest 가드 적용 ✅ (feature: "공감")</li>
+                    <li>• 하트 아이콘은 연한 회색·비활성 모양</li>
+                    <li>• 클릭 시 <span className="text-green-700 font-bold">로그인 유도 팝업</span> 표시 — 비회원이면 공감 불가</li>
                   </ul>
                 </div>
                 <div className="bg-red-50 border border-red-200 rounded-lg p-3">
@@ -625,7 +626,7 @@ export function CommunityTabSpec() {
                 <ul className="space-y-2 text-sm text-indigo-900">
                   <li className="flex items-start gap-2">
                     <span className="text-indigo-600 font-bold">•</span>
-                    <span><strong>비회원</strong>: "답글" 버튼 클릭 시 <span className="text-green-700 font-bold">LoginRequiredToast 발동</span> — onClick에 isGuest 가드 적용 ✅ (feature: "답글"), 입력창 열리지 않음</span>
+                    <span><strong>비회원</strong>: &quot;답글&quot; 버튼을 누르면 <span className="text-green-700 font-bold">로그인 유도 팝업</span>만 뜨고, 답글 입력창은 열리지 않음</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-indigo-600 font-bold">•</span>
@@ -652,7 +653,7 @@ export function CommunityTabSpec() {
               <div className="grid grid-cols-3 gap-3 text-xs">
                 <div className="bg-white border border-red-200 rounded p-3">
                   <div className="font-bold text-green-700 mb-1">✅ 회원 (타인 게시글/댓글)</div>
-                  <p className="text-gray-600">신고하기 메뉴 표시 → ReportModal 열림</p>
+                  <p className="text-gray-600">신고하기 메뉴 표시 → 신고하기 창 열림</p>
                 </div>
                 <div className="bg-white border border-red-200 rounded p-3">
                   <div className="font-bold text-red-600 mb-1">❌ 본인 게시글/댓글</div>
@@ -660,7 +661,7 @@ export function CommunityTabSpec() {
                 </div>
                 <div className="bg-white border border-red-200 rounded p-3">
                   <div className="font-bold text-red-600 mb-1">❌ 비회원</div>
-                  <p className="text-gray-600">⋮ 더보기 메뉴 자체는 노출됨. 신고하기 항목만 <code className="bg-gray-100 px-1 rounded">!isGuest</code> 조건으로 숨겨짐 (공유하기는 표시됨)</p>
+                  <p className="text-gray-600">⋮ 더보기 메뉴 자체는 노출됨. <strong>회원에게만</strong> 신고하기 항목이 보이고, 비회원에게는 숨김 (공유하기는 표시됨)</p>
                 </div>
               </div>
             </div>
@@ -674,12 +675,12 @@ export function CommunityTabSpec() {
                   <ul className="space-y-1 text-xs text-gray-700">
                     <li>• 게시글 상세: 우상단 ⋮ 더보기 메뉴 → "신고하기"</li>
                     <li>• 댓글: 댓글 우측 ⋮ 더보기 메뉴 → "신고하기"</li>
-                    <li>• 클릭 시 ReportModal 열림 (신고 대상 타입·ID·작성자명 전달)</li>
+                    <li>• 클릭 시 신고하기 창 열림 (어떤 글·댓글인지, 작성자 이름 등이 함께 전달됨)</li>
                   </ul>
                 </div>
 
                 <div className="bg-white border border-red-200 rounded p-3">
-                  <div className="text-xs font-bold text-red-700 mb-2">2️⃣ 신고 사유 선택 (ReportModal)</div>
+                  <div className="text-xs font-bold text-red-700 mb-2">2️⃣ 신고 사유 선택 (신고하기 창)</div>
                   <div className="grid grid-cols-2 gap-3 mt-2">
                     <div>
                       <p className="text-xs font-bold text-gray-600 mb-1">게시글 신고 사유 (7종)</p>
@@ -710,7 +711,7 @@ export function CommunityTabSpec() {
                 <div className="bg-white border border-red-200 rounded p-3">
                   <div className="text-xs font-bold text-red-700 mb-2">3️⃣ 신고 접수</div>
                   <ul className="space-y-1 text-xs text-gray-700">
-                    <li>• "신고가 접수되었습니다" 토스트 메시지 표시 (SuccessToast)</li>
+                    <li>• "신고가 접수되었습니다" 토스트 메시지 표시 (완료 알림(짧은 메시지))</li>
                     <li>• 신고 결과는 알림 없음 (완전 무통보 정책)</li>
                   </ul>
                 </div>
@@ -746,11 +747,35 @@ export function CommunityTabSpec() {
           <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4 rounded-r-lg">
             <div className="font-bold text-yellow-900 mb-2 flex items-center gap-2">
               <span>⚠️</span>
-              <span>A방식: 비활성화 + 클릭 시 LoginRequiredToast (로그인 유도 모달)</span>
+              <span>A방식: 비활성화 + 클릭 시 로그인 유도 팝업</span>
             </div>
             <div className="text-sm text-yellow-800">
-              비회원은 아래 기능을 사용할 수 없으며, 클릭 시 <strong>LoginRequiredToast</strong> 로그인 유도 모달이 표시됩니다. 또한 게시글 조회는 <strong>비회원 사용량 제한</strong> 정책이 별도 적용됩니다.
+              비회원은 아래 기능을 사용할 수 없으며, 클릭 시 <strong>로그인 유도 팝업</strong>(화면 가운데 안내 카드)이 표시됩니다. 또한 게시글 조회는 <strong>비회원 사용량 제한</strong> 정책이 별도 적용됩니다.
             </div>
+          </div>
+
+          <div className="bg-rose-50 border border-rose-200 rounded-lg p-4 mb-4">
+            <h3 className="text-sm font-bold text-rose-900 mb-2">📊 비회원 사용량 제한 (전역 통합)</h3>
+            <ul className="text-xs text-rose-900 space-y-1.5 list-disc pl-5 leading-relaxed">
+              <li>
+                <strong>탭마다 따로가 아닙니다.</strong> 검색 실행(하루 3회), 명의 프로필 상세 열람(하루 3회), 커뮤니티 게시글 본문 상세 열람(하루 5회)은 각각 <strong>앱 전역에서 하나의 카운터</strong>를 씁니다. 홈·명의 찾기·통합 검색 전체 창·커뮤니티 중 <strong>어느 화면에서 소비하든</strong> 같은 잔여 횟수가 줄고, 배너·검색창 잠금·한도 안내 창에 동시에 반영됩니다. (프로토타입: 이 브라우저에 저장된 값으로 맞춤)
+              </li>
+              <li>
+                <strong>검색 실행:</strong> 명의 찾기 탭에서 하는 검색과 통합 검색 전체 창에서 하는 검색이 <strong>같은 3회 한도</strong>를 공유합니다.
+              </li>
+              <li>
+                <strong>명의 프로필 열람:</strong> 홈 인기 명의 카드, 명의 찾기, 통합 검색 명의 탭 등에서 의사 프로필 상세가 열릴 때 <strong>같은 3회 한도</strong>를 공유합니다.
+              </li>
+              <li>
+                <strong>게시글 열람(글 상세 열기):</strong> 홈 추천글, 통합 검색의 게시글 탭, 커뮤니티 피드 등에서 글 상세 창이 열릴 때 <strong>같은 5회 한도</strong>를 공유합니다.
+              </li>
+              <li>
+                커뮤니티 화면에서는 주로 <strong>게시글 열람</strong> 배너가 보이지만, 사용자가 다른 탭에서 검색·프로필을 이미 소진한 경우에도 전역 상태에 맞춰 안내가 바뀔 수 있습니다.
+              </li>
+            </ul>
+            <p className="text-xs text-rose-800 mt-2 border-t border-rose-200 pt-2">
+              수치·UI 패턴·한도 안내 흐름의 상세 나열은 <strong>통합검색 화면정의서 「8. 비회원 사용량 제한」</strong> 및 <strong>명의 찾기 화면정의서 「5. 비회원 사용량 제한」</strong>과 맞춥니다. 구현·검수 시에는 앱에 반영된 비회원 한도(잔여 횟수) 처리 규칙과 일치하는지 확인합니다.
+            </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -765,7 +790,7 @@ export function CommunityTabSpec() {
                 <li>• 댓글 작성</li>
                 <li>• 댓글 좋아요</li>
                 <li>• 답글 작성</li>
-                <li>• <strong>신고하기</strong> (더보기 메뉴 미노출 또는 LoginRequiredToast)</li>
+                <li>• <strong>신고하기</strong> (더보기 메뉴 미노출 또는 로그인 유도 팝업)</li>
               </ul>
             </div>
 
@@ -780,7 +805,7 @@ export function CommunityTabSpec() {
                 <li>• 댓글 목록 보기</li>
                 <li>• 카테고리 필터 (질병별/진료과별)</li>
                 <li>• 정렬 변경 (최신순/인기순)</li>
-                <li>• 통합 검색 (GlobalSearchModal) 진입</li>
+                <li>• 통합 검색 (통합 검색 전체 창) 진입</li>
               </ul>
             </div>
           </div>
@@ -801,7 +826,7 @@ export function CommunityTabSpec() {
               <ul className="space-y-2 text-sm text-indigo-900">
                 <li className="flex items-start gap-2">
                   <span className="text-indigo-600 font-bold">•</span>
-                  <span><strong>LoginRequiredToast (로그인 유도 모달)</strong>: 비회원이 제한 기능 클릭 시. 카카오/네이버 로그인 버튼 포함 — 공통 탭 2절 참조</span>
+                  <span><strong>로그인 유도 팝업</strong>: 비회원이 제한 기능을 눌렀을 때. 모양·문구는 <strong>공통 탭</strong> 화면정의서를 참고합니다. 👉 버튼 탭 이후 흐름은 마이페이지 화면정의서에 정리된 [공통 로그인/회원가입 플로우 정책]을 공통으로 따름.</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-indigo-600 font-bold">•</span>
@@ -809,7 +834,7 @@ export function CommunityTabSpec() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-indigo-600 font-bold">•</span>
-                  <span><strong>SuccessToast</strong>: 작업 완료 알림 (글 작성/수정/삭제, 신고 접수 등) — 공통 탭 참조</span>
+                  <span><strong>완료 알림(짧은 메시지)</strong>: 작업 완료 알림 (글 작성/수정/삭제, 신고 접수 등) — 공통 탭 참조</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-indigo-600 font-bold">•</span>
@@ -817,7 +842,13 @@ export function CommunityTabSpec() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-indigo-600 font-bold">•</span>
-                  <span><strong>GlobalSearchModal (통합 검색)</strong>: 상단 돋보기 아이콘 진입 — 공통 탭 1절 SubSection 4 / 통합검색 탭 참조</span>
+                  <span><strong>통합 검색 전체 창 (통합 검색)</strong>: 상단 돋보기 아이콘 진입 — 공통 탭 1절 SubSection 4 / 통합검색 탭 참조</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-indigo-600 font-bold">•</span>
+                  <span>
+                    <strong>무료 이용 한도 안내 배너 · 한도 초과 안내 팝업</strong>: 비회원에게 남은 검색·프로필 보기·글 보기 횟수를 알려 주는 상단 띠와, 한도를 넘겼을 때 뜨는 가운데 안내 창입니다. 커뮤니티에서는 주로 <strong>게시글 보기</strong> 한도를 안내합니다. 정책·전역 합산은 본 문서 6절 및 통합검색 정의서 §8을 참고하세요.
+                  </span>
                 </li>
               </ul>
             </div>
@@ -827,15 +858,15 @@ export function CommunityTabSpec() {
               <ul className="space-y-1 text-sm text-amber-900">
                 <li className="flex items-start gap-2">
                   <span className="text-amber-600 font-bold">•</span>
-                  <span><strong>ReportModal (신고 모달)</strong>: 커뮤니티 전용. 게시글 7종 / 댓글 6종 사유 — 본 문서 5절 참조</span>
+                  <span><strong>신고하기 창 (신고 모달)</strong>: 커뮤니티 전용. 게시글 7종 / 댓글 6종 사유 — 본 문서 5절 참조</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-amber-600 font-bold">•</span>
-                  <span><strong>WritePostModal (글쓰기)</strong>: 게시글 작성/수정. 임시저장 기능 포함 — 본 문서 <strong>9절(화면정의)</strong> · <strong>10절(임시저장)</strong> 참조</span>
+                  <span><strong>글쓰기·수정 화면 (글쓰기)</strong>: 게시글 작성/수정. 임시저장 기능 포함 — 본 문서 <strong>9절(화면정의)</strong> · <strong>10절(임시저장)</strong> 참조</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-amber-600 font-bold">•</span>
-                  <span><strong>UserProfileModal</strong>: 작성자 아이콘 클릭 시. "이 사람 글만 보기" 포함</span>
+                  <span><strong>작성자 프로필 창</strong>: 작성자 아이콘 클릭 시. "이 사람 글만 보기" 포함</span>
                 </li>
               </ul>
             </div>
@@ -849,12 +880,12 @@ export function CommunityTabSpec() {
           </div>
         </section>
 
-        {/* 9. WritePostModal 화면정의서 (회원 · 커뮤니티) */}
+        {/* 9. 글쓰기·수정 화면 화면정의서 (회원 · 커뮤니티) */}
         <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4 pb-3 border-b border-gray-200">📝 WritePostModal 화면정의서 (회원 · 커뮤니티)</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-4 pb-3 border-b border-gray-200">📝 글쓰기·수정 화면 (회원 · 커뮤니티)</h2>
           <p className="text-xs text-gray-500 mb-5">
             <strong className="text-gray-700">UI/UX 정의</strong> — 진입: 커뮤니티 탭 <strong className="text-gray-700">글쓰기(+)</strong> 또는 <strong className="text-gray-700">게시글 수정</strong>.
-            프로토타입 파일명: <code className="bg-gray-100 px-1.5 py-0.5 rounded">WritePostModal.tsx</code>
+            프로토타입에서는 이 화면이 별도 화면으로 구현되어 있습니다.
           </p>
 
           <div className="space-y-5 text-sm text-gray-700">
@@ -961,9 +992,9 @@ export function CommunityTabSpec() {
           </div>
         </section>
 
-        {/* 10. WritePostModal — 임시저장(기기 저장) 상세 */}
+        {/* 10. 글쓰기·수정 화면 — 임시저장(기기 저장) 상세 */}
         <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4 pb-3 border-b border-gray-200">💾 WritePostModal — 임시저장(이 기기에 보관)</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-4 pb-3 border-b border-gray-200">💾 글쓰기·수정 화면 — 임시저장(이 기기에 보관)</h2>
           <p className="text-xs text-gray-500 mb-4">사용자 관점에서는 &quot;작성 중이던 글이 이 폰/PC에 남아 있다&quot;로 이해하면 된다. (구현: 브라우저 저장소)</p>
 
           <div className="space-y-5">
@@ -1015,7 +1046,7 @@ export function CommunityTabSpec() {
 
             {/* 복원 다이얼로그 */}
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-              <div className="font-bold text-amber-900 mb-3 text-sm">🔄 임시저장 복원 다이얼로그 — WritePostModal 재진입 시</div>
+              <div className="font-bold text-amber-900 mb-3 text-sm">🔄 임시저장 복원 다이얼로그 — 글쓰기·수정 화면 재진입 시</div>
               <div className="grid grid-cols-2 gap-3 mb-3">
                 <div className="bg-white border border-amber-200 rounded p-3">
                   <div className="text-xs font-bold text-amber-800 mb-2">표시 조건</div>
@@ -1028,7 +1059,7 @@ export function CommunityTabSpec() {
                 <div className="bg-white border border-amber-200 rounded p-3">
                   <div className="text-xs font-bold text-amber-800 mb-2">UI 형태</div>
                   <ul className="space-y-1 text-xs text-gray-700">
-                    <li>• WritePostModal 위에 딤(bg-black/40) 레이어</li>
+                    <li>• 글쓰기·수정 화면 위에 딤(bg-black/40) 레이어</li>
                     <li>• 흰 카드: rounded-2xl, max-w-xs, shadow-2xl</li>
                     <li>• 타이틀 <strong>"AIGA"</strong> + 메시지 + 저장시각 미리보기</li>
                   </ul>
@@ -1062,7 +1093,7 @@ export function CommunityTabSpec() {
 
             {/* 푸터 버튼 구성 */}
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-              <div className="font-bold text-gray-900 mb-3 text-sm">🔘 WritePostModal 푸터 버튼 구성 (v0.6 기준)</div>
+              <div className="font-bold text-gray-900 mb-3 text-sm">🔘 글쓰기·수정 화면 푸터 버튼 구성 (v0.6 기준)</div>
               <div className="flex gap-2 mb-3 max-w-sm">
                 <div className="flex-1 px-4 py-2.5 text-center text-sm font-medium bg-gray-100 text-gray-700 rounded-lg">취소</div>
                 <div className="flex-1 px-4 py-2.5 text-center text-sm font-medium bg-blue-600 text-white rounded-lg">게시하기</div>

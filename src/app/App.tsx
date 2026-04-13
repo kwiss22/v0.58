@@ -17,6 +17,8 @@ import { Search, Smartphone, LayoutPanelLeft } from 'lucide-react';
 import { UsageLimitProvider } from './contexts/UsageLimitContext';
 import { GuestLimitModal } from './components/GuestLimitModal';
 import { DebugPanel } from './components/DebugPanel';
+import { Toaster } from 'sonner';
+import 'sonner/dist/styles.css';
 
 // 전역 검색 아이콘을 띄울 탭 목록 (chat·mypage 제외)
 const TABS_WITH_SEARCH = ['home', 'search', 'community'];
@@ -145,7 +147,7 @@ function AppContent() {
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-gray-900 rounded-b-2xl z-20" />
           {/* 화면 */}
           <div
-            className="relative bg-gray-50 overflow-hidden rounded-[2.2rem] z-10"
+            className="relative bg-gray-50 overflow-hidden rounded-[2.2rem] z-10 transform-gpu"
             style={{ width: '390px', height: '100%', maxWidth: 'calc(100vw - 48px)' }}
           >
             {/* 전역 검색 버튼 */}
@@ -183,6 +185,14 @@ function AppContent() {
             <GuestLimitModal />
             {/* 개발용 디버그 패널 */}
             <DebugPanel />
+            {/* 서비스 화면(폰 프레임) 내부에만 고정되는 토스트 — transform으로 fixed 기준점 제한 */}
+            <Toaster
+              position="bottom-center"
+              theme="light"
+              richColors
+              offset={{ bottom: '5.5rem' }}
+              toastOptions={{ duration: 3000 }}
+            />
           </div>
         </div>
       </div>
@@ -192,8 +202,8 @@ function AppContent() {
   // 기본 분할 레이아웃
   return (
     <div className="h-screen bg-slate-100 flex overflow-hidden">
-      {/* 왼쪽: 앱 화면 — 모바일 전체 / PC는 max-w-2xl 고정폭으로 왼쪽 부착 */}
-      <div className="relative w-full md:w-[42rem] md:flex-shrink-0 flex flex-col bg-gray-50 shadow-[0_0_0_1px_rgba(0,0,0,0.06),0_8px_40px_rgba(0,0,0,0.10)]">
+      {/* 왼쪽: 앱 화면 — 모바일 전체 / PC는 max-w-2xl 고정폭으로 왼쪽 부착; transform-gpu 로 sonner fixed 토스트가 이 열 안에만 잡힘 */}
+      <div className="relative w-full md:w-[42rem] md:flex-shrink-0 flex flex-col bg-gray-50 shadow-[0_0_0_1px_rgba(0,0,0,0.06),0_8px_40px_rgba(0,0,0,0.10)] transform-gpu">
         {/* 전역 검색 버튼 — 해당 탭에서만 우상단 고정 */}
         {showSearchIcon && (
           <button
@@ -239,8 +249,19 @@ function AppContent() {
 
         {/* 비회원 한도 초과 모달 */}
         <GuestLimitModal />
-        {/* 개발용 디버그 패널 */}
-        <DebugPanel />
+        {/* 모바일 단일열에서만: 스펙 패널이 없을 때 창 우하단 디버그 (PC는 SpecPanel 쪽) */}
+        <div className="md:hidden">
+          <DebugPanel />
+        </div>
+
+        {/* 실제 서비스 미리보기 영역(왼쪽 열) 안에만 표시되는 토스트 */}
+        <Toaster
+          position="bottom-center"
+          theme="light"
+          richColors
+          offset={{ bottom: '5.5rem' }}
+          toastOptions={{ duration: 3000 }}
+        />
       </div>
 
       {/* 오른쪽: 화면정의서 */}

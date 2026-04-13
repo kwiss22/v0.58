@@ -5,7 +5,14 @@ import type { Doctor } from '@/types/chat.types';
 
 export type Tab = 'home' | 'chat' | 'search' | 'community' | 'mypage';
 export type HomeSubTab = 'popular' | 'department' | 'findDoctor';
-export type SpecTab = 'home' | 'common' | 'doctor' | 'search-spec' | 'community' | 'mypage-spec';
+export type SpecTab =
+  | 'home'
+  | 'aiga-chatbot-spec'
+  | 'common'
+  | 'doctor'
+  | 'search-spec'
+  | 'community'
+  | 'mypage-spec';
 
 interface AppNavigationState {
   // 메인 탭

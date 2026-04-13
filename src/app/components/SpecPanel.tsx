@@ -1,6 +1,7 @@
 // 화면정의서 슬라이딩 사이드패널
 
 import { SpecDocumentation } from './docs/SpecDocumentation';
+import { DebugPanel } from './DebugPanel';
 import { useUser } from '../contexts/UserContext';
 import { Smartphone, ShieldCheck } from 'lucide-react';
 
@@ -13,7 +14,7 @@ export function SpecPanel({ onMobilePreview, onAdminPage }: SpecPanelProps) {
   const { role, setRole } = useUser();
 
   return (
-    <div className="h-full bg-white border-l border-gray-200 flex flex-col">
+    <div className="relative h-full bg-white border-l border-gray-200 flex flex-col">
       {/* 헤더 */}
       <div className="border-b border-gray-200 bg-gradient-to-r from-blue-600 to-blue-700 p-4">
         <div className="flex items-center justify-between mb-3">
@@ -72,6 +73,9 @@ export function SpecPanel({ onMobilePreview, onAdminPage }: SpecPanelProps) {
       <div className="flex-1 overflow-y-auto">
         <SpecDocumentation />
       </div>
+
+      {/* PC: 화면정의서 영역 우하단 (왼쪽 앱 열의 transform과 분리) */}
+      <DebugPanel placement="spec" />
     </div>
   );
 }

@@ -88,7 +88,7 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
               <div>
                 <p className="font-bold text-blue-900 text-sm mb-1">AIGA 리뷰</p>
                 <p className="text-xs text-blue-800">
-                  틸색 섹션 제목. <strong>환자 작성 리뷰 목록</strong>(작성자, 별점, 4항 평점, 본문, 인증 배지, 첨부 사진 그리드 → ImageLightbox). 상단에 평균 평점·항목별 막대 요약 가능. 회원에게만 <strong>임시저장 이어쓰기</strong> 배너 조건부. 하단 고정 <strong>리뷰쓰기</strong>(비회원 Lock + LoginRequiredToast).
+                  틸색 섹션 제목. <strong>환자 작성 리뷰 목록</strong>(작성자, 별점, 4항 평점, 본문, 인증 배지, 첨부 사진 그리드 → 사진 크게 보기). 상단에 평균 평점·항목별 막대 요약 가능. 회원에게만 <strong>임시저장 이어쓰기</strong> 배너 조건부. 하단 고정 <strong>리뷰쓰기</strong>(비회원 Lock + 로그인 유도 팝업).
                 </p>
               </div>
             </div>
@@ -99,8 +99,8 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
               rows={[
                 ['의사 정보 보기', '✅', '✅', '모든 사용자가 의사의 상세 정보 열람 가능'],
                 ['AI 소셜리뷰 보기', '✅', '✅', '4지표(친절·배려, 치료 만족, 쉬운 설명, 추천 의향) 숫자·아이콘으로 확인'],
-                ['다른 환자 리뷰 읽기 (AIGA 리뷰)', '✅', '✅', '리뷰 카드 목록·첨부 이미지(ImageLightbox) 열람'],
-                ['의료진 인증 요청', '✅', '✅(비활성)', '비회원·회원 모두 버튼 노출. 비회원: 잠금·회색 UI, 탭 시 로그인 안내(LoginRequiredToast). 회원: 데모 토스트. 실서비스 노출 규칙은 별도 의사 인증 화면정의서'],
+                ['다른 환자 리뷰 읽기 (AIGA 리뷰)', '✅', '✅', '리뷰 카드 목록·첨부 이미지(사진 크게 보기) 열람'],
+                ['의료진 인증 요청', '✅', '✅(비활성)', '비회원·회원 모두 버튼 노출. 비회원: 잠금·회색 UI, 탭 시 로그인 안내(로그인 유도 팝업). 회원: 데모 토스트. 실서비스 노출 규칙은 별도 의사 인증 화면정의서'],
                 ['의사 정보 수정 요청', '✅', '✅', '비회원·회원 모두 항상 노출. 2차 모달·서비스 영역 오버레이. 제출·연동 상세는 별도 의사 인증 화면정의서 참고'],
                 ['리뷰쓰기', '✅', '❌', '비회원은 버튼이 회색 비활성화 상태 (Lock 아이콘) + 클릭 시 \"로그인 필요\" 안내 표시'],
                 ['즐겨찾기', '✅', '❌', '비회원은 버튼이 회색 비활성화 상태 (Lock 아이콘) + 클릭 시 \"로그인 필요\" 안내 표시'],
@@ -110,7 +110,7 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
             {/* ── 비회원 버튼 비활성화 상태 상세 ── */}
             <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">🔒 비회원 버튼 비활성화 상태 상세</h4>
             <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4 space-y-4">
-              <p className="text-xs text-red-800 font-bold">비회원이 아래 두 버튼을 클릭하면 LoginRequiredToast 모달이 표시됩니다.</p>
+              <p className="text-xs text-red-800 font-bold">비회원이 아래 두 버튼을 클릭하면 로그인 유도 팝업이 표시됩니다.</p>
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="bg-white border border-red-200 rounded-lg p-3">
@@ -122,7 +122,7 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
                   <ul className="text-xs text-gray-600 space-y-0.5">
                     <li>• 버튼 색상: 회색(비활성화)</li>
                     <li>• 자물쇠(Lock) 아이콘 표시</li>
-                    <li>• 클릭 → LoginRequiredToast 모달</li>
+                    <li>• 클릭 → 로그인 유도 팝업</li>
                   </ul>
                 </div>
                 <div className="bg-white border border-red-200 rounded-lg p-3">
@@ -134,19 +134,22 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
                   <ul className="text-xs text-gray-600 space-y-0.5">
                     <li>• 버튼 색상: 회색(비활성화)</li>
                     <li>• 자물쇠(Lock) 아이콘 표시</li>
-                    <li>• 클릭 → LoginRequiredToast 모달</li>
+                    <li>• 클릭 → 로그인 유도 팝업</li>
                   </ul>
                 </div>
               </div>
 
               <div className="bg-white border border-red-200 rounded-lg p-3">
-                <p className="text-xs font-bold text-red-800 mb-2">🪟 LoginRequiredToast 모달 동작 방식</p>
+                <p className="text-xs font-bold text-red-800 mb-2">🪟 로그인 유도 팝업 동작 방식</p>
                 <ul className="text-xs text-red-700 space-y-1">
                   <li>• 배경 딤처리(어두운 반투명 오버레이) 적용</li>
                   <li>• 화면 <strong>중앙</strong>에 카드 형태 모달 표시</li>
                   <li>• 모달 내부: 안내 문구 + 로그인하기 버튼</li>
-                  <li className="text-red-500 font-bold">⚠️ 단순 하단 토스트 알림이 아닌 중앙 카드 모달임 — 이름(LoginRequiredToast)과 실제 동작 혼동 주의</li>
+                  <li className="text-red-500 font-bold">⚠️ 하단에 잠깐 뜨는 토스트 알림이 아니라, 화면 가운데 카드 형태로 뜨는 창입니다.</li>
                 </ul>
+                <p className="text-xs text-indigo-900 bg-indigo-50 border border-indigo-200 rounded-lg px-2.5 py-2 mt-2">
+                  👉 버튼 탭 시 이후의 진행 흐름은 마이페이지 화면정의서에 정리된 [공통 로그인/회원가입 플로우 정책]을 공통으로 따름.
+                </p>
               </div>
             </div>
 
@@ -166,12 +169,12 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
                 {
                   icon: '🔒',
                   case: '비회원이 즐겨찾기 버튼 누름',
-                  action: 'LoginRequiredToast 모달 표시 — 배경 딤처리 + 화면 중앙 카드',
+                  action: '로그인 유도 팝업 표시 — 배경 딤처리 + 화면 중앙 카드',
                 },
                 {
                   icon: '✍️',
                   case: '비회원이 리뷰 작성 버튼 누름',
-                  action: 'LoginRequiredToast 모달 표시 — 배경 딤처리 + 화면 중앙 카드',
+                  action: '로그인 유도 팝업 표시 — 배경 딤처리 + 화면 중앙 카드',
                 },
               ].map((item, i) => (
                 <div key={i} className="bg-white border border-gray-200 rounded-lg p-3">
@@ -224,13 +227,13 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
                     <li>• 노출 조건: 전체 이미지 수 &gt; 3장일 때만 3번째 슬롯에 표시</li>
                     <li>• 오버레이 텍스트: <code className="bg-gray-100 px-1 rounded">+{'{'}총장수 - 3{'}'}</code> (예: 5장이면 <code className="bg-gray-100 px-1 rounded">+2</code>)</li>
                     <li>• 스타일: 검정 반투명 배경(<code className="bg-gray-100 px-1 rounded">bg-black/50</code>) + 흰 텍스트</li>
-                    <li>• 클릭 시 ImageLightbox가 3번째 이미지부터 열림</li>
+                    <li>• 클릭 시 사진 크게 보기가 3번째 이미지부터 열림</li>
                   </ul>
                 </div>
                 <div className="bg-white border border-teal-100 rounded-lg p-3">
                   <p className="text-[10px] font-bold text-gray-700 mb-1">이미지 탭(클릭) 동작</p>
                   <ul className="text-[10px] text-gray-600 space-y-0.5">
-                    <li>• 어느 슬롯을 탭해도 <strong>ImageLightbox</strong> 뷰어 열림</li>
+                    <li>• 어느 슬롯을 탭해도 <strong>사진 크게 보기</strong> 뷰어 열림</li>
                     <li>• 탭한 이미지의 인덱스부터 시작 (1번 탭 → 1번째, 2번 탭 → 2번째 …)</li>
                     <li>• Lightbox에서는 <strong>첨부된 전체 이미지</strong>를 탐색 가능</li>
                     <li>• Lightbox는 의사 프로필 팝업 내부에 마운트 (최상위 z-index)</li>
@@ -238,7 +241,7 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
                 </div>
               </div>
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <p className="text-xs font-bold text-blue-800 mb-1.5">ImageLightbox 뷰어 동작 (리뷰 카드 공통)</p>
+                <p className="text-xs font-bold text-blue-800 mb-1.5">사진 크게 보기 뷰어 동작 (리뷰 카드 공통)</p>
                 <ul className="text-xs text-blue-700 space-y-1">
                   <li>• 이전 / 다음 화살표 버튼으로 이미지 간 이동</li>
                   <li>• 상단 카운터: <code className="bg-blue-100 px-1 rounded">N / 전체장수</code></li>
@@ -248,7 +251,7 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
                 </ul>
               </div>
               <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-                <p className="text-[10px] font-bold text-amber-800 mb-1.5">⚠️ 리뷰 카드(목록) vs ImageLightbox(상세) 역할 구분</p>
+                <p className="text-[10px] font-bold text-amber-800 mb-1.5">⚠️ 리뷰 카드(목록) vs 사진 크게 보기(상세) 역할 구분</p>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="bg-white border border-amber-100 rounded p-2">
                     <p className="text-[10px] font-bold text-gray-700 mb-1">리뷰 카드 (목록 역할)</p>
@@ -259,7 +262,7 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
                     </ul>
                   </div>
                   <div className="bg-white border border-amber-100 rounded p-2">
-                    <p className="text-[10px] font-bold text-gray-700 mb-1">ImageLightbox (상세 역할)</p>
+                    <p className="text-[10px] font-bold text-gray-700 mb-1">사진 크게 보기 (상세 역할)</p>
                     <ul className="text-[10px] text-gray-600 space-y-0.5">
                       <li>• 전체 이미지 개수 제한 없음</li>
                       <li>• 한 장씩 전체화면 표시</li>
@@ -276,8 +279,8 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
             <div className="mb-4 bg-emerald-50 border border-emerald-200 rounded-xl p-4">
               <p className="text-sm font-bold text-emerald-800 mb-1">진입 경로별 모듈 (프로토타입 — 개발 참고)</p>
               <ul className="text-sm text-emerald-900 space-y-1 list-disc list-inside">
-                <li><strong>CommunityPostModal</strong> — 홈 추천글, 통합 검색의 커뮤니티 결과 등</li>
-                <li><strong>PostDetailModal</strong> — 커뮤니티 탭 피드</li>
+                <li><strong>게시글 상세(홈·통합검색)</strong> — 홈 추천글, 통합 검색의 커뮤니티 결과 등</li>
+                <li><strong>게시글 상세(커뮤니티 피드)</strong> — 커뮤니티 탭 피드</li>
               </ul>
               <p className="text-xs text-emerald-800 mt-2"><strong>기획·UX 기준</strong>은 두 경로 모두 같은 게시글 상세 패턴(본문·공감·댓글·더보기)을 목표로 합니다.</p>
             </div>
@@ -286,15 +289,15 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
             <div className="space-y-2">
               <div className="bg-gray-50 rounded-lg p-3">
                 <p className="text-sm font-bold text-gray-900">홈 화면</p>
-                <p className="text-xs text-gray-600">«커뮤니티 추천글» 카드 터치 → CommunityPostModal</p>
+                <p className="text-xs text-gray-600">«커뮤니티 추천글» 카드 터치 → 게시글 상세(홈·통합검색)</p>
               </div>
               <div className="bg-gray-50 rounded-lg p-3">
                 <p className="text-sm font-bold text-gray-900">통합 검색</p>
-                <p className="text-xs text-gray-600">커뮤니티 결과 카드 터치 → CommunityPostModal (검색어 변경 시 세션 내 공감 오버라이드 초기화)</p>
+                <p className="text-xs text-gray-600">커뮤니티 결과 카드 터치 → 게시글 상세(홈·통합검색) (검색어 변경 시 세션 내 공감 오버라이드 초기화)</p>
               </div>
               <div className="bg-gray-50 rounded-lg p-3">
                 <p className="text-sm font-bold text-gray-900">커뮤니티 탭</p>
-                <p className="text-xs text-gray-600">피드 카드 터치 → PostDetailModal</p>
+                <p className="text-xs text-gray-600">피드 카드 터치 → 게시글 상세(커뮤니티 피드)</p>
               </div>
             </div>
 
@@ -312,7 +315,7 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
               headers={['기능', '회원', '비회원', '설명']}
               rows={[
                 ['게시글 읽기', '✅', '✅', '모든 사용자가 전체 내용 열람 가능'],
-                ['게시글 공감(좋아요)', '✅ 토글·재탭 취소', '❌ LoginRequiredToast', 'CommunityPostModal·PostDetailModal 공통 패턴. 화면별 state라 탭 간 자동 동기는 없음'],
+                ['게시글 공감(좋아요)', '✅ 토글·재탭 취소', '❌ 로그인 유도 팝업', '홈·통합검색에서 연 상세와 커뮤니티 피드 상세는 같은 패턴이나, 데모에서는 화면마다 따로 열릴 수 있어 공감 숫자가 자동으로 맞지 않을 수 있음'],
                 ['댓글 읽기', '✅', '✅', '다른 사용자들의 댓글 확인 가능'],
                 ['댓글 작성', '✅', '❌', '비회원은 입력창이 비활성화되며 \"로그인 필요\" 안내'],
                 ['커뮤니티 탭 이동', '✅', '✅', '\"커뮤니티에서 더 보기\" 등으로 커뮤니티 탭 전환'],
@@ -325,7 +328,7 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
                 {
                   icon: '💬',
                   case: '댓글이 하나도 없는 경우',
-                  action: '\"첫 댓글을 작성해보세요\" 안내 문구 (PostDetailModal·CommunityPostModal)',
+                  action: '\"첫 댓글을 작성해보세요\" 안내 문구 (게시글 상세(커뮤니티 피드)·게시글 상세(홈·통합검색))',
                 },
                 {
                   icon: '🔒',
@@ -354,7 +357,7 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
 
             {/* ── 상세 UI 명세 (CommunityTabSpec 2.7에서 이관) ── */}
             <div className="mt-5 border-t border-gray-100 pt-5 space-y-4">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-wide">상세 UI 명세 (PostDetailModal)</p>
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wide">상세 UI 명세 (게시글 상세(커뮤니티 피드))</p>
 
               {/* 화면 구성 */}
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
@@ -362,10 +365,10 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
                 <ul className="space-y-2 text-xs text-gray-700">
                   <li>• <strong>헤더</strong>: <span className="text-red-600 font-bold">"게시글" 텍스트(좌)</span> + ⋮ 더보기 메뉴 + <span className="text-red-600 font-bold">X 닫기 버튼(우)</span> — ← 뒤로가기 버튼 없음</li>
                   <li>• <strong>작성자 정보</strong>: 프로필 아이콘 + "익명XX" + 작성일 + (수정됨)</li>
-                  <li>• <strong>본문</strong>: 제목 + 전체 내용 + 질환 태그 + 첨부 이미지 (탭 → ImageLightbox 확대 뷰어)</li>
+                  <li>• <strong>본문</strong>: 제목 + 전체 내용 + 질환 태그 + 첨부 이미지 (탭 → 사진 크게 보기 확대 뷰어)</li>
                   <li>• <strong>액션 바</strong>: <span className="text-red-600 font-bold">공감해요 버튼 + 댓글 수 — 2가지만 존재 (AI상담하기·명의찾기 버튼 없음)</span></li>
-                  <li>• <strong>병원 미니카드</strong> (조건부): post.hospital 데이터가 있을 때 액션 바 아래 표시. 병원명·별점·거리·진료과 + "병원 정보" 버튼 (onHospitalClick). 배경: blue-50 → indigo-50 그라데이션</li>
-                  <li>• <strong>의사 미니카드</strong> (조건부): post.doctor도 있을 때 병원 미니카드 내부에 중첩. "AI 맞춤 의사 추천" 배지(teal) + 의사 프로필 이미지 + 이름 + 전문과목 + "상세보기" 버튼 (onDoctorClick → DoctorProfileModal)</li>
+                  <li>• <strong>병원 미니카드</strong> (조건부): 글에 병원 정보가 붙어 있을 때 액션 바 아래 표시. 병원명·별점·거리·진료과 + &quot;병원 정보&quot; 버튼. 배경은 연한 파랑~남색 그라데이션</li>
+                  <li>• <strong>의사 미니카드</strong> (조건부): 같은 글에 의사 정보가 함께 있을 때 병원 미니카드 안에 겹쳐 표시. &quot;AI 맞춤 의사 추천&quot; 배지(청록 톤) + 의사 사진 + 이름 + 전문과목 + &quot;상세보기&quot; 버튼(누르면 명의 프로필 상세 창)</li>
                   <li>• <strong>댓글 영역</strong>: 댓글 목록 + 답글(대댓글) 지원 + 입력창. 댓글 0건 시 중앙 안내 <strong>첫 댓글을 작성해보세요</strong></li>
                 </ul>
               </div>
@@ -420,7 +423,7 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
                         <span>공유하기</span>
                       </div>
                     </div>
-                    <p className="text-xs text-red-700 mt-2">⋮ 메뉴 자체는 노출됨. 공유하기만 표시, 신고하기는 <code className="bg-red-100 px-1 rounded text-red-700">!isGuest</code> 조건으로 숨겨짐</p>
+                    <p className="text-xs text-red-700 mt-2">⋮ 메뉴 자체는 노출됨. 공유하기만 표시, 신고하기는 <code className="bg-red-100 px-1 rounded text-red-700">회원에게만</code> 조건으로 숨겨짐</p>
                     <p className="text-xs text-red-600 mt-1">수정/삭제/신고 모두 불가</p>
                   </div>
                 </div>
@@ -456,12 +459,12 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
                       <li>• <code className="bg-gray-100 px-1 rounded">flex-wrap gap-2</code> 로 전체 이미지 나열</li>
                       <li>• <strong>개수 제한 없음</strong> — 첨부된 이미지 전부 표시 (+N 오버레이 없음)</li>
                       <li>• 목록 카드(커뮤니티·리뷰)와 달리 상세 모달에서는 모두 노출</li>
-                      <li>• 이미지 탭 → <strong>ImageLightbox</strong> 뷰어 오버레이</li>
+                      <li>• 이미지 탭 → <strong>사진 크게 보기</strong> 뷰어 오버레이</li>
                     </ul>
                   </div>
                 </div>
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                  <div className="text-xs font-bold text-blue-800 mb-1.5">ImageLightbox 뷰어 동작</div>
+                  <div className="text-xs font-bold text-blue-800 mb-1.5">사진 크게 보기 뷰어 동작</div>
                   <ul className="text-xs text-blue-700 space-y-1">
                     <li>• 이전 / 다음 화살표 버튼으로 이미지 간 이동</li>
                     <li>• 상단 카운터: <code className="bg-blue-100 px-1 rounded">N / 전체장수</code></li>
@@ -529,7 +532,7 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
             </div>
 
             {/* ── 이미지 첨부 스펙 ── */}
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">🖼️ 이미지 첨부 (WritePostModal과 동일 UI/UX)</h4>
+            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">🖼️ 이미지 첨부 (글쓰기·수정 화면과 동일 UI/UX)</h4>
             <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div className="bg-white border border-gray-200 rounded-lg p-3">
@@ -676,7 +679,7 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
 
               {/* 저장 위치 */}
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                <p className="text-xs font-bold text-gray-800 mb-2">🗄️ 저장 위치 (localStorage)</p>
+                <p className="text-xs font-bold text-gray-800 mb-2">🗄️ 저장 위치 (이 브라우저에 임시 보관 — 데모)</p>
                 <div className="bg-white border border-gray-200 rounded p-3 mb-2">
                   <p className="text-xs text-gray-500 mb-1">키 형식</p>
                   <code className="text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded">{'aiga_review_draft_{doctorId}'}</code>
@@ -693,7 +696,7 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
                 <p className="text-xs font-bold text-blue-900 mb-3">⚙️ 임시저장 트리거 2가지</p>
                 <div className="space-y-2">
                   <div className="bg-white border border-blue-200 rounded p-3">
-                    <p className="text-xs font-bold text-blue-800 mb-1.5">① 자동저장 (3초 debounce)</p>
+                    <p className="text-xs font-bold text-blue-800 mb-1.5">① 자동저장 (입력을 멈춘 뒤 약 3초 뒤)</p>
                     <ul className="space-y-1 text-xs text-gray-700">
                       <li>• 별점 슬라이더 또는 리뷰 내용 변경 시 3초 뒤 자동 저장</li>
                       <li>• 헤더 우측에 <code className="bg-gray-100 px-1 rounded">HH:MM 임시저장</code> 타임스탬프 표시</li>
@@ -703,7 +706,7 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
                   <div className="bg-white border border-blue-200 rounded p-3">
                     <p className="text-xs font-bold text-blue-800 mb-1.5">② X 버튼 터치 시 즉시저장</p>
                     <ul className="space-y-1 text-xs text-gray-700">
-                      <li>• 리뷰 내용 또는 별점 중 하나라도 입력값이 있으면 즉시 localStorage 저장</li>
+                      <li>• 리뷰 내용 또는 별점 중 하나라도 입력값이 있으면 즉시 이 브라우저에 저장</li>
                       <li>• 경고 다이얼로그 없이 바로 팝업 닫힘</li>
                       <li>• 모든 값이 기본값(빈 텍스트 + 별점 0)이면 저장 안 함</li>
                     </ul>
@@ -718,7 +721,7 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
                   <div className="bg-white border border-amber-200 rounded p-3">
                     <p className="text-xs font-bold text-amber-800 mb-1.5">표시 조건</p>
                     <ul className="space-y-1 text-xs text-gray-700">
-                      <li>• 팝업 마운트 시 localStorage 확인</li>
+                      <li>• 팝업을 열 때 저장된 임시 글이 있는지 확인</li>
                       <li>• 해당 의사의 임시저장 데이터가 있을 때</li>
                       <li>• 내용 또는 별점 중 하나라도 값이 있을 때</li>
                     </ul>
@@ -748,7 +751,7 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
                   </div>
                 </div>
                 <ul className="space-y-1 text-xs text-amber-800">
-                  <li>• <strong>취소(삭제)</strong>: localStorage 데이터 삭제 후 빈 폼으로 시작</li>
+                  <li>• <strong>취소(삭제)</strong>: 이 브라우저에 저장된 임시 데이터를 지우고 빈 폼으로 시작</li>
                   <li>• <strong>불러오기</strong>: 리뷰 내용 + 별점 4개 + 인증요청 여부 전체 복원 (인증 파일 제외)</li>
                 </ul>
               </div>
@@ -763,7 +766,7 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
                 </div>
                 <ul className="text-xs text-gray-600 space-y-0.5">
                   <li>• AIGA 리뷰 섹션 상단에 표시</li>
-                  <li>• "이어서 쓰기" 터치 → ReviewWriteModal 열림 (복원 다이얼로그 자동 표시)</li>
+                  <li>• "이어서 쓰기" 터치 → 리뷰 작성 창 열림 (복원 다이얼로그 자동 표시)</li>
                   <li>• 비회원에게는 배너 미표시</li>
                 </ul>
               </div>
@@ -779,14 +782,14 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
             </div>
           </SubSection>
 
-          <SubSection label="4" title="통합 검색 모달 (GlobalSearchModal)">
+          <SubSection label="4" title="통합 검색 전체 창">
             <div className="bg-amber-50 border-2 border-amber-200 rounded-xl p-5">
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-lg">🔎</span>
                 <p className="text-sm font-bold text-amber-900">상세 정의서 별도 탭에서 관리</p>
               </div>
               <p className="text-sm text-amber-800 mb-4">
-                통합 검색 모달(GlobalSearchModal)은 내용이 많아 전용 탭으로 분리하여 관리합니다.
+                통합 검색 전체 창은 내용이 많아 전용 탭으로 분리하여 관리합니다.
               </p>
               <div className="bg-white rounded-xl border border-amber-200 px-4 py-3.5 flex items-start gap-3">
                 <span className="text-amber-400 mt-0.5 text-base">→</span>
@@ -842,8 +845,8 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
                 로그인하기
               </button>
             </div>
-            <p className="text-xs text-gray-500 mt-2 text-center">
-              → 화면 하단 중앙에 3초간 표시되며, 버튼 터치 시 로그인 화면으로 이동
+            <p className="text-xs text-indigo-900 bg-indigo-50 border border-indigo-200 rounded-lg px-2.5 py-2 mt-2 text-center">
+              👉 버튼 탭 시 이후의 진행 흐름은 마이페이지 화면정의서에 정리된 [공통 로그인/회원가입 플로우 정책]을 공통으로 따름.
             </p>
           </SubSection>
 
@@ -989,7 +992,7 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
         {/* ───── 4. 레이아웃 컴포넌트 ───── */}
         <Section id="layout" title="4. 레이아웃 컴포넌트 (하단 탭 메뉴)" color="emerald">
 
-          <SubSection label="1" title="하단 탭 메뉴 (BottomTabBar)">
+          <SubSection label="1" title="하단 탭 메뉴">
             <div className="mb-4 bg-emerald-50 border border-emerald-200 rounded-xl p-4">
               <p className="text-sm font-bold text-emerald-800 mb-1">🔗 전역 고정 컴포넌트</p>
               <p className="text-sm text-emerald-900">모든 주요 화면 하단에 고정되어 표시되는 탭 네비게이션</p>
@@ -998,7 +1001,7 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
             <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">📍 어디서 볼 수 있나요?</h4>
             <div className="bg-gray-50 rounded-xl p-4 space-y-2 text-sm">
               <p>• 홈·AIGA챗봇·명의 찾기·커뮤니티·MY 각각의 메인 화면 하단에 동일 바가 붙습니다.</p>
-              <p>• 구현 참고: <code className="text-xs bg-white px-1 rounded border">BottomTabBar</code> — 좌→우 5칸 그리드, 라벨은 프로토타입과 동일합니다.</p>
+              <p>• 좌→우 5칸, 각 탭 아이콘·이름은 프로토타입과 동일하게 맞춥니다.</p>
             </div>
 
             <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">🎯 탭 구성</h4>
@@ -1068,7 +1071,7 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
 
             <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">🎯 동작</h4>
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 space-y-2 text-sm">
-              <p>• 터치 시 <strong>GlobalSearchModal (팝업 UI → 5번)</strong> 오버레이 표시</p>
+              <p>• 터치 시 <strong>통합 검색 전체 창 (팝업 UI → 5번)</strong> 오버레이 표시</p>
               <p>• 아이콘 형태: 돋보기 (lucide-react Search)</p>
               <p>• 아이콘 크기 및 색상: 각 탭 상단 영역과 시각적으로 맞출 것(통일 권장)</p>
               <p className="text-xs text-blue-900">

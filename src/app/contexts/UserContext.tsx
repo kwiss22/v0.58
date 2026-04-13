@@ -8,6 +8,7 @@ interface User {
   email: string;
   avatar?: string;
   bio?: string;
+  /** SNS 다채널 통합 시 플랫폼별 외부 ID·현재 로그인 채널 등은 `snsAccountMerge` 스텁·백엔드 스키마로 확장 */
 }
 
 interface UserContextType {

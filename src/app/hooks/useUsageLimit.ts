@@ -3,9 +3,12 @@
 const STORAGE_KEY = 'aiga_usage_v1';
 
 export const USAGE_LIMITS = {
-  search: 3,       // 통합검색 + 명의찾기 검색 통합 카운트
-  profileView: 3,  // 명의 프로필 상세 열기
-  postView: 5,     // 커뮤니티 본문 열기
+  /** 홈·명의찾기·통합검색 등 앱 전역에서 공유하는 검색 실행 횟수(탭/화면별로 따로 두지 않음) */
+  search: 3,
+  /** 홈·명의찾기·통합검색 등에서 명의 프로필 상세를 열 때 전역 공유 */
+  profileView: 3,
+  /** 홈·커뮤니티·통합검색 등에서 게시글 본문 상세를 열 때 전역 공유 */
+  postView: 5,
 } as const;
 
 export type LimitType = 'search' | 'profileView' | 'postView';

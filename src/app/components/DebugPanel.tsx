@@ -5,7 +5,17 @@ import { loadUsage, saveUsage, USAGE_LIMITS } from '@/app/hooks/useUsageLimit';
 import { useUser } from '@/app/contexts/UserContext';
 import { useUsageLimitContext } from '@/app/contexts/UsageLimitContext';
 
-export function DebugPanel() {
+export type DebugPanelPlacement = 'viewport' | 'spec';
+
+interface DebugPanelProps {
+  /**
+   * viewport: 창 기준 fixed (모바일 단일열·채팅 등)
+   * spec: 부모 relative 영역 기준 absolute — PC 화면정의서 패널 우하단
+   */
+  placement?: DebugPanelPlacement;
+}
+
+export function DebugPanel({ placement = 'viewport' }: DebugPanelProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [, forceUpdate] = useState(0);
   const { role, setRole } = useUser();
@@ -42,11 +52,16 @@ export function DebugPanel() {
     refreshRemaining();
   };
 
+  const positionClass =
+    placement === 'spec'
+      ? 'absolute bottom-4 right-4 z-[9999]'
+      : 'fixed bottom-4 right-4 z-50';
+
   if (!isOpen) {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-4 right-4 bg-red-500 text-white px-4 py-2 rounded-full shadow-lg z-50 text-sm font-bold"
+        className={`${positionClass} bg-red-500 text-white px-4 py-2 rounded-full shadow-lg text-sm font-bold`}
       >
         🐛 디버그
       </button>
@@ -62,7 +77,7 @@ export function DebugPanel() {
   ];
 
   return (
-    <div className="fixed bottom-4 right-4 z-[9999] w-72 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
+    <div className={`${positionClass} w-72 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden`}>
       {/* 헤더 */}
       <div className="bg-red-500 text-white px-4 py-3 flex items-center justify-between">
         <span className="font-bold text-sm">🐛 사용량 디버그</span>
