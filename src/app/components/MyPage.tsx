@@ -12,6 +12,8 @@ import {
   AlertTriangle,
   Trash2,
   BookmarkX,
+  Star,
+  CheckCircle2,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useUser } from '@/app/contexts/UserContext';
@@ -19,7 +21,10 @@ import { useAppNavigation } from '@/app/contexts/AppNavigationContext';
 import { useSavedDoctors } from '@/hooks/useSavedDoctors';
 import { toast } from 'sonner';
 import { DoctorProfileModal } from '@/app/components/DoctorProfileModal';
+import { PostDetailModal } from '@/app/components/PostDetailModal';
 import { getDoctorById } from '@/constants/doctor-data';
+import type { CommunityPost } from '@/constants/community-data';
+import { communityPosts } from '@/constants/community-data';
 
 interface MyPost {
   id: string;
@@ -61,13 +66,221 @@ interface SavedDoctor {
   savedDate: string;
 }
 
+/** 마이페이지 내 활동 — 내가 쓴 후기 (의사 프로필 AIGA 리뷰 카드와 동일 스타일) */
+interface MyWrittenReview {
+  id: string;
+  authorNickname: string;
+  dateLine: string;
+  visitVerified: boolean;
+  kindness: number;
+  satisfaction: number;
+  explanation: number;
+  recommendation: number;
+  content: string;
+  footerLine: string;
+  /** DoctorProfileModal + getDoctorById 보조 */
+  doctorPayload: SavedDoctor;
+}
+
+const REVIEW_RATING_LABELS: { label: string; key: keyof Pick<MyWrittenReview, 'kindness' | 'satisfaction' | 'explanation' | 'recommendation'> }[] = [
+  { label: '친절 · 배려', key: 'kindness' },
+  { label: '치료 만족', key: 'satisfaction' },
+  { label: '쉬운 설명', key: 'explanation' },
+  { label: '추천 의향', key: 'recommendation' },
+];
+
+function MyActivityReviewCard({
+  review,
+  onOpenDoctor,
+  onDelete,
+}: {
+  review: MyWrittenReview;
+  onOpenDoctor: (d: SavedDoctor) => void;
+  onDelete: (e: React.MouseEvent, id: string) => void;
+}) {
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={() => onOpenDoctor(review.doctorPayload)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onOpenDoctor(review.doctorPayload);
+        }
+      }}
+      className="bg-white border border-gray-200 rounded-xl p-4 cursor-pointer text-left w-full shadow-sm transition-all duration-200 hover:shadow-md hover:border-gray-300 active:scale-[0.99] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+    >
+        <div className="flex items-start justify-between gap-2 mb-2">
+          <div className="flex flex-wrap items-center gap-2 min-w-0">
+            <span className="text-sm font-bold text-gray-900">{review.authorNickname}</span>
+            {review.visitVerified && (
+              <span className="inline-flex items-center gap-0.5 shrink-0 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-green-50 text-[#15803d] border border-green-200">
+                <CheckCircle2 className="w-3 h-3 text-[#22C55E]" aria-hidden />
+                방문인증
+              </span>
+            )}
+          </div>
+          <button
+            type="button"
+            title="후기 삭제"
+            className="shrink-0 p-1.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+            onClick={(e) => onDelete(e, review.id)}
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+        <p className="text-xs text-gray-500 mb-3">{review.dateLine}</p>
+
+        <div className="grid grid-cols-2 gap-3 mb-3">
+          {REVIEW_RATING_LABELS.map(({ label, key }) => {
+            const val = review[key];
+            return (
+              <div key={label} className="flex flex-col gap-1">
+                <div className="flex items-center justify-between gap-1">
+                  <span className="text-xs text-gray-600 truncate">{label}</span>
+                  <div className="flex items-center gap-0.5 shrink-0">
+                    <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                    <span className="text-xs font-bold text-yellow-500">{val}.0</span>
+                  </div>
+                </div>
+                <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-[#22C55E]"
+                    style={{ width: `${(val / 5) * 100}%` }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <p className="text-sm text-gray-700 leading-relaxed line-clamp-3">{review.content}</p>
+
+        <div className="flex items-center justify-between gap-2 mt-3 pt-2 border-t border-gray-100">
+          <span className="text-xs text-gray-500 min-w-0 flex-1 leading-snug">{review.footerLine}</span>
+          <button
+            type="button"
+            className="shrink-0 text-xs font-medium text-blue-600 hover:text-blue-700"
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenDoctor(review.doctorPayload);
+            }}
+          >
+            프로필 보기 &gt;
+          </button>
+        </div>
+    </div>
+  );
+}
+
+function myPostToDetailPost(post: MyPost, nickname: string): CommunityPost {
+  return {
+    id: post.id,
+    userId: post.userId,
+    nickname,
+    userRole: post.userRole,
+    department: post.department,
+    disease: post.disease,
+    title: post.title,
+    summary: post.summary,
+    aiLabel: '내가 쓴 글',
+    likeCount: post.likeCount,
+    comments: post.comments,
+    views: post.views,
+    timeAgo: post.timeAgo,
+    isLiked: post.isLiked,
+  };
+}
+
+function findCommunityPostByCommentTitle(postTitle: string): CommunityPost | undefined {
+  const exact = communityPosts.find(p => p.title === postTitle);
+  if (exact) return exact;
+  const base = postTitle.replace(/\.\.\.$/, '').trim();
+  if (base.length < 5) return undefined;
+  return communityPosts.find(p => p.title.startsWith(base) || base.startsWith(p.title.replace(/\.\.\.$/, '').trim()));
+}
+
+function syntheticPostFromComment(comment: Comment): CommunityPost {
+  return {
+    id: comment.postId,
+    userId: 'community_author',
+    userRole: 'patient',
+    department: '커뮤니티',
+    title: comment.postTitle,
+    summary:
+      '원글 전체는 커뮤니티 탭에서 확인할 수 있습니다. (마이페이지 샘플 데이터에서는 원글 제목만 연결됩니다.)',
+    aiLabel: '커뮤니티',
+    likeCount: 0,
+    comments: 0,
+    views: 0,
+    timeAgo: '',
+  };
+}
+
+function resolvePostForComment(comment: Comment, posts: MyPost[], nickname: string): CommunityPost {
+  const mine = posts.find(p => p.id === comment.postId);
+  if (mine) return myPostToDetailPost(mine, nickname);
+  const fromFeed = findCommunityPostByCommentTitle(comment.postTitle);
+  if (fromFeed) return fromFeed;
+  return syntheticPostFromComment(comment);
+}
+
 export function MyPage() {
-  const { isGuest, isMember, setRole } = useUser();
-  const { navigateToPreviousTab } = useAppNavigation();
+  const { isGuest, isMember, setRole, user } = useUser();
+  const { navigateToPreviousTab, navigateToChat, navigateToDoctorSearch } = useAppNavigation();
   const { isSaved, toggleSave, savedDoctors: savedDoctorsList, removeDoctor } = useSavedDoctors();
   const [nickname, setNickname] = useState('Maverick Hur');
-  const [activeTab, setActiveTab] = useState<'posts' | 'comments' | 'doctors'>('posts');
+  const [activeTab, setActiveTab] = useState<'posts' | 'comments' | 'reviews' | 'saved'>('posts');
   const [selectedDoctor, setSelectedDoctor] = useState<SavedDoctor | null>(null);
+  const [selectedDetailPost, setSelectedDetailPost] = useState<CommunityPost | null>(null);
+
+  const [myReviews, setMyReviews] = useState<MyWrittenReview[]>([
+    {
+      id: 'myrev-1',
+      authorNickname: 'Maverick Hur',
+      dateLine: '2026-04-06 · 수정됨',
+      visitVerified: true,
+      kindness: 4,
+      satisfaction: 5,
+      explanation: 4,
+      recommendation: 4,
+      content:
+        '강선생님은 최고의 명의이십니다. 너무 걱정하고 있는 저에게 위로와 격려도 아끼지 않으시고 끝까지 좋은 일, 좋은 결과만 있을거라고 용기 주셨어요',
+      footerLine: '김민수 교수 · 순환기내과 · 서울아산병원',
+      doctorPayload: {
+        id: 'mypage-rev-kim',
+        name: '김민수',
+        department: '순환기내과',
+        hospital: '서울아산병원',
+        specialty: '심장·부정맥',
+        rating: 4.9,
+        savedDate: '-',
+      },
+    },
+    {
+      id: 'myrev-2',
+      authorNickname: 'Maverick Hur',
+      dateLine: '2026-03-28',
+      visitVerified: false,
+      kindness: 4,
+      satisfaction: 4,
+      explanation: 3,
+      recommendation: 4,
+      content:
+        '아토피 치료 받았는데 친절하게 설명해 주셔서 좋았어요. 대기가 좀 길었지만 진료는 만족스러웠습니다.',
+      footerLine: '이지현 과장 · 피부과 · 세브란스병원',
+      doctorPayload: {
+        id: 'mypage-rev-lee',
+        name: '이지현',
+        department: '피부과',
+        hospital: '세브란스병원',
+        specialty: '아토피·알레르기',
+        rating: 4.7,
+        savedDate: '-',
+      },
+    },
+  ]);
 
   // 내가 쓴 글 데이터 (삭제 가능하도록 state로 관리)
   const [myPosts, setMyPosts] = useState<MyPost[]>([
@@ -450,6 +663,43 @@ export function MyPage() {
     setSelectedDoctor(doctor);
   };
 
+  const handleDeleteReview = (e: React.MouseEvent, reviewId: string) => {
+    e.stopPropagation();
+    if (confirm('후기를 삭제하시겠습니까?')) {
+      setMyReviews(prev => prev.filter(r => r.id !== reviewId));
+      toast.success('후기가 삭제되었습니다.');
+    }
+  };
+
+  const handleDetailToggleLike = (postId: string) => {
+    setMyPosts(prev => {
+      if (!prev.some(p => p.id === postId)) return prev;
+      return prev.map(p =>
+        p.id === postId
+          ? { ...p, likeCount: p.isLiked ? p.likeCount - 1 : p.likeCount + 1, isLiked: !p.isLiked }
+          : p
+      );
+    });
+    setSelectedDetailPost(prev => {
+      if (!prev || prev.id !== postId) return prev;
+      return {
+        ...prev,
+        likeCount: prev.isLiked ? prev.likeCount - 1 : prev.likeCount + 1,
+        isLiked: !prev.isLiked,
+      };
+    });
+  };
+
+  const handleDetailCommentAdded = (postId: string) => {
+    setMyPosts(prev => {
+      if (!prev.some(p => p.id === postId)) return prev;
+      return prev.map(p => (p.id === postId ? { ...p, comments: p.comments + 1 } : p));
+    });
+    setSelectedDetailPost(prev =>
+      prev && prev.id === postId ? { ...prev, comments: prev.comments + 1 } : prev
+    );
+  };
+
   // 게시글 삭제 핸들러
   const handleDeletePost = (e: React.MouseEvent, postId: string) => {
     e.stopPropagation();
@@ -512,50 +762,58 @@ export function MyPage() {
   }, []);
 
   return (
-    <div className="h-screen flex flex-col bg-white">
+    <div className="h-screen flex flex-col bg-slate-50">
       {/* Header - Fixed */}
-      <div className="flex-shrink-0">
-        <div className="max-w-2xl mx-auto bg-blue-600 px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-semibold text-white">마이페이지</h1>
+      <div className="flex-shrink-0 shadow-md shadow-blue-900/10">
+        <div className="max-w-2xl mx-auto bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3.5 sm:py-4 flex items-center justify-between">
+          <div>
+            <h1 className="text-lg sm:text-xl font-semibold text-white tracking-tight">마이페이지</h1>
+            <p className="text-[11px] sm:text-xs text-blue-100/90 mt-0.5 font-normal">나의 활동과 설정</p>
+          </div>
         </div>
       </div>
 
       {/* 비회원 화면 */}
       {isGuest && (
-        <div className="flex-1 overflow-y-auto flex items-center justify-center p-4">
-          <div className="max-w-md w-full text-center space-y-6">
+        <div className="flex-1 overflow-y-auto flex items-center justify-center p-4 sm:p-6">
+          <div className="w-full max-w-md text-center space-y-6 rounded-2xl bg-white p-8 sm:p-10 shadow-lg shadow-gray-200/80 border border-gray-100">
             {/* Icon */}
-            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto">
-              <User className="w-12 h-12 text-gray-400" />
+            <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-gray-50 to-gray-100 rounded-full flex items-center justify-center mx-auto ring-8 ring-gray-50">
+              <User className="w-9 h-9 sm:w-12 sm:h-12 text-gray-400" strokeWidth={1.5} />
             </div>
 
             {/* Title */}
             <div className="space-y-2">
-              <h2 className="text-2xl font-bold text-gray-900">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 leading-snug">
                 로그인이 필요합니다
               </h2>
-              <p className="text-gray-600">
+              <p className="text-sm text-gray-500 leading-relaxed">
                 나만의 건강 관리를 시작하세요!
               </p>
             </div>
 
             {/* Login Buttons */}
-            <div className="space-y-3">
+            <div className="space-y-3 pt-1">
               <button
+                type="button"
                 onClick={() => setRole('member')}
-                className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-medium py-4 rounded-xl transition-colors"
+                className="w-full bg-[#FEE500] hover:bg-[#FDD835] text-gray-900 font-semibold py-3.5 sm:py-4 rounded-xl transition-all duration-200 shadow-sm hover:shadow active:scale-[0.98]"
               >
                 카카오톡으로 3초 만에 시작
               </button>
-              <button className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-4 rounded-xl transition-colors">
+              <button
+                type="button"
+                className="w-full bg-[#03C75A] hover:bg-[#02b350] text-white font-semibold py-3.5 sm:py-4 rounded-xl transition-all duration-200 shadow-sm hover:shadow active:scale-[0.98]"
+              >
                 네이버로 시작하기
               </button>
             </div>
 
             {/* Guest Mode */}
-            <button 
+            <button
+              type="button"
               onClick={navigateToPreviousTab}
-              className="text-sm text-gray-500 hover:text-gray-700"
+              className="text-sm text-gray-400 hover:text-gray-600 transition-colors pt-1"
             >
               나중에 하기 &gt;
             </button>
@@ -566,98 +824,129 @@ export function MyPage() {
       {/* 회원 화면 */}
       {isMember && (
         <div className="flex-1 overflow-y-auto">
-          <div className="max-w-2xl mx-auto p-6 space-y-6 pb-24">
+          <div className="max-w-2xl mx-auto px-4 py-5 sm:p-6 space-y-5 sm:space-y-6 pb-28">
             {/* Email Display with Logout */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
-                  <User className="w-5 h-5 text-white" />
+            <div className="flex items-center justify-between rounded-2xl bg-white border border-gray-100 px-4 py-3.5 shadow-sm">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-11 h-11 shrink-0 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center shadow-md shadow-blue-500/25 ring-2 ring-white">
+                  <User className="w-5 h-5 text-white" strokeWidth={2} />
                 </div>
-                <span className="text-sm text-gray-700">fassionmap@kakao.com</span>
+                <div className="min-w-0">
+                  <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400">로그인 계정</p>
+                  <span className="text-sm font-medium text-gray-800 truncate block">fassionmap@kakao.com</span>
+                </div>
               </div>
               <button
+                type="button"
                 onClick={handleLogout}
-                className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-lg transition-colors"
+                title="로그아웃"
+                className="shrink-0 w-10 h-10 flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition-colors"
               >
-                <LogOut className="w-5 h-5 text-gray-600" />
+                <LogOut className="w-5 h-5" />
               </button>
             </div>
 
             {/* Nickname Setting */}
-            <div className="space-y-3">
-              <label className="block text-sm font-medium text-gray-900">
-                닉네임 <span className="text-red-500">(필수)</span>
-              </label>
+            <div className="rounded-2xl bg-white border border-gray-100 p-4 sm:p-5 shadow-sm space-y-3">
+              <div className="flex items-end justify-between gap-2">
+                <label className="text-sm font-semibold text-gray-900">
+                  닉네임 <span className="text-red-500 font-medium">(필수)</span>
+                </label>
+                <span className="text-[11px] tabular-nums text-gray-400">{nickname.length}/10</span>
+              </div>
               <input
                 type="text"
                 value={nickname}
                 onChange={(e) => setNickname(e.target.value)}
                 placeholder="닉네임을 입력하세요"
                 maxLength={10}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50/50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 focus:bg-white transition-shadow"
               />
-              <p className="text-xs text-gray-500">
-                최소 2자, 최대 10자(한글,영문,숫자,_만 가능)
+              <p className="text-xs text-gray-500 leading-relaxed">
+                최소 2자, 최대 10자 · 한글, 영문, 숫자, 밑줄(_)만 사용할 수 있어요
               </p>
               <button
+                type="button"
                 onClick={handleSaveNickname}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition-colors"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-all duration-200 shadow-sm shadow-blue-600/25 hover:shadow-md active:scale-[0.99]"
               >
                 저장하기
               </button>
             </div>
 
             {/* 내 활동 Section Title */}
-            <div className="pt-2">
-              <h3 className="text-sm font-bold text-gray-900 mb-3">내 활동</h3>
+            <div className="pt-1">
+              <h3 className="text-base font-bold text-gray-900">내 활동</h3>
+              <p className="text-xs text-gray-500 mt-1">게시글, 댓글, 후기, 저장한 명의를 한곳에서 확인해요</p>
             </div>
 
             {/* Tab Navigation */}
-            <div className="bg-white rounded-xl overflow-hidden border border-gray-200">
-              <div className="flex border-b border-gray-200">
+            <div className="rounded-2xl overflow-hidden border border-gray-200 bg-white shadow-sm w-full">
+              <div className="flex border-b border-gray-100 bg-gray-50/80">
                 <button
+                  type="button"
+                  aria-selected={activeTab === 'posts'}
                   onClick={() => setActiveTab('posts')}
-                  className={`flex-1 py-3 text-sm font-medium transition-colors relative ${
+                  className={`flex-1 min-w-0 py-3 px-0.5 text-[11px] sm:text-sm relative leading-tight transition-all duration-200 ${
                     activeTab === 'posts'
-                      ? 'text-blue-600'
-                      : 'text-gray-500 hover:text-gray-700'
+                      ? 'text-blue-600 font-semibold bg-white'
+                      : 'text-gray-500 hover:text-gray-800 hover:bg-white/60 font-medium'
                   }`}
                 >
                   게시글 ({myPosts.length})
                   {activeTab === 'posts' && (
-                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
+                    <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-blue-600 rounded-full" />
                   )}
                 </button>
                 <button
+                  type="button"
+                  aria-selected={activeTab === 'comments'}
                   onClick={() => setActiveTab('comments')}
-                  className={`flex-1 py-3 text-sm font-medium transition-colors relative ${
+                  className={`flex-1 min-w-0 py-3 px-0.5 text-[11px] sm:text-sm relative leading-tight transition-all duration-200 ${
                     activeTab === 'comments'
-                      ? 'text-blue-600'
-                      : 'text-gray-500 hover:text-gray-700'
+                      ? 'text-blue-600 font-semibold bg-white'
+                      : 'text-gray-500 hover:text-gray-800 hover:bg-white/60 font-medium'
                   }`}
                 >
                   댓글 ({myComments.length})
                   {activeTab === 'comments' && (
-                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
+                    <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-blue-600 rounded-full" />
                   )}
                 </button>
                 <button
-                  onClick={() => setActiveTab('doctors')}
-                  className={`flex-1 py-3 text-sm font-medium transition-colors relative ${
-                    activeTab === 'doctors'
-                      ? 'text-blue-600'
-                      : 'text-gray-500 hover:text-gray-700'
+                  type="button"
+                  aria-selected={activeTab === 'reviews'}
+                  onClick={() => setActiveTab('reviews')}
+                  className={`flex-1 min-w-0 py-3 px-0.5 text-[11px] sm:text-sm relative leading-tight transition-all duration-200 ${
+                    activeTab === 'reviews'
+                      ? 'text-blue-600 font-semibold bg-white'
+                      : 'text-gray-500 hover:text-gray-800 hover:bg-white/60 font-medium'
                   }`}
                 >
-                  저장한 의료진 ({savedDoctorsList.length})
-                  {activeTab === 'doctors' && (
-                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
+                  후기 ({myReviews.length})
+                  {activeTab === 'reviews' && (
+                    <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-blue-600 rounded-full" />
+                  )}
+                </button>
+                <button
+                  type="button"
+                  aria-selected={activeTab === 'saved'}
+                  onClick={() => setActiveTab('saved')}
+                  className={`flex-1 min-w-0 py-3 px-0.5 text-[11px] sm:text-sm relative leading-tight transition-all duration-200 ${
+                    activeTab === 'saved'
+                      ? 'text-blue-600 font-semibold bg-white'
+                      : 'text-gray-500 hover:text-gray-800 hover:bg-white/60 font-medium'
+                  }`}
+                >
+                  저장 ({savedDoctorsList.length})
+                  {activeTab === 'saved' && (
+                    <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-blue-600 rounded-full" />
                   )}
                 </button>
               </div>
 
               {/* Tab Content */}
-              <div className="h-[360px] overflow-y-auto">
+              <div className="h-[360px] overflow-y-auto overscroll-contain bg-white">
                 {/* 게시글 탭 */}
                 {activeTab === 'posts' && (
                   <div className="divide-y divide-gray-100">
@@ -667,11 +956,23 @@ export function MyPage() {
                         return (
                           <div
                             key={post.id}
-                            className={`transition-colors ${isDeleted ? 'bg-gray-50 cursor-default' : 'hover:bg-gray-50 cursor-pointer'}`}
+                            role={isDeleted ? undefined : 'button'}
+                            tabIndex={isDeleted ? undefined : 0}
+                            onClick={() => {
+                              if (!isDeleted) setSelectedDetailPost(myPostToDetailPost(post, nickname));
+                            }}
+                            onKeyDown={(e) => {
+                              if (isDeleted) return;
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                setSelectedDetailPost(myPostToDetailPost(post, nickname));
+                              }
+                            }}
+                            className={`transition-colors duration-150 ${isDeleted ? 'bg-gray-50/80 cursor-default' : 'hover:bg-slate-50 cursor-pointer active:bg-slate-100'}`}
                           >
                             {/* 삭제 안내 배너 */}
                             {isDeleted && (
-                              <div className="mx-4 mt-4 px-3 py-2.5 bg-red-50 border border-red-200 rounded-lg">
+                              <div className="mx-3 sm:mx-4 mt-3 px-3 py-2.5 bg-red-50/90 border border-red-100 rounded-xl">
                                 <div className="flex items-start gap-2 mb-1">
                                   <AlertTriangle className="w-3.5 h-3.5 text-red-500 flex-shrink-0 mt-0.5" />
                                   <p className="text-xs text-red-700 font-medium">
@@ -685,41 +986,42 @@ export function MyPage() {
                             )}
 
                             {/* 게시글 본문 */}
-                            <div className={`p-4 ${isDeleted ? 'opacity-40' : ''}`}>
+                            <div className={`p-4 ${isDeleted ? 'opacity-45' : ''}`}>
                               {/* 상단 행: 배지 + 시간 + 삭제 버튼 */}
                               <div className="flex items-center gap-2 mb-2">
-                                <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded">
+                                <span className="px-2 py-0.5 bg-blue-50 text-blue-700 text-xs font-semibold rounded-md border border-blue-100">
                                   {post.department}
                                 </span>
-                                <span className="text-xs text-gray-400 flex-1">{post.timeAgo}</span>
+                                <span className="text-xs text-gray-400 flex-1 tabular-nums">{post.timeAgo}</span>
                                 {!isDeleted && (
                                   <button
+                                    type="button"
                                     onClick={(e) => handleDeletePost(e, post.id)}
-                                    className="flex-shrink-0 p-1 text-gray-300 hover:text-red-500 rounded transition-colors"
+                                    className="flex-shrink-0 p-1.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                                     title="게시글 삭제"
                                   >
                                     <Trash2 className="w-4 h-4" />
                                   </button>
                                 )}
                               </div>
-                              <h3 className="font-medium text-gray-900 mb-2 line-clamp-2 leading-snug">
+                              <h3 className="font-semibold text-gray-900 mb-1.5 line-clamp-2 leading-snug tracking-tight">
                                 {post.title}
                               </h3>
-                              <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                              <p className="text-sm text-gray-600 mb-3 line-clamp-2 leading-relaxed">
                                 {post.summary}
                               </p>
-                              <div className="flex items-center gap-4 text-xs text-gray-500">
+                              <div className="flex items-center gap-4 text-xs text-gray-600">
                                 <div className="flex items-center gap-1">
-                                  <Heart className="w-3.5 h-3.5" />
-                                  <span>{post.likeCount}</span>
+                                  <Heart className="w-3.5 h-3.5 text-rose-400/90" />
+                                  <span className="tabular-nums font-medium">{post.likeCount}</span>
                                 </div>
                                 <div className="flex items-center gap-1">
-                                  <MessageCircle className="w-3.5 h-3.5" />
-                                  <span>{post.comments}</span>
+                                  <MessageCircle className="w-3.5 h-3.5 text-gray-400" />
+                                  <span className="tabular-nums font-medium">{post.comments}</span>
                                 </div>
                                 <div className="flex items-center gap-1">
-                                  <Eye className="w-3.5 h-3.5" />
-                                  <span>{post.views}</span>
+                                  <Eye className="w-3.5 h-3.5 text-gray-400" />
+                                  <span className="tabular-nums font-medium">{post.views}</span>
                                 </div>
                               </div>
                             </div>
@@ -727,9 +1029,12 @@ export function MyPage() {
                         );
                       })
                     ) : (
-                      <div className="flex flex-col items-center justify-center py-12">
-                        <FileText className="w-12 h-12 text-gray-300 mb-3" />
-                        <p className="text-sm text-gray-500">작성한 글이 없습니다</p>
+                      <div className="flex flex-col items-center justify-center py-14 px-6 text-center">
+                        <div className="w-14 h-14 rounded-2xl bg-gray-100 flex items-center justify-center mb-4">
+                          <FileText className="w-7 h-7 text-gray-400" strokeWidth={1.5} />
+                        </div>
+                        <p className="text-sm font-medium text-gray-700">작성한 글이 없습니다</p>
+                        <p className="text-xs text-gray-500 mt-1">커뮤니티에서 첫 글을 남겨보세요</p>
                       </div>
                     )}
                   </div>
@@ -742,10 +1047,25 @@ export function MyPage() {
                       myComments.map((comment) => {
                         const isDeleted = comment.status === 'deleted_by_report';
                         return (
-                          <div key={comment.id} className={`transition-colors ${isDeleted ? 'bg-gray-50 cursor-default' : 'hover:bg-gray-50 cursor-pointer'}`}>
+                          <div
+                            key={comment.id}
+                            role={isDeleted ? undefined : 'button'}
+                            tabIndex={isDeleted ? undefined : 0}
+                            onClick={() => {
+                              if (!isDeleted) setSelectedDetailPost(resolvePostForComment(comment, myPosts, nickname));
+                            }}
+                            onKeyDown={(e) => {
+                              if (isDeleted) return;
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                setSelectedDetailPost(resolvePostForComment(comment, myPosts, nickname));
+                              }
+                            }}
+                            className={`transition-colors duration-150 ${isDeleted ? 'bg-gray-50/80 cursor-default' : 'hover:bg-slate-50 cursor-pointer active:bg-slate-100'}`}
+                          >
                             {/* 삭제 안내 배너 */}
                             {isDeleted && (
-                              <div className="mx-4 mt-4 px-3 py-2.5 bg-red-50 border border-red-200 rounded-lg">
+                              <div className="mx-3 sm:mx-4 mt-3 px-3 py-2.5 bg-red-50/90 border border-red-100 rounded-xl">
                                 <div className="flex items-start gap-2 mb-1">
                                   <AlertTriangle className="w-3.5 h-3.5 text-red-500 flex-shrink-0 mt-0.5" />
                                   <p className="text-xs text-red-700 font-medium">
@@ -769,8 +1089,9 @@ export function MyPage() {
                                 <span className="text-xs text-gray-400 flex-shrink-0">{comment.timeAgo}</span>
                                 {!isDeleted && (
                                   <button
+                                    type="button"
                                     onClick={(e) => handleDeleteComment(e, comment.id)}
-                                    className="flex-shrink-0 p-1 text-gray-300 hover:text-red-500 rounded transition-colors"
+                                    className="flex-shrink-0 p-1.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                                     title="댓글 삭제"
                                   >
                                     <Trash2 className="w-4 h-4" />
@@ -780,63 +1101,109 @@ export function MyPage() {
                               <p className="text-sm text-gray-900 mb-2 leading-relaxed">
                                 {comment.content}
                               </p>
-                              <div className="flex items-center gap-1 text-xs text-gray-500">
-                                <Heart className="w-3.5 h-3.5" />
-                                <span>공감 {comment.likes}</span>
+                              <div className="flex items-center gap-1 text-xs text-gray-600">
+                                <Heart className="w-3.5 h-3.5 text-rose-400/90" />
+                                <span className="tabular-nums font-medium">공감 {comment.likes}</span>
                               </div>
                             </div>
                           </div>
                         );
                       })
                     ) : (
-                      <div className="flex flex-col items-center justify-center py-12">
-                        <MessageCircle className="w-12 h-12 text-gray-300 mb-3" />
-                        <p className="text-sm text-gray-500">작성한 댓글이 없습니다</p>
+                      <div className="flex flex-col items-center justify-center py-14 px-6 text-center">
+                        <div className="w-14 h-14 rounded-2xl bg-gray-100 flex items-center justify-center mb-4">
+                          <MessageCircle className="w-7 h-7 text-gray-400" strokeWidth={1.5} />
+                        </div>
+                        <p className="text-sm font-medium text-gray-700">작성한 댓글이 없습니다</p>
+                        <p className="text-xs text-gray-500 mt-1">커뮤니티에서 댓글을 남겨보세요</p>
                       </div>
                     )}
                   </div>
                 )}
 
-                {/* 저장한 의료진 탭 */}
-                {activeTab === 'doctors' && (
+                {/* 후기 탭 */}
+                {activeTab === 'reviews' && (
+                  <div className="space-y-3 p-3 sm:p-4">
+                    {myReviews.length > 0 ? (
+                      myReviews.map(review => (
+                        <MyActivityReviewCard
+                          key={review.id}
+                          review={{ ...review, authorNickname: nickname }}
+                          onOpenDoctor={handleDoctorClick}
+                          onDelete={handleDeleteReview}
+                        />
+                      ))
+                    ) : (
+                      <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
+                        <div className="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center mb-4 ring-4 ring-amber-50/50">
+                          <Star className="w-7 h-7 text-amber-400" strokeWidth={1.25} />
+                        </div>
+                        <p className="text-sm font-semibold text-gray-800 mb-1">아직 작성한 후기가 없어요</p>
+                        <p className="text-xs text-gray-500 mb-6 max-w-[240px] leading-relaxed">명의를 찾고 진료 경험을 남기면 다른 환자에게도 큰 도움이 돼요</p>
+                        <button
+                          type="button"
+                          onClick={() => navigateToDoctorSearch()}
+                          className="w-full max-w-[280px] py-3 rounded-xl font-semibold text-sm bg-blue-600 text-white hover:bg-blue-700 shadow-md shadow-blue-600/20 transition-all active:scale-[0.98]"
+                        >
+                          명의 찾고 후기 남기기
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* 저장 탭 */}
+                {activeTab === 'saved' && (
                   <div className="divide-y divide-gray-100">
                     {savedDoctorsList.length > 0 ? (
                       savedDoctorsList.map((doctor) => (
                         <div
                           key={doctor.id}
+                          role="button"
+                          tabIndex={0}
                           onClick={() => handleDoctorClick(doctor)}
-                          className="p-4 hover:bg-gray-50 transition-colors cursor-pointer"
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              handleDoctorClick(doctor);
+                            }
+                          }}
+                          className="p-4 hover:bg-slate-50 active:bg-slate-100 transition-colors duration-150 cursor-pointer"
                         >
                           {/* 상단 행: 이름 + 배지 + 저장 해제 버튼 */}
-                          <div className="flex items-center gap-2 mb-1">
-                            <h3 className="font-bold text-gray-900">{doctor.name}</h3>
-                            <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded">
+                          <div className="flex items-center gap-2 mb-1.5">
+                            <h3 className="font-bold text-gray-900 tracking-tight">{doctor.name}</h3>
+                            <span className="px-2 py-0.5 bg-blue-50 text-blue-700 text-xs font-semibold rounded-md border border-blue-100">
                               {doctor.department}
                             </span>
                             <div className="flex-1" />
                             <button
+                              type="button"
                               onClick={(e) => handleUnsaveDoctor(e, doctor.id)}
-                              className="flex-shrink-0 flex items-center gap-1 px-2 py-1 text-xs text-gray-400 hover:text-red-500 hover:bg-red-50 border border-gray-200 hover:border-red-200 rounded-md transition-colors"
+                              className="shrink-0 flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-gray-500 hover:text-red-600 hover:bg-red-50 border border-gray-200 hover:border-red-200 rounded-lg transition-colors"
                               title="저장 해제"
                             >
                               <BookmarkX className="w-3.5 h-3.5" />
                               <span>저장 해제</span>
                             </button>
                           </div>
-                          <p className="text-sm text-gray-600 mb-1">{doctor.hospital}</p>
+                          <p className="text-sm text-gray-600 mb-0.5">{doctor.hospital}</p>
                           <p className="text-xs text-gray-500 mb-2">{doctor.specialty}</p>
                           <div className="flex items-center gap-3 text-xs text-gray-500">
-                            <div className="flex items-center gap-1">
-                              <span className="text-yellow-500">★</span>
-                              <span>{doctor.rating}</span>
+                            <div className="flex items-center gap-1 text-amber-600">
+                              <span className="text-amber-400">★</span>
+                              <span className="font-medium text-gray-700">{doctor.rating}</span>
                             </div>
                           </div>
                         </div>
                       ))
                     ) : (
-                      <div className="flex flex-col items-center justify-center py-12">
-                        <Bookmark className="w-12 h-12 text-gray-300 mb-3" />
-                        <p className="text-sm text-gray-500">저장한 의료진이 없습니다</p>
+                      <div className="flex flex-col items-center justify-center py-14 px-6 text-center">
+                        <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mb-4">
+                          <Bookmark className="w-7 h-7 text-blue-300" strokeWidth={1.5} />
+                        </div>
+                        <p className="text-sm font-medium text-gray-700">저장한 의료진이 없습니다</p>
+                        <p className="text-xs text-gray-500 mt-1">명의 찾기에서 마음에 드는 선생님을 저장해 보세요</p>
                       </div>
                     )}
                   </div>
@@ -846,11 +1213,13 @@ export function MyPage() {
 
             {/* Customer Support */}
             <div>
-              <h3 className="text-sm font-bold text-gray-900 mb-3">고객지원</h3>
-              <div className="space-y-2">
+              <h3 className="text-base font-bold text-gray-900 mb-2">고객지원</h3>
+              <p className="text-xs text-gray-500 mb-3">공지·약관·문의를 모아 두었어요</p>
+              <div className="rounded-2xl border border-gray-100 bg-white shadow-sm divide-y divide-gray-100 overflow-hidden">
                 <button
+                  type="button"
                   onClick={handleAnnouncementClick}
-                  className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors rounded-lg"
+                  className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-slate-50 transition-colors text-left"
                 >
                   <div className="flex items-center gap-3">
                     <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -862,8 +1231,9 @@ export function MyPage() {
                 </button>
 
                 <button
+                  type="button"
                   onClick={handleTermsClick}
-                  className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors rounded-lg"
+                  className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-slate-50 transition-colors text-left"
                 >
                   <div className="flex items-center gap-3">
                     <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -875,8 +1245,9 @@ export function MyPage() {
                 </button>
 
                 <button
+                  type="button"
                   onClick={handlePrivacyClick}
-                  className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors rounded-lg"
+                  className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-slate-50 transition-colors text-left"
                 >
                   <div className="flex items-center gap-3">
                     <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -888,8 +1259,9 @@ export function MyPage() {
                 </button>
 
                 <button
+                  type="button"
                   onClick={handleFeedbackClick}
-                  className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors rounded-lg"
+                  className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-slate-50 transition-colors text-left"
                 >
                   <div className="flex items-center gap-3">
                     <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -904,13 +1276,29 @@ export function MyPage() {
 
             {/* Withdrawal Button */}
             <button
+              type="button"
               onClick={handleWithdrawal}
-              className="w-full text-center py-3 text-sm text-gray-500 hover:text-gray-700 underline transition-colors"
+              className="w-full text-center py-3 text-sm text-gray-400 hover:text-gray-600 transition-colors rounded-xl hover:bg-gray-100/80"
             >
               탈퇴하기
             </button>
           </div>
         </div>
+      )}
+
+      {selectedDetailPost && (
+        <PostDetailModal
+          post={selectedDetailPost}
+          onClose={() => setSelectedDetailPost(null)}
+          onToggleLike={handleDetailToggleLike}
+          onNavigateToChat={navigateToChat}
+          onNavigateToDoctors={navigateToDoctorSearch}
+          onCommentAdded={handleDetailCommentAdded}
+          isOwner={
+            selectedDetailPost.userId === 'current_user' ||
+            selectedDetailPost.userId === (user?.id ?? '')
+          }
+        />
       )}
 
       {/* Doctor Profile Modal */}
