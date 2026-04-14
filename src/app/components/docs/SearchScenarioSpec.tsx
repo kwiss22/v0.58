@@ -150,7 +150,7 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
             <div className="flex flex-col items-end gap-1.5">
               <span className="text-[10px] font-bold bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full">공통</span>
               <span className="text-[10px] font-bold bg-green-100 text-green-700 px-2 py-0.5 rounded-full">UI 스펙</span>
-              <span className="text-[10px] font-bold bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full">v0.6</span>
+              <span className="text-[10px] font-bold bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full">v0.58</span>
             </div>
           </div>
           <p className="text-xs text-gray-700 leading-relaxed">
@@ -161,7 +161,7 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
         <div className="bg-blue-50 border border-blue-200 rounded-xl px-3 py-2.5 text-[11px] text-blue-900 leading-relaxed">
           <strong>운영 원칙:</strong> 이 문서는 통합검색의 <strong>비회원·공통(Base) 화면</strong>만 다룹니다(검색창·탭·목록·비회원 한도 등).
           <strong> 회원 전용 이용 경험</strong>(한도 안내가 사라진 뒤의 체감, 카드 열기 이후 저장·댓글 등)은 <strong>회원 역할</strong>로 볼 때 열리는{' '}
-          <SpecDocLink to="searchMemberBizRoot">SearchScenarioSpecBiz</SpecDocLink> 문서에 모았습니다.
+          <SpecDocLink to="searchMemberBizRoot">회원용 통합검색 안내 문서</SpecDocLink>에 모았습니다.
         </div>
 
         {/* ── 1. 개요 ── */}
@@ -201,6 +201,22 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
             <SpecRow label="돋보기 아이콘"  value="검색을 나타내는 작은 돋보기 아이콘(회색 톤)" />
             <SpecRow label="텍스트 입력창"  value="안내 문구: «명의, 병원, 질환, 게시글 검색» — 창이 열리면 곧바로 입력할 수 있게 포커스" />
             <SpecRow label="자동완성"       value="글을 입력 중이면 연관 검색어 목록이 아래에 펼쳐짐" sub="항목을 고르면 방금 친 단어가 제안어로 바뀜" />
+            <SpecRow label="용어 정의" value="검색 결과 라벨 UI 용어(카테고리 태그/결과 유형 배지/필터 칩)" />
+            <SpecRow
+              label="Search Category Tag"
+              value="검색어 옆에 붙는 ‘질환’, ‘진료과’ 등의 분류 라벨"
+              sub="색 카테고리 태그: 검색어/제안어가 어떤 분류인지 즉시 식별하도록 돕는 태그"
+            />
+            <SpecRow
+              label="Result Type Badge"
+              value="특정 항목이 어떤 성격(결과 유형)인지 보여주는 배지형 UI"
+              sub="검색 결과 유형 배지: 목록 항목의 유형(예: 질환/진료과/병원 등)을 구분"
+            />
+            <SpecRow
+              label="Filter Chip / Label"
+              value="검색 결과의 속성을 한눈에 보여주는 칩(라벨) 형태 UI"
+              sub="필터 칩: 문서 내 태그/라벨/칩은 동일한 시각 패턴으로 취급"
+            />
             <SpecRow label="X 버튼"         value="검색어가 있을 때만 보임 · 누르면 입력 내용만 지움" />
             <SpecRow 
               label="🔒 가입하기 버튼" 
@@ -290,8 +306,8 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
               sub={
                 <>
                   비회원: 게시글 열람 횟수 차감 (하루 5회, 홈·커뮤니티·통합 검색이 같은 남은 횟수를 씀). 회원 경험은{' '}
-                  <SpecDocLink to="searchMemberBizRoot">SearchScenarioSpecBiz</SpecDocLink>·
-                  <SpecDocLink to="communityMemberBizOverview">CommunityTabSpecBiz</SpecDocLink> 참조
+                  <SpecDocLink to="searchMemberBizRoot">회원용 통합검색 안내 문서</SpecDocLink>·
+                  <SpecDocLink to="communityMemberBizOverview">회원용 커뮤니티 안내 문서</SpecDocLink> 참조
                 </>
               }
             />

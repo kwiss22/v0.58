@@ -8,7 +8,7 @@ export function CommonComponentsSpecBiz(_props: { onTestSearch?: (keyword: strin
       <div className="bg-gradient-to-r from-violet-600 to-purple-700 text-white px-8 py-10">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-2 mb-3">
-            <span className="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">공통 컴포넌트 정의서 v0.6</span>
+            <span className="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">공통 컴포넌트 정의서 v0.58</span>
             <span className="bg-white/10 text-purple-100 text-xs px-3 py-1 rounded-full">회원전용</span>
           </div>
           <h1 className="text-3xl font-black mb-2">🔗 공통 UI 컴포넌트 — 회원 확장</h1>

@@ -1,4 +1,4 @@
-// 커뮤니티 탭 화면정의서 — UI/UX (v0.6 · 프로토타입 참고·더미 데이터와 구분)
+// 커뮤니티 탭 화면정의서 — UI/UX (v0.58 · 프로토타입 참고·더미 데이터와 구분)
 
 import { Heart, MessageCircle, Shield, BadgeCheck, ThumbsUp, User, Plus, MoreVertical, ArrowLeft, Search, X, Flag, Pencil, Trash2 } from 'lucide-react';
 import { SpecDocLink } from './SpecDocLink';
@@ -12,7 +12,7 @@ export function CommunityTabSpec() {
           <div className="flex items-center gap-2 mb-3">
             <span className="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">커뮤니티 탭</span>
             <span className="bg-white/10 text-purple-100 text-xs px-3 py-1 rounded-full">UI/UX 화면정의서</span>
-            <span className="bg-green-400/90 text-green-900 text-xs font-bold px-3 py-1 rounded-full">✅ v0.6 · UI/UX 중심</span>
+            <span className="bg-green-400/90 text-green-900 text-xs font-bold px-3 py-1 rounded-full">✅ v0.58 · UI/UX 중심</span>
           </div>
           <h1 className="text-3xl font-black mb-2">💬 커뮤니티 탭</h1>
           <p className="text-purple-200 text-sm">환자들이 경험을 공유하고 소통하는 게시판 · 프로토타입 화면은 레이아웃·인터랙션 참고용 (피드 내용은 더미)</p>
@@ -1140,7 +1140,7 @@ export function CommunityTabSpec() {
 
             {/* 푸터 버튼 구성 */}
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-              <div className="font-bold text-gray-900 mb-3 text-sm">🔘 글쓰기·수정 화면 푸터 버튼 구성 (v0.6 기준)</div>
+              <div className="font-bold text-gray-900 mb-3 text-sm">🔘 글쓰기·수정 화면 푸터 버튼 구성 (v0.58 기준)</div>
               <div className="flex gap-2 mb-3 max-w-sm">
                 <div className="flex-1 px-4 py-2.5 text-center text-sm font-medium bg-gray-100 text-gray-700 rounded-lg">취소</div>
                 <div className="flex-1 px-4 py-2.5 text-center text-sm font-medium bg-blue-600 text-white rounded-lg">게시하기</div>

@@ -15,7 +15,7 @@ export function SearchScenarioSpecBiz({ onTestSearch }: SearchScenarioSpecBizPro
       <div className="bg-gradient-to-r from-amber-600 to-orange-700 text-white px-6 py-8">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center gap-2 mb-2 flex-wrap">
-            <span className="bg-white/20 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">v0.6</span>
+            <span className="bg-white/20 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">v0.58</span>
             <span className="bg-white/10 text-amber-100 text-[10px] px-2 py-0.5 rounded-full">회원전용</span>
           </div>
           <h1 className="text-xl font-black mb-1">🔎 통합 검색 — 회원 전용 이용 경험</h1>

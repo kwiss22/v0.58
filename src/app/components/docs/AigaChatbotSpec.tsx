@@ -178,7 +178,7 @@ export function AigaChatbotSpec() {
             <span className="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">AIGA 챗봇</span>
             <span className="bg-white/10 text-sky-100 text-xs px-3 py-1 rounded-full">UI/UX 화면정의서</span>
             <span className="bg-yellow-400/90 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full">🎨 UI/UX</span>
-            <span className="bg-white/15 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">v0.6</span>
+            <span className="bg-white/15 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">v0.58</span>
             <span
               className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                 isMember ? 'bg-blue-400/90 text-blue-950' : 'bg-gray-600/80 text-gray-100'

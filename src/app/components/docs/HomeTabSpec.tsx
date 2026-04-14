@@ -15,8 +15,7 @@ export function HomeTabSpec() {
       {/* 문서 헤더 */}
       <div className="bg-gradient-to-r from-blue-700 to-indigo-700 text-white px-3 py-3">
         <div className="flex items-center gap-2 mb-1.5">
-          <span className="bg-white/20 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">v0.6</span>
-          <span className="bg-white/10 text-blue-100 text-[10px] px-2 py-0.5 rounded-full">2026.03.27</span>
+          <span className="bg-white/20 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">v0.58</span>
           <span className="bg-yellow-400/90 text-yellow-900 text-[10px] font-bold px-2 py-0.5 rounded-full">🎨 화면·경험</span>
         </div>
         <h1 className="text-base font-black mb-1">홈 화면</h1>

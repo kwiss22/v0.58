@@ -20,8 +20,8 @@ export function MyPageSpec() {
       </div>
 
       <div className="max-w-5xl mx-auto px-6 py-8 space-y-6">
-        <section id="mypage-overview" className="scroll-mt-36 bg-white rounded-xl border border-gray-200 p-5">
-          <h2 className="text-lg font-bold text-gray-900 mb-3">📌 개요</h2>
+        <section id="mypage-overview" className="scroll-mt-36 bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <h2 className="text-lg font-black text-gray-900 mb-4 pb-2 border-b border-gray-100">📌 개요</h2>
           <ul className="space-y-2 text-sm text-gray-700 leading-relaxed">
             <li>
               • <strong>역할:</strong> 이용자 본인의 계정 정보, 닉네임, 커뮤니티 활동(글·댓글·후기), 저장한 명의, 고객지원 링크를 한곳에서 제공합니다.
@@ -39,9 +39,9 @@ export function MyPageSpec() {
         </section>
 
         {!isMember ? (
-          <section className="bg-white rounded-xl border border-gray-200 p-5 space-y-5">
+          <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-5">
             <div>
-              <h2 className="text-lg font-bold text-gray-900 mb-2">🔓 로그인 전 화면 (비회원 마이페이지)</h2>
+              <h2 className="text-lg font-black text-gray-900 mb-3 pb-2 border-b border-gray-100">🔓 로그인 전 화면 (비회원 마이페이지)</h2>
               <p className="text-sm text-gray-600 leading-relaxed mb-3">
                 상단 앱 바 제목은 로그인 후와 동일하게 <strong>마이페이지</strong>로 두어 같은 GNB 메뉴임을 인지시킵니다.
                 닉네임·내 활동·고객지원·탈퇴 등 회원 전용 블록은 이 단계에서 보이지 않습니다.
@@ -49,8 +49,8 @@ export function MyPageSpec() {
             </div>
 
             {/* [비회원 마이페이지 및 공통 로그인/가입 플로우 정책] — OAuth·약관 상태 구현 코드는 이 문서 범위 밖 */}
-            <div className="pt-2 border-t border-gray-200 space-y-3">
-              <h3 className="text-xs font-bold text-gray-800 tracking-wide uppercase">
+            <div className="pt-2 border-t border-gray-100 space-y-3">
+              <h3 className="text-xs font-bold text-blue-800 tracking-wide uppercase bg-blue-50 border border-blue-100 rounded-lg px-3 py-2">
                 [비회원 마이페이지 및 공통 로그인/가입 플로우 정책]
               </h3>
 
@@ -116,11 +116,11 @@ export function MyPageSpec() {
             </div>
           </section>
         ) : (
-          <section className="bg-white rounded-xl border border-gray-200 p-5 space-y-6">
-            <h2 className="text-lg font-bold text-gray-900">✅ 로그인 후 화면</h2>
+          <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-6">
+            <h2 className="text-lg font-black text-gray-900 mb-1 pb-2 border-b border-gray-100">✅ 로그인 후 화면</h2>
 
             <div>
-              <h3 className="text-sm font-bold text-gray-800 mb-2">1) 프로필 요약</h3>
+              <h3 className="text-sm font-bold text-blue-900 mb-2">1) 프로필 요약</h3>
               <ul className="space-y-2 text-sm text-gray-700 leading-relaxed list-disc pl-5">
                 <li>왼쪽: 원형 프로필 영역(그라데이션 배경 + 사람 아이콘).</li>
                 <li>로그인 계정 라벨 아래 <strong>이메일</strong>을 표시합니다. (데모에서는 샘플 주소)</li>
@@ -128,8 +128,8 @@ export function MyPageSpec() {
               </ul>
 
               {/* [로그아웃 팝업 정책] — 실제 화면 구현·로그아웃 처리는 이 문서 범위 밖 */}
-              <div className="mt-4 pt-4 border-t border-gray-200 space-y-3">
-                <h4 className="text-xs font-bold text-gray-800 tracking-wide">[로그아웃 팝업 정책]</h4>
+              <div className="mt-4 pt-4 border-t border-gray-100 space-y-3">
+                <h4 className="text-xs font-bold text-blue-800 tracking-wide bg-blue-50 border border-blue-100 rounded-lg px-3 py-2">[로그아웃 팝업 정책]</h4>
                 <div className="space-y-2 text-sm text-gray-700 leading-relaxed">
                   <p>
                     <strong>노출 조건:</strong> 마이페이지에서 <strong>로그아웃</strong> 버튼(아이콘)을 탭했을 때
@@ -159,7 +159,7 @@ export function MyPageSpec() {
             </div>
 
             <div>
-              <h3 className="text-sm font-bold text-gray-800 mb-2">2) 닉네임</h3>
+              <h3 className="text-sm font-bold text-blue-900 mb-2">2) 닉네임</h3>
               <ul className="space-y-2 text-sm text-gray-700 leading-relaxed list-disc pl-5">
                 <li>필수 입력 필드로, 표시 이름에 쓰입니다.</li>
                 <li>가입 시 시스템이 부여한 기본 닉네임이 초기값으로 들어갑니다.</li>
@@ -207,7 +207,7 @@ export function MyPageSpec() {
             </section>
 
             <div>
-              <h3 className="text-sm font-bold text-gray-800 mb-2">3) 내 활동</h3>
+              <h3 className="text-sm font-bold text-blue-900 mb-2">3) 내 활동</h3>
               <p className="text-sm text-gray-600 mb-3 leading-relaxed">
                 섹션 제목 아래 <strong>흰 카드</strong> 안에 네 가지 탭을 두고, 탭마다 목록이 바뀝니다. 목록 영역은{' '}
                 <strong>높이를 일정하게 두고 안에서만 스크롤</strong>되어, 위·아래 다른 블록과 레이아웃이 흔들리지 않습니다.
@@ -279,7 +279,7 @@ export function MyPageSpec() {
             </div>
 
             <div>
-              <h3 className="text-sm font-bold text-gray-800 mb-2">4) 다른 화면과의 연결</h3>
+              <h3 className="text-sm font-bold text-blue-900 mb-2">4) 다른 화면과의 연결</h3>
               <ul className="space-y-2 text-sm text-gray-700 leading-relaxed list-disc pl-5">
                 <li>게시글·댓글 상세 레이어 안에서 채팅·명의 찾기로 이어지는 버튼이 있으면, 각각 채팅 화면·명의 찾기 탭으로 전환됩니다.</li>
                 <li>후기·저장에서 연 의사 프로필은 동일한 상세 패턴을 사용합니다.</li>
@@ -287,7 +287,7 @@ export function MyPageSpec() {
             </div>
 
             <div>
-              <h3 className="text-sm font-bold text-gray-800 mb-2">5) 고객지원 · 탈퇴</h3>
+              <h3 className="text-sm font-bold text-blue-900 mb-2">5) 고객지원 · 탈퇴</h3>
               <ul className="space-y-2 text-sm text-gray-700 leading-relaxed list-disc pl-5">
                 <li>공지사항, 이용약관, 개인정보 처리방침, 의견 보내기를 한 블록에 모아, 행마다 오른쪽 화살표로 ‘다음 단계가 있다’는 느낌을 줍니다. (연결 동작은 서비스 정책에 맞게 구현)</li>
                 <li>
@@ -296,8 +296,8 @@ export function MyPageSpec() {
               </ul>
 
               {/* [이용약관 / 개인정보처리방침 상세페이지 정책] — 구현 스펙은 별도 화면/컴포넌트 문서에서 다룸 */}
-              <div className="mt-5 pt-4 border-t border-gray-200 space-y-3">
-                <h4 className="text-xs font-bold text-gray-800 tracking-wide">
+              <div className="mt-5 pt-4 border-t border-gray-100 space-y-3">
+                <h4 className="text-xs font-bold text-blue-800 tracking-wide bg-blue-50 border border-blue-100 rounded-lg px-3 py-2">
                   [이용약관 / 개인정보처리방침 상세페이지 정책]
                 </h4>
                 <div className="space-y-3 text-sm text-gray-700 leading-relaxed">
@@ -335,8 +335,8 @@ export function MyPageSpec() {
               </div>
 
               {/* [공지사항 목록 페이지 정책] — 실제 화면·라우팅·스크롤 구현은 이 문서 범위 밖 */}
-              <div className="mt-5 pt-4 border-t border-gray-200 space-y-3">
-                <h4 className="text-xs font-bold text-gray-800 tracking-wide">[공지사항 목록 페이지 정책]</h4>
+              <div className="mt-5 pt-4 border-t border-gray-100 space-y-3">
+                <h4 className="text-xs font-bold text-blue-800 tracking-wide bg-blue-50 border border-blue-100 rounded-lg px-3 py-2">[공지사항 목록 페이지 정책]</h4>
                 <div className="space-y-3 text-sm text-gray-700 leading-relaxed">
                   <p className="font-semibold text-gray-800">1. App Bar (상단 바)</p>
                   <ul className="space-y-1.5 list-disc pl-5">
@@ -372,8 +372,8 @@ export function MyPageSpec() {
               </div>
 
               {/* [회원탈퇴 페이지 및 알림 팝업 정책] — 체크박스/버튼/모달 구현 코드는 이 문서 범위 밖 */}
-              <div className="mt-5 pt-4 border-t border-gray-200 space-y-3">
-                <h4 className="text-xs font-bold text-gray-800 tracking-wide">
+              <div className="mt-5 pt-4 border-t border-gray-100 space-y-3">
+                <h4 className="text-xs font-bold text-blue-800 tracking-wide bg-blue-50 border border-blue-100 rounded-lg px-3 py-2">
                   [회원탈퇴 페이지 및 알림 팝업 정책]
                 </h4>
                 <div className="space-y-3 text-sm text-gray-700 leading-relaxed">

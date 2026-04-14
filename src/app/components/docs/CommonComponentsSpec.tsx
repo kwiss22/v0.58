@@ -10,8 +10,7 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
       <div className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white px-8 py-10">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-2 mb-3">
-            <span className="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">공통 컴포넌트 정의서 v0.6</span>
-            <span className="bg-white/10 text-emerald-100 text-xs px-3 py-1 rounded-full">2026.03.27</span>
+            <span className="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">공통 컴포넌트 정의서 v0.58</span>
             <span className="bg-yellow-400/90 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full">🎨 UI/UX</span>
           </div>
           <h1 className="text-3xl font-black mb-2">🔗 Aiga — 공통 UI 컴포넌트</h1>
@@ -31,7 +30,24 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
         {/* ───── 1. 팝업 UI ───── */}
         <Section id="modals" title="1. 팝업 UI (모달)" color="emerald">
 
-          <SubSection label="1" title="의사 프로필 상세 팝업">
+          <SubSection
+            label="1"
+            title="의사 프로필 상세 팝업 (aiga.kormedi.com/chat 기준 — 본 문서는 변경·추가분만 기술)"
+          >
+            <p className="text-xs text-slate-700 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 mb-4 leading-relaxed">
+              기본 UX·화면 구조·진입 흐름은 기존 서비스{' '}
+              <a
+                href="https://aiga.kormedi.com/chat"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-700 font-semibold underline underline-offset-2"
+              >
+                aiga.kormedi.com/chat
+              </a>
+              의 의사 프로필 상세 팝업 경험을 따릅니다. 세부 카피·레이아웃은 해당 화면을 참고하고, 아래에는 간단 요약과 본 앱(v0.58){' '}
+              <strong>프로토타입에서 달라지거나 추가된 부분</strong>만 적습니다.
+            </p>
+
             <div className="mb-4 bg-emerald-50 border border-emerald-200 rounded-xl p-4">
               <p className="text-sm font-bold text-emerald-800 mb-1">🔗 재사용 팝업</p>
               <p className="text-sm text-emerald-900">홈, 명의찾기, 커뮤니티 화면에서 의사 카드를 터치하면 표시</p>
@@ -112,7 +128,10 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
             {/* ── 비회원 버튼 비활성화 상태 상세 ── */}
             <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">🔒 비회원 버튼 비활성화 상태 상세</h4>
             <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4 space-y-4">
-              <p className="text-xs text-red-800 font-bold">비회원이 아래 두 버튼을 클릭하면 로그인 유도 팝업이 표시됩니다.</p>
+              <p className="text-xs text-red-800 font-bold">
+                비회원이 아래 두 버튼을 클릭하면 로그인 유도 팝업이 표시됩니다.{' '}
+                <SpecDocLink to="commonToasts">2. 로그인 필요·비회원 한도 모달 (전역)</SpecDocLink>으로 이동
+              </p>
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="bg-white border border-red-200 rounded-lg p-3">
@@ -502,10 +521,29 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
 
           </SubSection>
 
-          <SubSection label="3" title="리뷰 작성 팝업">
+          <SubSection
+            label="3"
+            title="리뷰 작성 팝업 (aiga.kormedi.com/chat 기준 — 본 문서는 변경·추가분만 기술)"
+          >
+            <p className="text-xs text-slate-700 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 mb-4 leading-relaxed">
+              기본 UX·화면 구조·입력 흐름은 기존 서비스{' '}
+              <a
+                href="https://aiga.kormedi.com/chat"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-700 font-semibold underline underline-offset-2"
+              >
+                aiga.kormedi.com/chat
+              </a>
+              의 리뷰 작성 경험을 따릅니다. 세부 카피·레이아웃은 해당 화면을 참고하고, 아래에는 간단 요약과 본 앱(v0.58){' '}
+              <strong>프로토타입에서 달라지거나 추가된 부분</strong>만 적습니다.
+            </p>
+
             <div className="mb-4 bg-emerald-50 border border-emerald-200 rounded-xl p-4">
               <p className="text-sm font-bold text-emerald-800 mb-1">🔗 중첩 팝업</p>
-              <p className="text-sm text-emerald-900">의사 프로필 팝업 안에서 \"리뷰 작성\" 버튼을 누르면 위에 한 번 더 표시</p>
+              <p className="text-sm text-emerald-900">
+                {'의사 프로필 팝업 안에서 "리뷰 작성" 버튼을 누르면 위에 한 번 더 표시'}
+              </p>
             </div>
 
             <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">📍 언제 나타나나요?</h4>
@@ -513,7 +551,7 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
               <p className="text-sm font-bold text-amber-900 mb-2">진입 흐름</p>
               <div className="space-y-1 text-xs text-amber-800">
                 <p>1️⃣ 의사 카드 터치 → 의사 프로필 팝업 열림</p>
-                <p>2️⃣ \"리뷰 작성\" 버튼 터치 (회원만 가능)</p>
+                <p>{'2️⃣ "리뷰 작성" 버튼 터치 (회원만 가능)'}</p>
                 <p>3️⃣ 리뷰 작성 팝업이 의사 프로필 팝업 위에 표시</p>
               </div>
             </div>
@@ -534,7 +572,10 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
             </div>
 
             {/* ── 이미지 첨부 스펙 ── */}
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">🖼️ 이미지 첨부 (글쓰기·수정 화면과 동일 UI/UX)</h4>
+            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">🖼️ 이미지 첨부 (글쓰기·수정 화면과 동일 UI/UX · 추후 논의 후 적용 예정)</h4>
+            <p className="text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-2">
+              현재는 적용 확정 전으로, 아래 내용은 참고안입니다. 최종 반영 범위·정책은 추후 논의 후 확정합니다.
+            </p>
             <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div className="bg-white border border-gray-200 rounded-lg p-3">
@@ -623,7 +664,32 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
             </div>
 
             <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">🎯 사용자 행동</h4>
+            <p className="text-xs text-gray-500 mb-2">제출·닫기·버튼 상태에 대한 확정 동작을 한곳에 모았습니다.</p>
             <div className="space-y-2">
+              <div className="bg-white border border-gray-200 rounded-lg p-3 mb-1">
+                <p className="text-xs font-bold text-gray-900 mb-2">동작·제약 요약</p>
+                <ul className="text-xs text-gray-700 space-y-1.5 list-disc pl-4">
+                  <li>
+                    <strong>별점 미입력 또는 리뷰 50자 미만</strong> — 저장하기 비활성(회색), 경고 alert 없음, 클릭 자체 차단
+                  </li>
+                  <li>
+                    <strong>버튼 구성</strong> — 저장하기 1개만 표시, 취소 버튼 없음, 닫기는 우측 상단 X
+                  </li>
+                  <li>
+                    <strong>최대 글자 수</strong> — 상한 없음, 최소 50자 이상 충족 시에만 제출 가능
+                  </li>
+                  <li>
+                    <strong>X 버튼</strong> — 별점·텍스트 등 입력이 하나라도 있으면 경고 없이 즉시 임시저장 후 닫힘(전부 기본값이면
+                    저장 생략). 다음 진입 시 임시저장이 있을 때만 복원 다이얼로그(
+                    <code className="text-[10px] bg-gray-100 px-1 rounded">ReviewWriteModal</code> ·{' '}
+                    <code className="text-[10px] bg-gray-100 px-1 rounded">handleClose</code>)
+                  </li>
+                  <li>
+                    <strong>반투명 바깥(오버레이)</strong> — 현재 구현에서는 닫기 핸들러 없음 → 닫히지 않음, X로만 닫기
+                  </li>
+                </ul>
+              </div>
+
               {/* 버튼 시각 상태 프리뷰 */}
               <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
                 <p className="text-xs font-bold text-gray-700 mb-3">🎨 저장하기 버튼 시각 상태</p>
@@ -653,26 +719,6 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
                 <p className="text-sm font-bold text-gray-500">저장하기 버튼 터치 (비활성 상태)</p>
                 <p className="text-xs text-gray-400">→ 아무 동작 없음 (경고 없음, 클릭 자체가 막힘)</p>
               </div>
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                <p className="text-sm font-bold text-gray-900">X 버튼 또는 바깥 영역 터치</p>
-                <p className="text-xs text-gray-600">→ 작성 중이던 내용은 저장되지 않고 팝업이 닫힙니다</p>
-              </div>
-            </div>
-
-            {/* 확정된 정책 */}
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">✅ 확정된 정책</h4>
-            <div className="space-y-2">
-              {[
-                { item: '별점 미입력 또는 리뷰 50자 미만 시', decision: '저장하기 버튼 비활성화 (회색) — 경고 alert 없음, 클릭 자체 차단' },
-                { item: '버튼 구성', decision: '저장하기 버튼 1개만 표시. 취소 버튼 없음 — 닫기는 우측 상단 X 아이콘 사용' },
-                { item: '최대 글자 수', decision: '제한 없음 — 최소 50자 이상만 충족하면 제출 가능' },
-                { item: '입력 중 닫기 시도', decision: 'X 버튼 터치 시 경고 없이 현재 입력 내용을 즉시 임시저장 후 팝업 닫힘 — 다음 진입 시 복원 다이얼로그 표시' },
-              ].map((item, i) => (
-                <div key={i} className="bg-green-50 border border-green-200 rounded-lg p-3">
-                  <p className="text-sm font-bold text-green-900">{item.item}</p>
-                  <p className="text-xs text-green-700">✓ {item.decision}</p>
-                </div>
-              ))}
             </div>
 
             {/* 임시저장 동작 정의 */}
