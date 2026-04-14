@@ -107,26 +107,29 @@ function StateCard({ title, condition, ui, sub, color = 'gray', isNew }: {
 /* ─── 메인 컴포넌트 ─── */
 export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
 
-  const scenarios = [
-    { label: '질환 검색',   keyword: '간암',      expects: ['명의', '게시글'], desc: '간암 전문 명의 + 관련 게시글', branch: 'isDiseaseQuery', status: '✅' },
-    { label: '병원 검색',   keyword: '서울아산병원', expects: ['병원', '게시글'], desc: '병원 카드 + 관련 게시글', branch: 'isHospitalQuery', status: '✅' },
-    { label: 'Alias 확장', keyword: '허리디스크', expects: ['명의', '게시글'], desc: '척추/디스크 명의 + 경험담 게시글', branch: 'isDiseaseQuery', status: '✅' },
-    { label: '진료과 검색', keyword: '소화기내과', expects: ['명의', '게시글'], desc: '소화기내과 전문 명의', branch: 'isDiseaseQuery', status: '✅' },
-    { label: '병원 검색 2', keyword: '세브란스',   expects: ['병원', '게시글'], desc: '세브란스 병원 + 게시글', branch: 'isHospitalQuery', status: '✅' },
-    { label: '증상어 감지', keyword: '배가 아파요', expects: [],                desc: 'Aiga 챗봇 연결 화면 — 검색 결과 미표시', branch: 'isSymptomQuery', status: '✅' },
+  /** 검증 시나리오 분류(기획·검증용 표기 — 내부 코드명 사용 안 함) */
+  type ScenarioKind = '질환·진료과 검색' | '병원명 검색' | '증상·상담형 질문';
+
+  const scenarios: {
+    label: string;
+    keyword: string;
+    expects: string[];
+    desc: string;
+    kind: ScenarioKind;
+    status: string;
+  }[] = [
+    { label: '질환 검색', keyword: '간암', expects: ['명의', '게시글'], desc: '간암 전문 명의 + 관련 게시글', kind: '질환·진료과 검색', status: '✅' },
+    { label: '병원 검색', keyword: '서울아산병원', expects: ['병원', '게시글'], desc: '병원 카드 + 관련 게시글', kind: '병원명 검색', status: '✅' },
+    { label: '비슷한 말 자동 연결', keyword: '허리디스크', expects: ['명의', '게시글'], desc: '척추/디스크 명의 + 경험담 게시글', kind: '질환·진료과 검색', status: '✅' },
+    { label: '진료과 검색', keyword: '소화기내과', expects: ['명의', '게시글'], desc: '소화기내과 전문 명의', kind: '질환·진료과 검색', status: '✅' },
+    { label: '병원 검색 2', keyword: '세브란스', expects: ['병원', '게시글'], desc: '세브란스 병원 + 게시글', kind: '병원명 검색', status: '✅' },
+    { label: '증상어 감지', keyword: '배가 아파요', expects: [], desc: 'Aiga 챗봇 연결 화면 — 검색 결과 미표시', kind: '증상·상담형 질문', status: '✅' },
   ];
 
-  const branchColor: Record<string, string> = {
-    isSymptomQuery:  'blue',
-    isHospitalQuery: 'teal',
-    isDiseaseQuery:  'violet',
-  };
-
-  /** 시나리오 카드에 표시하는 분류 이름(기획·검증용) */
-  const branchLabelKr: Record<string, string> = {
-    isSymptomQuery: '증상·상담형 질문',
-    isHospitalQuery: '병원명 검색',
-    isDiseaseQuery: '질환·진료과 검색',
+  const kindTagColor: Record<ScenarioKind, 'blue' | 'teal' | 'violet'> = {
+    '증상·상담형 질문': 'blue',
+    '병원명 검색': 'teal',
+    '질환·진료과 검색': 'violet',
   };
 
   return (
@@ -319,7 +322,7 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
 
         {/* ── 4. 검색어 분류 로직 ── */}
         <section>
-          <SectionHeader emoji="🔀" title="4. 검색어 분류 로직 (상호 배타적 3단계)" color="amber" />
+          <SectionHeader emoji="🔀" title="4. 검색어 분류 로직 (순서대로 판단하는 3단계)" color="amber" />
 
           <div className="space-y-2.5 mb-4">
             {/* 1순위 */}
@@ -364,8 +367,8 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
             </div>
           </div>
 
-          {/* Alias 확장 */}
-          <p className="text-xs font-bold text-gray-700 mb-2">⚡ Alias 확장 — 동의어 처리</p>
+          {/* 비슷한 말 자동 연결 */}
+          <p className="text-xs font-bold text-gray-700 mb-2">⚡ 비슷한 말 자동 연결 — 동의어 처리</p>
           <div className="overflow-x-auto rounded-xl border border-gray-200 mb-3">
             <table className="w-full text-[11px]">
               <thead>
@@ -716,7 +719,7 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
                   <span className="text-[11px] font-bold bg-gray-100 text-gray-600 px-2 py-0.5 rounded">{s.label}</span>
                   <code className="text-xs font-bold text-violet-700 bg-violet-50 px-2 py-0.5 rounded">"{s.keyword}"</code>
-                  <Tag color={branchColor[s.branch] as 'blue' | 'teal' | 'violet'}>{branchLabelKr[s.branch] ?? s.branch}</Tag>
+                  <Tag color={kindTagColor[s.kind]}>{s.kind}</Tag>
                   <span className="ml-auto text-[11px] font-bold text-green-600">{s.status} 검증완료</span>
                   {onTestSearch && (
                     <span className="text-[10px] text-violet-400 font-medium bg-violet-50 px-2 py-0.5 rounded-full border border-violet-100">

@@ -33,6 +33,55 @@ export function SearchScenarioSpecBiz({ onTestSearch }: SearchScenarioSpecBizPro
           </p>
         </section>
 
+        <section className="bg-white rounded-xl border border-emerald-200 p-4 shadow-sm">
+          <p className="text-xs font-bold text-emerald-900 mb-2">회원 전용 — 통합검색 이용 한도 해제</p>
+          <p className="text-[11px] text-gray-700 leading-relaxed mb-3">
+            비회원은 아래 횟수 제한이 있으며, 회원은 모두 <strong>무제한</strong>으로 이용할 수 있습니다.
+          </p>
+          <div className="overflow-x-auto rounded-lg border border-gray-200">
+            <table className="w-full text-[11px] border-collapse">
+              <thead>
+                <tr className="bg-gray-50 border-b border-gray-200">
+                  <th className="px-3 py-2 text-left font-bold text-gray-700">항목</th>
+                  <th className="px-3 py-2 text-left font-bold text-gray-700">비회원</th>
+                  <th className="px-3 py-2 text-left font-bold text-gray-700">회원</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b border-gray-100 bg-white">
+                  <td className="px-3 py-2 text-gray-900 font-medium">검색 실행</td>
+                  <td className="px-3 py-2 text-gray-700">3회/일</td>
+                  <td className="px-3 py-2 text-emerald-800 font-semibold">무제한</td>
+                </tr>
+                <tr className="border-b border-gray-100 bg-gray-50/50">
+                  <td className="px-3 py-2 text-gray-900 font-medium">프로필 조회</td>
+                  <td className="px-3 py-2 text-gray-700">3회/일</td>
+                  <td className="px-3 py-2 text-emerald-800 font-semibold">무제한</td>
+                </tr>
+                <tr className="border-b border-gray-100 bg-white">
+                  <td className="px-3 py-2 text-gray-900 font-medium">게시글 열람</td>
+                  <td className="px-3 py-2 text-gray-700">5회/일</td>
+                  <td className="px-3 py-2 text-emerald-800 font-semibold">무제한</td>
+                </tr>
+                <tr className="border-b border-gray-100 bg-gray-50/50">
+                  <td className="px-3 py-2 text-gray-900 font-medium">한도 배너</td>
+                  <td className="px-3 py-2 text-gray-700">표시</td>
+                  <td className="px-3 py-2 text-emerald-800 font-semibold">미표시</td>
+                </tr>
+                <tr className="bg-white">
+                  <td className="px-3 py-2 text-gray-900 font-medium">자물쇠 차단 화면</td>
+                  <td className="px-3 py-2 text-gray-700">표시</td>
+                  <td className="px-3 py-2 text-emerald-800 font-semibold">미표시</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p className="text-[10px] text-gray-600 mt-3 leading-relaxed space-y-1">
+            <span className="block">* 위 횟수는 홈·명의찾기·커뮤니티와 공유되는 전역 기준입니다.</span>
+            <span className="block">* Base 문서 3절 ⑤ 한도 차단 화면은 회원에게 표시되지 않습니다.</span>
+          </p>
+        </section>
+
         <BizSection title="1. 회원이 체감하는 변화 (한눈에)">
           <ul className="text-xs text-gray-800 leading-relaxed list-disc pl-4 space-y-1.5">
             <li>
@@ -45,7 +94,7 @@ export function SearchScenarioSpecBiz({ onTestSearch }: SearchScenarioSpecBizPro
               명의·게시글 카드를 눌렀을 때 <strong>«오늘 볼 수 있는 횟수가 찼어요»</strong> 같은 막힘이 줄어, 프로필·글 내용을 <strong>끊기지 않고</strong> 볼 수 있습니다(서비스 정책 기준).
             </li>
             <li>
-              카드 안으로 들어간 뒤에는 <strong>즐겨찾기·리뷰·댓글·공감</strong>처럼 비회원은 잠겨 있던 행동이 <strong>로그인 창 없이</strong> 이어지기 쉽습니다. 세부 화면은 아래 참조로 연결합니다.
+              카드를 열면 <strong>공감·댓글</strong>처럼 비회원에게 막혀 있던 행동이 <strong>로그인 창 없이</strong> 이어집니다. 의사 저장·리뷰 작성 등 <strong>카드 안 세부 기능</strong>은 <strong>공통 모달 회원 문서(CommonComponentsSpecBiz)</strong>를 참조하세요.
             </li>
           </ul>
         </BizSection>
@@ -69,13 +118,12 @@ export function SearchScenarioSpecBiz({ onTestSearch }: SearchScenarioSpecBizPro
 
         <BizSection title="4. 결과 카드를 눌렀을 때 — 열리는 뒷장면">
           <SubBlock title="명의(의사) 카드" />
-          <p className="text-xs text-gray-800 leading-relaxed mb-3">
-            카드를 누르면 의사 프로필이 열립니다. 화면 구성은 <strong>비회원과 같습니다.</strong> 회원에게 추가로 열리는 것은 <strong>즐겨찾기·리뷰 쓰기</strong>처럼, 예전에는 자물쇠였던 버튼이 <strong>바로 눌리는 경험</strong>입니다. 누른 뒤 저장·작성 화면으로 이어지는 자세한 순서는{' '}
-            <strong>공통 컴포넌트 회원 문서(CommonComponentsSpecBiz)</strong>를 봅니다.
+          <p className="text-xs text-gray-800 leading-relaxed mb-2">
+            <strong>최소 흐름:</strong> 목록에서 의사 카드를 누르면 통합 검색은 닫히거나 뒤로 가고, <strong>의사 프로필(공통 모달)</strong>이 열립니다. 프로필 안의 저장·리뷰 등 버튼 동작·문구는 통합검색 문서가 아니라 <strong>CommonComponentsSpecBiz</strong> 기준입니다.
           </p>
           <SubBlock title="게시글 카드" />
-          <p className="text-xs text-gray-800 leading-relaxed">
-            글이 열리면 본문·댓글이 보입니다. 레이아웃은 같고, 회원은 <strong>공감·댓글</strong>을 막히지 않고 이어갈 수 있습니다. 댓글 톤·신고·수정 같은 세부 규칙은 <strong>커뮤니티 회원 문서(CommunityTabSpecBiz)</strong>와 맞춥니다.
+          <p className="text-xs text-gray-800 leading-relaxed mb-2">
+            <strong>최소 흐름:</strong> 게시글 카드를 누르면 <strong>글 상세(공통 패턴)</strong>가 열리고 본문·댓글 영역이 보입니다. 공감·댓글·신고 등 상호작용 세부는 <strong>CommunityTabSpecBiz</strong>와 동일하게 적용합니다.
           </p>
         </BizSection>
 
@@ -111,18 +159,19 @@ export function SearchScenarioSpecBiz({ onTestSearch }: SearchScenarioSpecBizPro
         </BizSection>
 
         <BizSection title="7. 참조 문서">
+          <p className="text-[11px] text-gray-600 mb-2">위 한도 표·4절에 없는 세부만 아래에서 보완합니다.</p>
           <ul className="text-xs text-gray-700 space-y-1.5 list-disc pl-5">
             <li>
               <strong>SearchScenarioSpec</strong> — 통합검색 화면·비회원 한도·탭·무한 스크롤 <strong>기준(Base)</strong>
             </li>
             <li>
-              <strong>CommonComponentsSpecBiz</strong> — 의사 프로필 안에서의 저장·리뷰 등
+              <strong>CommonComponentsSpecBiz</strong> — 의사 프로필 레이아웃·리뷰 작성 단계
             </li>
             <li>
-              <strong>CommunityTabSpecBiz</strong> — 게시글 공감·댓글·글쓰기 등
+              <strong>CommunityTabSpecBiz</strong> — 게시글 ⋮ 메뉴·답글·글쓰기 등
             </li>
             <li>
-              <strong>DoctorSearchSpecBiz · HomeTabSpecBiz</strong> — 각 탭으로 «더 보기» 이동 후 회원 경험
+              <strong>DoctorSearchSpecBiz · HomeTabSpecBiz</strong> — «더 보기»로 이동한 뒤 탭별 회원 경험
             </li>
           </ul>
           <button

@@ -220,10 +220,16 @@ export function MyPageSpec() {
                 <li>
                   <strong>저장</strong> 탭은 사용자가 명의 찾기 등에서 <strong>즐겨찾기한 의료진</strong> 목록입니다. (이전 명칭: 저장한 의료진)
                 </li>
+                <li>
+                  <strong>게시글·댓글·후기·저장</strong> 네 탭의 목록은 모두 <strong>최신순(내림차순)</strong>으로 정렬합니다. 가장 최근에 활동한 항목이 맨 위에 옵니다.
+                </li>
               </ul>
 
               <h4 className="text-xs font-bold text-gray-700 mb-2">게시글</h4>
               <ul className="space-y-2 text-sm text-gray-700 leading-relaxed list-disc pl-5 mb-4">
+                <li>
+                  <strong>정렬:</strong> 작성·수정 시각 기준 <strong>최신순(내림차순)</strong>입니다.
+                </li>
                 <li>내가 쓴 글을 카드형 목록으로 보여 줍니다. 진료과 뱃지, 올린 지 얼마나 지났는지, 제목·요약 일부, 좋아요·댓글·조회 수를 한눈에 넣습니다.</li>
                 <li>항목을 누르면 <strong>게시글 상세</strong>이 화면 위 레이어(모달)로 열립니다.</li>
                 <li>삭제 아이콘은 목록에서 바로 삭제할 때 사용하며, 확인 후 삭제되었다는 알림이 뜹니다.</li>
@@ -233,13 +239,22 @@ export function MyPageSpec() {
 
               <h4 className="text-xs font-bold text-gray-700 mb-2">댓글</h4>
               <ul className="space-y-2 text-sm text-gray-700 leading-relaxed list-disc pl-5 mb-4">
-                <li>원글 제목 한 줄, 내가 단 댓글, 공감 수, 시간 순서로 보여 줍니다.</li>
+                <li>
+                  <strong>정렬:</strong> 일반 댓글과 대댓글을 <strong>한 목록에 통합</strong>하여, 작성 시각 기준 <strong>최신순(내림차순)</strong>으로 노출합니다.
+                </li>
+                <li>
+                  <strong>시각적 구분:</strong> 대댓글은 본문 텍스트 앞에 꺾인 화살표(<strong>↳</strong>) 아이콘을 붙여, 일반 댓글과 구분합니다.
+                </li>
+                <li>원글 제목 한 줄, 내가 단 댓글(또는 대댓글) 내용, 공감 수, 시간이 함께 보입니다.</li>
                 <li>항목을 누르면 해당 맥락의 <strong>게시글 상세</strong>로 연결됩니다.</li>
                 <li>삭제·신고 처리 표시 방식은 게시글과 같은 패턴을 따릅니다.</li>
               </ul>
 
               <h4 className="text-xs font-bold text-gray-700 mb-2">후기</h4>
               <ul className="space-y-2 text-sm text-gray-700 leading-relaxed list-disc pl-5 mb-4">
+                <li>
+                  <strong>정렬:</strong> 작성 시각 기준 <strong>최신순(내림차순)</strong>입니다.
+                </li>
                 <li>
                   의사 프로필 화면에 있는 <strong>AIGA 리뷰 카드</strong>와 같은 시각 규칙(네 가지 별점 항목, 초록 진행 막대, 후기 본문, 하단에 의사·과·병원 한 줄)을 사용합니다.
                 </li>
@@ -253,6 +268,9 @@ export function MyPageSpec() {
 
               <h4 className="text-xs font-bold text-gray-700 mb-2">저장</h4>
               <ul className="space-y-2 text-sm text-gray-700 leading-relaxed list-disc pl-5">
+                <li>
+                  <strong>정렬:</strong> 저장한 시각 기준 <strong>최신순(내림차순)</strong>입니다.
+                </li>
                 <li>저장해 둔 의료진 이름·과·병원·평점 등을 목록으로 보여 줍니다.</li>
                 <li>행을 누르면 의사 <strong>프로필 상세</strong>로 연결됩니다.</li>
                 <li>각 행에서 저장을 해제할 수 있습니다.</li>
