@@ -1,5 +1,7 @@
 // 홈탭 화면정의서 — UI/UX (비기술 버전)
+import type { ReactNode } from 'react';
 import { useAppNavigation } from '../../contexts/AppNavigationContext';
+import { SpecDocLink } from './SpecDocLink';
 
 export function HomeTabSpecBiz() {
   const { navigateToCommunity } = useAppNavigation();
@@ -19,13 +21,17 @@ export function HomeTabSpecBiz() {
 
       <div className="px-3 py-4 space-y-4">
         <div className="bg-violet-50 border border-violet-200 rounded-xl px-3 py-3">
-          <p className="text-xs font-bold text-violet-900 mb-1">📌 회원(Delta) 탭 운영 원칙</p>
+          <p className="text-xs font-bold text-violet-900 mb-1">📌 회원전용 탭 운영 원칙</p>
           <p className="text-xs text-violet-900 leading-relaxed">
-            기본 동작 및 UI 인터랙션은 <strong>[비회원 탭]</strong> 정책을 동일하게 참조함. 이 문서는 비회원 기준 대비 회원 확장점(Delta)만 기록합니다.
+            기본 동작 및 UI 인터랙션은{' '}
+            <SpecDocLink to="homeGuestOverview">
+              <strong>[비회원 탭]</strong>
+            </SpecDocLink>{' '}
+            정책을 동일하게 참조함. 이 문서는 비회원 기준 대비 <strong>회원전용</strong>에서만 달라지는 점만 기록합니다.
           </p>
         </div>
 
-        <BizSection id="auth" title="1. 회원 확장 차이점 (Delta)" color="emerald">
+        <BizSection id="auth" title="1. 회원전용에서 달라지는 점" color="emerald">
           <div className="bg-rose-50 border border-rose-200 rounded-lg px-3 py-2.5 mb-3">
             <p className="text-xs text-rose-900 leading-relaxed">
               <strong>전역 통합 카운터:</strong> 비회원의 검색/프로필/게시글 열람 한도는 홈·명의찾기·통합검색·커뮤니티가 동일 카운터를 공유합니다.
@@ -33,18 +39,33 @@ export function HomeTabSpecBiz() {
             </p>
           </div>
           <BizTable
-            headers={['항목', '비회원(기본)', '회원(확장)', '비고']}
+            headers={['항목', '비회원 기준', '회원전용', '비고']}
             rows={[
               ['검색/프로필/게시글 열람 한도', '전역 통합 카운터 적용', '한도 미적용(정책 기준)', '카운터는 탭 단위가 아닌 서비스 전역'],
               ['의사 즐겨찾기', '로그인 유도', '저장 가능', '저장 결과는 마이페이지와 연계'],
-              ['의사 리뷰 작성', '로그인 유도', '작성 가능', '리뷰 작성 팝업 패턴은 공통 탭 참조'],
-              ['커뮤니티 게시글 공감', '로그인 유도', '토글 가능(재탭 취소 포함)', '상세 모달 패턴은 공통 탭 참조'],
+              [
+                '의사 리뷰 작성',
+                '로그인 유도',
+                '작성 가능',
+                <>
+                  리뷰 작성 팝업 패턴은 <SpecDocLink to="commonModals">공통 탭</SpecDocLink> 참조
+                </>,
+              ],
+              [
+                '커뮤니티 게시글 공감',
+                '로그인 유도',
+                '토글 가능(재탭 취소 포함)',
+                <>
+                  상세 모달 패턴은 <SpecDocLink to="commonModals">공통 탭</SpecDocLink> 참조
+                </>,
+              ],
               ['커뮤니티 댓글/답글', '입력 비활성 + 안내', '작성/전송 가능', '권한 차이만 본 문서에서 관리'],
               ['커뮤니티 ⋮ 더보기', '공유 중심', '공유 + 작성자 수정/삭제 + 타인 신고', '작성자 여부 분기'],
             ]}
           />
           <BizNote>
-            홈 화면 레이아웃, 카드 구성, 모달 기본 구조, 공통 컴포넌트 상세는 비회원 탭 및 공통 탭을 참조합니다.
+            홈 화면 레이아웃, 카드 구성, 모달 기본 구조, 공통 컴포넌트 상세는{' '}
+            <SpecDocLink to="homeGuestOverview">비회원 탭</SpecDocLink> 및 <SpecDocLink to="commonModals">공통 탭</SpecDocLink>을 참조합니다.
           </BizNote>
         </BizSection>
 
@@ -126,7 +147,7 @@ function BizBlock({ label, title, file, children }: { label: string; title: stri
   );
 }
 
-function BizTable({ headers, rows }: { headers: string[]; rows: string[][] }) {
+function BizTable({ headers, rows }: { headers: string[]; rows: ReactNode[][] }) {
   return (
     <div className="overflow-x-auto rounded-lg border border-gray-100">
       <table className="w-full text-xs border-collapse">

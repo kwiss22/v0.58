@@ -1,7 +1,9 @@
+import type { ReactNode } from 'react';
 import { useAppNavigation } from '../../contexts/AppNavigationContext';
+import { SpecDocLink } from './SpecDocLink';
 
 export function DoctorSearchSpecBiz() {
-  const { navigateToDoctorSearch, navigateToCommonSpec, navigateToChat } = useAppNavigation();
+  const { navigateToDoctorSearch, navigateToChat } = useAppNavigation();
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans text-sm">
@@ -12,18 +14,22 @@ export function DoctorSearchSpecBiz() {
           <span className="bg-yellow-400/90 text-yellow-900 text-[10px] font-bold px-2 py-0.5 rounded-full">🎨 UI/UX</span>
         </div>
         <h1 className="text-base font-black mb-1">명의 찾기 화면</h1>
-        <p className="text-purple-200 text-[10px]">회원 탭 (Delta) — 비회원 기준 대비 차이점만 정리</p>
+        <p className="text-purple-200 text-[10px]">회원전용 — 비회원 기준과 달라지는 점만 정리</p>
       </div>
 
       <div className="px-3 py-4 space-y-4">
         <div className="bg-violet-50 border border-violet-200 rounded-xl px-3 py-3">
-          <p className="text-xs font-bold text-violet-900 mb-1">📌 회원(Delta) 탭 운영 원칙</p>
+          <p className="text-xs font-bold text-violet-900 mb-1">📌 회원전용 탭 운영 원칙</p>
           <p className="text-xs text-violet-900 leading-relaxed">
-            기본 동작 및 UI 인터랙션은 <strong>[비회원 탭]</strong> 정책을 동일하게 참조함. 이 문서는 비회원 기준 대비 회원 확장점(Delta)만 기록합니다.
+            기본 화면 구성과 터치·탭 반응은{' '}
+            <SpecDocLink to="doctorGuestOverview">
+              <strong>[비회원 탭]</strong>
+            </SpecDocLink>{' '}
+            정의와 같습니다. 이 문서는 비회원과 비교해 <strong>회원만 달라지는 점</strong>만 적습니다.
           </p>
         </div>
 
-        <Section id="delta" title="1. 회원 확장 차이점 (Delta)" color="emerald">
+        <Section id="delta" title="1. 회원전용에서 달라지는 점" color="emerald">
           <div className="bg-rose-50 border border-rose-200 rounded-lg px-3 py-2.5 mb-3">
             <p className="text-xs text-rose-900 leading-relaxed">
               <strong>전역 통합 카운터:</strong> 비회원의 검색/프로필/게시글 열람 한도는 홈·명의찾기·통합검색·커뮤니티가 동일 카운터를 공유합니다.
@@ -31,12 +37,19 @@ export function DoctorSearchSpecBiz() {
             </p>
           </div>
           <Table
-            headers={['항목', '비회원(기본)', '회원(확장)', '비고']}
+            headers={['항목', '비회원 기준', '회원전용', '비고']}
             rows={[
               ['검색 실행', '하루 3회', '무제한', '전역 통합 카운터 기준'],
               ['의사 프로필 열람', '하루 3회', '무제한', '카드 클릭 열람 기준'],
               ['의사 즐겨찾기', '로그인 유도', '저장 가능', '저장 결과는 마이페이지 연계'],
-              ['리뷰 작성', '로그인 유도', '작성 가능', '팝업 구조는 공통 탭 참조'],
+              [
+                '리뷰 작성',
+                '로그인 유도',
+                '작성 가능',
+                <>
+                  팝업 구조는 <SpecDocLink to="commonModals">공통 탭</SpecDocLink> 참조
+                </>,
+              ],
             ]}
           />
         </Section>
@@ -46,7 +59,7 @@ export function DoctorSearchSpecBiz() {
             <ul className="text-xs text-violet-900 space-y-1.5 list-disc ml-4">
               <li>검색/프로필 열람 한도 초과 배너·잠금 흐름 없이 연속 탐색이 가능합니다.</li>
               <li>의사 상세에서 즐겨찾기 저장과 리뷰 작성이 즉시 가능합니다.</li>
-              <li>로그인 유도 모달 대신 회원 액션(저장/작성)이 바로 수행됩니다.</li>
+              <li>로그인 유도 안내 대신 저장·작성이 바로 이어집니다.</li>
             </ul>
           </div>
           <div className="mt-3 flex items-center gap-2 p-3 bg-gradient-to-r from-teal-50 to-cyan-50 border border-teal-200 rounded-xl">
@@ -69,21 +82,24 @@ export function DoctorSearchSpecBiz() {
         <Section id="refs" title="3. 참고 문서" color="indigo">
           <div className="space-y-2">
             <div className="bg-white border border-indigo-100 rounded-lg px-3 py-2.5">
-              <p className="text-xs font-bold text-indigo-900">기본 화면/인터랙션</p>
-              <p className="text-[10px] text-gray-600 mt-0.5">비회원 탭 `DoctorSearchSpec`을 기준으로 동일하게 동작합니다.</p>
+              <p className="text-xs font-bold text-indigo-900">기본 화면·사용 방식</p>
+              <p className="text-[10px] text-gray-600 mt-0.5">
+                비회원용{' '}
+                <SpecDocLink to="doctorGuestOverview">명의 찾기 화면 정의서</SpecDocLink>와 같은 흐름으로 동작합니다.
+              </p>
             </div>
             <div className="bg-white border border-indigo-100 rounded-lg px-3 py-2.5">
               <div className="flex items-center justify-between gap-2">
                 <div>
-                  <p className="text-xs font-bold text-indigo-900">공통 컴포넌트 상세</p>
-                  <p className="text-[10px] text-gray-600 mt-0.5">의사 프로필, 리뷰 작성, 로그인 유도 안내 등</p>
+                  <p className="text-xs font-bold text-indigo-900">공통 UI 상세</p>
+                  <p className="text-[10px] text-gray-600 mt-0.5">의사 프로필 창, 리뷰 작성, 로그인 유도 안내 등</p>
                 </div>
-                <button
-                  onClick={navigateToCommonSpec}
-                  className="text-[10px] text-indigo-600 hover:text-indigo-800 underline underline-offset-2 whitespace-nowrap"
+                <SpecDocLink
+                  to="commonModals"
+                  className="text-[10px] text-indigo-600 hover:text-indigo-800 whitespace-nowrap"
                 >
                   공통 문서 →
-                </button>
+                </SpecDocLink>
               </div>
             </div>
           </div>
@@ -114,7 +130,7 @@ function Section({ id, title, color, children }: { id: string; title: string; co
   );
 }
 
-function Table({ headers, rows }: { headers: string[]; rows: string[][] }) {
+function Table({ headers, rows }: { headers: string[]; rows: ReactNode[][] }) {
   return (
     <div className="overflow-x-auto rounded-lg border border-gray-100">
       <table className="w-full text-xs border-collapse">

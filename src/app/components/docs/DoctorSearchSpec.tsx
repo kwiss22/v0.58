@@ -1,7 +1,9 @@
+import type { ReactNode } from 'react';
 import { useAppNavigation } from '../../contexts/AppNavigationContext';
+import { SpecDocLink } from './SpecDocLink';
 
 export function DoctorSearchSpec() {
-  const { navigateToChat, navigateToDoctorSearch, navigateToCommonSpec } = useAppNavigation();
+  const { navigateToChat, navigateToDoctorSearch } = useAppNavigation();
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans text-sm">
@@ -230,12 +232,9 @@ export function DoctorSearchSpec() {
 
             <Note>
               카드 터치 시 의사 프로필 상세 팝업이 열립니다. 팝업 스펙은{' '}
-              <button
-                onClick={navigateToCommonSpec}
-                className="font-bold underline underline-offset-2 text-blue-700 hover:text-blue-900 transition-colors"
-              >
+              <SpecDocLink to="commonModals" className="font-bold text-blue-700">
                 공통 컴포넌트 문서
-              </button>
+              </SpecDocLink>
               를 참조하세요.
             </Note>
           </SubSection>
@@ -395,7 +394,10 @@ export function DoctorSearchSpec() {
 
         {/* ───── 4. 공통 컴포넌트 연계 ───── */}
         <Section id="common" title="4. 공통 컴포넌트 연계" color="indigo">
-          <p className="text-xs text-gray-500 mb-3">아래 팝업·컴포넌트는 명의찾기 화면에서도 사용되며, 상세 스펙은 공통 문서에 정의되어 있습니다.</p>
+          <p className="text-xs text-gray-500 mb-3">
+            아래 팝업·컴포넌트는 명의찾기 화면에서도 사용되며, 상세 스펙은{' '}
+            <SpecDocLink to="commonModals">공통 문서</SpecDocLink>에 정의되어 있습니다.
+          </p>
           <div className="space-y-2">
             {[
               { name: '의사 프로필 상세 팝업', trigger: '의사 카드 터치 시', desc: '프로필·경력·학력·AI 소셜리뷰·리뷰쓰기 포함' },
@@ -409,25 +411,27 @@ export function DoctorSearchSpec() {
                     <p className="text-[10px] text-gray-500 mt-0.5">진입: {item.trigger}</p>
                     <p className="text-[10px] text-gray-500">{item.desc}</p>
                   </div>
-                  <button
-                    onClick={navigateToCommonSpec}
-                    className="text-[10px] text-indigo-600 hover:text-indigo-800 underline underline-offset-2 whitespace-nowrap flex-shrink-0"
+                  <SpecDocLink
+                    to="commonModals"
+                    className="text-[10px] text-indigo-600 hover:text-indigo-800 whitespace-nowrap flex-shrink-0"
                   >
                     공통 문서 →
-                  </button>
+                  </SpecDocLink>
                 </div>
               </div>
             ))}
           </div>
           <p className="text-xs text-indigo-900 bg-indigo-50 border border-indigo-200 rounded-lg px-3 py-2 mt-2">
-            👉 &quot;로그인 유도 안내&quot;에서 로그인(가입) 버튼 탭 시 이후의 진행 흐름은 마이페이지 화면정의서에 정리된 [공통 로그인/회원가입 플로우 정책]을 공통으로 따름.
+            👉 &quot;로그인 유도 안내&quot;에서 로그인(가입) 버튼 탭 시 이후의 진행 흐름은{' '}
+            <SpecDocLink to="mypageOverview">마이페이지 화면정의서</SpecDocLink>에 정리된 [공통 로그인/회원가입 플로우 정책]을 공통으로
+            따름.
           </p>
         </Section>
 
         {/* ───── 5. 비회원(Base) 기준 기능 요약 ───── */}
         <Section id="auth" title="5. 비회원(Base) 기준 기능 요약" color="emerald">
           {/* 🆕 비회원 사용량 제한 추가 */}
-          <div className="bg-pink-50 border-2 border-pink-400 rounded-xl px-4 py-3 mb-4">
+          <div id="doctor-spec-guest-usage" className="scroll-mt-36 bg-pink-50 border-2 border-pink-400 rounded-xl px-4 py-3 mb-4">
             <h3 className="text-sm font-black text-pink-900 mb-3">🆕 비회원 사용량 제한</h3>
             <p className="text-xs text-pink-900 bg-white/80 border border-pink-200 rounded-lg px-3 py-2 mb-3 leading-relaxed">
               <strong>전역 통합:</strong> 아래 검색·프로필·게시글 열람 한도는 <strong>명의 찾기 탭만의 독립 카운터가 아닙니다.</strong> 홈 탭, 통합 검색 전체 창, 커뮤니티 탭과 <strong>같은 남은 횟수</strong>를 씁니다(프로토타입: 이 브라우저에 저장). 어느 화면에서든 1회를 쓰면 모든 화면의 잔여 횟수·배너·잠금 안내에 같이 반영됩니다.
@@ -530,7 +534,9 @@ export function DoctorSearchSpec() {
                   </div>
                 </div>
                 <p className="text-xs text-indigo-900 bg-indigo-50 border border-indigo-200 rounded-lg px-2.5 py-2 mt-2">
-                  👉 위 모달 내 가입·로그인 관련 버튼 탭 시 이후의 진행 흐름은 마이페이지 화면정의서에 정리된 [공통 로그인/회원가입 플로우 정책]을 공통으로 따름.
+                  👉 위 모달 내 가입·로그인 관련 버튼 탭 시 이후의 진행 흐름은{' '}
+                  <SpecDocLink to="mypageOverview">마이페이지 화면정의서</SpecDocLink>에 정리된 [공통 로그인/회원가입 플로우 정책]을
+                  공통으로 따름.
                 </p>
                 <div className="mt-3 space-y-1">
                   <p className="text-xs text-gray-600">• <strong>검색 한도 초과 시</strong>: 검색창 클릭 → 모달 팝업</p>
@@ -567,7 +573,8 @@ export function DoctorSearchSpec() {
             ]}
           />
           <p className="text-xs text-emerald-900 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2 mt-2">
-            회원 전용 확장(Delta)은 회원 탭(`DoctorSearchSpecBiz`)에서만 관리합니다.
+            회원전용 확장은 회원 탭(
+            <SpecDocLink to="doctorMemberDelta">DoctorSearchSpecBiz</SpecDocLink>)에서만 관리합니다.
           </p>
         </Section>
 
@@ -596,7 +603,7 @@ function Section({ id, title, color, children }: { id: string; title: string; co
     rose: 'bg-rose-50 text-rose-900',
   };
   return (
-    <section id={id}>
+    <section id={id} className="scroll-mt-36">
       <div className={`flex items-center gap-1.5 mb-3 pb-2 border-b ${borderColors[color]}`}>
         <h2 className={`text-sm font-black px-2.5 py-1 rounded ${bgColors[color]}`}>{title}</h2>
       </div>
@@ -617,7 +624,7 @@ function SubSection({ label, title, children }: { label: string; title: string; 
   );
 }
 
-function Table({ headers, rows }: { headers: string[]; rows: string[][] }) {
+function Table({ headers, rows }: { headers: string[]; rows: ReactNode[][] }) {
   return (
     <div className="overflow-x-auto rounded-lg border border-gray-100">
       <table className="w-full text-xs border-collapse">

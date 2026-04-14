@@ -1,11 +1,9 @@
 // 커뮤니티 탭 화면정의서 — UI/UX (v0.6 · 프로토타입 참고·더미 데이터와 구분)
 
-import { useAppNavigation } from '../../contexts/AppNavigationContext';
 import { Heart, MessageCircle, Shield, BadgeCheck, ThumbsUp, User, Plus, MoreVertical, ArrowLeft, Search, X, Flag, Pencil, Trash2 } from 'lucide-react';
+import { SpecDocLink } from './SpecDocLink';
 
 export function CommunityTabSpec() {
-  const { setActiveTab, setSpecTab } = useAppNavigation();
-
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* 헤더 */}
@@ -25,7 +23,7 @@ export function CommunityTabSpec() {
       <div className="max-w-5xl mx-auto px-6 py-8 space-y-8">
 
         {/* 1. 개요 */}
-        <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <section id="community-overview" className="scroll-mt-36 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <h2 className="text-xl font-bold text-gray-900 mb-4 pb-3 border-b border-gray-200">📌 개요</h2>
           <div className="mb-4 bg-amber-50 border border-amber-200 rounded-lg p-4 text-xs text-amber-900 leading-relaxed">
             <p className="font-bold text-amber-950 mb-1">문서 범위</p>
@@ -161,7 +159,10 @@ export function CommunityTabSpec() {
                     <li>• <strong>(공통) 고정/스크롤 분리</strong>: 카테고리 필터, 정렬 헤더, 우상단 통합검색 진입점은 결과 수와 무관하게 유지되며, <strong>게시글 목록 영역만</strong> 결과 수에 따라 스크롤됨</li>
                     <li>• <strong>(비회원 Base)</strong>: 결과 0개 안내 문구는 &quot;다른 카테고리를 선택해 보세요.&quot;</li>
                     <li>• <strong>(비회원 Base)</strong>: 비회원 사용량 배너(조건부), 우하단 글쓰기 버튼 미노출</li>
-                    <li>• <strong>(회원 Delta)</strong>: 결과 0개 문구/글쓰기 버튼/임시저장 배너 등 확장 동작은 회원 탭(CommunityTabSpecBiz) 참조</li>
+                    <li>
+                      • <strong>(회원전용)</strong>: 결과 0개 문구/글쓰기 버튼/임시저장 배너 등 확장 동작은 회원 탭(
+                      <SpecDocLink to="communityMemberBizOverview">CommunityTabSpecBiz</SpecDocLink>) 참조
+                    </li>
                   </ul>
                 </div>
 
@@ -379,9 +380,13 @@ export function CommunityTabSpec() {
                   <span className="text-indigo-400 text-lg mt-0.5">🔗</span>
                   <div>
                     <p className="text-sm font-bold text-indigo-900 mb-1">공통 팝업 — 상세 명세는 공통 탭에서 확인</p>
-                    <p className="text-xs text-indigo-700 mb-2">홈·커뮤니티 화면에서 공용으로 사용되는 팝업입니다. 화면 구성, 더보기 메뉴 권한 분리, 댓글 더보기 패턴 등 전체 명세는 아래 위치에서 확인하세요. 댓글 0건일 때는 <strong>첫 댓글을 작성해보세요</strong> 안내를 표시합니다(공통 탭 명세와 동일).</p>
+                    <p className="text-xs text-indigo-700 mb-2">
+                      홈·커뮤니티 화면에서 공용으로 사용되는 팝업입니다. 화면 구성, 더보기 메뉴 권한 분리, 댓글 더보기 패턴 등 전체 명세는
+                      아래 위치에서 확인하세요. 댓글 0건일 때는 <strong>첫 댓글을 작성해보세요</strong> 안내를 표시합니다(
+                      <SpecDocLink to="commonModals">공통 탭</SpecDocLink> 명세와 동일).
+                    </p>
                     <div className="bg-white border border-indigo-200 rounded-lg px-3 py-2 text-xs text-indigo-800 font-medium">
-                      공통 탭 → 1. 팝업 UI (모달) → <strong>2. 커뮤니티 게시글 상세 팝업</strong>
+                      <SpecDocLink to="commonModals">공통 탭 → 1. 팝업 UI (모달) → 2. 커뮤니티 게시글 상세 팝업</SpecDocLink>
                     </div>
                   </div>
                 </div>
@@ -488,10 +493,12 @@ export function CommunityTabSpec() {
             <p className="text-xs text-blue-700">
               아래 인터랙션에서 비회원이 제한 기능을 클릭하면 <strong>로그인 유도 팝업</strong>이 뜹니다.
               (배경을 살짝 어둡게 하고, 가운데 흰 카드로 안내 — 하단에 잠깐 나오는 알림과 다름)
-              문구·버튼 배치 등은 <strong>공통 탭</strong> 화면정의서를 참고합니다.
+              문구·버튼 배치 등은 <SpecDocLink to="commonModals">공통 탭</SpecDocLink> 화면정의서를 참고합니다.
             </p>
             <p className="text-xs text-indigo-900 bg-indigo-50 border border-indigo-200 rounded-lg px-2.5 py-2 mt-2">
-              👉 버튼 탭 시 이후의 진행 흐름은 마이페이지 화면정의서에 정리된 [공통 로그인/회원가입 플로우 정책]을 공통으로 따름.
+              👉 버튼 탭 시 이후의 진행 흐름은{' '}
+              <SpecDocLink to="mypageOverview">마이페이지 화면정의서</SpecDocLink>에 정리된 [공통 로그인/회원가입 플로우 정책]을 공통으로
+              따름.
             </p>
           </div>
 
@@ -643,7 +650,7 @@ export function CommunityTabSpec() {
         </section>
 
         {/* 5. 신고 기능 */}
-        <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <section id="community-spec-section-5" className="scroll-mt-36 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <h2 className="text-xl font-bold text-gray-900 mb-4 pb-3 border-b border-gray-200">🚨 신고 기능</h2>
 
           <div className="space-y-4">
@@ -774,7 +781,10 @@ export function CommunityTabSpec() {
               </li>
             </ul>
             <p className="text-xs text-rose-800 mt-2 border-t border-rose-200 pt-2">
-              수치·UI 패턴·한도 안내 흐름의 상세 나열은 <strong>통합검색 화면정의서 「8. 비회원 사용량 제한」</strong> 및 <strong>명의 찾기 화면정의서 「5. 비회원 사용량 제한」</strong>과 맞춥니다. 구현·검수 시에는 앱에 반영된 비회원 한도(잔여 횟수) 처리 규칙과 일치하는지 확인합니다.
+              수치·UI 패턴·한도 안내 흐름의 상세 나열은{' '}
+              <SpecDocLink to="searchGuestUsage">통합검색 화면정의서 「비회원 사용량 제한」</SpecDocLink> 및{' '}
+              <SpecDocLink to="doctorGuestUsage">명의 찾기 화면정의서 「비회원 사용량 제한」</SpecDocLink>과 맞춥니다. 구현·검수 시에는 앱에
+              반영된 비회원 한도(잔여 횟수) 처리 규칙과 일치하는지 확인합니다.
             </p>
           </div>
 
@@ -818,7 +828,7 @@ export function CommunityTabSpec() {
           <div className="space-y-3">
             <p className="text-sm text-gray-700">
               커뮤니티에서 사용되는 일부 컴포넌트는 앱 전체에서 공통으로 사용됩니다.
-              자세한 UI/UX 정의는 <strong className="text-indigo-600">공통 탭</strong>을 참조하세요.
+              자세한 UI/UX 정의는 <SpecDocLink to="commonModals">공통 탭</SpecDocLink>을 참조하세요.
             </p>
 
             <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
@@ -826,28 +836,49 @@ export function CommunityTabSpec() {
               <ul className="space-y-2 text-sm text-indigo-900">
                 <li className="flex items-start gap-2">
                   <span className="text-indigo-600 font-bold">•</span>
-                  <span><strong>로그인 유도 팝업</strong>: 비회원이 제한 기능을 눌렀을 때. 모양·문구는 <strong>공통 탭</strong> 화면정의서를 참고합니다. 👉 버튼 탭 이후 흐름은 마이페이지 화면정의서에 정리된 [공통 로그인/회원가입 플로우 정책]을 공통으로 따름.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-indigo-600 font-bold">•</span>
-                  <span><strong>커뮤니티 게시글 상세 팝업</strong>: 홈·커뮤니티 공통 팝업 — 공통 탭 1절 SubSection 2 참조</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-indigo-600 font-bold">•</span>
-                  <span><strong>완료 알림(짧은 메시지)</strong>: 작업 완료 알림 (글 작성/수정/삭제, 신고 접수 등) — 공통 탭 참조</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-indigo-600 font-bold">•</span>
-                  <span><strong>하단 네비게이션 바</strong>: 커뮤니티 탭 포함 — 공통 탭 4절 참조</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-indigo-600 font-bold">•</span>
-                  <span><strong>통합 검색 전체 창 (통합 검색)</strong>: 상단 돋보기 아이콘 진입 — 공통 탭 1절 SubSection 4 / 통합검색 탭 참조</span>
+                  <span>
+                    <strong>로그인 유도 팝업</strong>: 비회원이 제한 기능을 눌렀을 때. 모양·문구는{' '}
+                    <SpecDocLink to="commonModals">공통 탭</SpecDocLink> 화면정의서를 참고합니다. 👉 버튼 탭 이후 흐름은{' '}
+                    <SpecDocLink to="mypageOverview">마이페이지 화면정의서</SpecDocLink>에 정리된 [공통 로그인/회원가입 플로우 정책]을
+                    공통으로 따름.
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-indigo-600 font-bold">•</span>
                   <span>
-                    <strong>무료 이용 한도 안내 배너 · 한도 초과 안내 팝업</strong>: 비회원에게 남은 검색·프로필 보기·글 보기 횟수를 알려 주는 상단 띠와, 한도를 넘겼을 때 뜨는 가운데 안내 창입니다. 커뮤니티에서는 주로 <strong>게시글 보기</strong> 한도를 안내합니다. 정책·전역 합산은 본 문서 6절 및 통합검색 정의서 §8을 참고하세요.
+                    <strong>커뮤니티 게시글 상세 팝업</strong>: 홈·커뮤니티 공통 팝업 —{' '}
+                    <SpecDocLink to="commonModals">공통 탭 1절(팝업 UI) 게시글 상세</SpecDocLink> 참조
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-indigo-600 font-bold">•</span>
+                  <span>
+                    <strong>완료 알림(짧은 메시지)</strong>: 작업 완료 알림 (글 작성/수정/삭제, 신고 접수 등) —{' '}
+                    <SpecDocLink to="commonToasts">공통 탭(알림 UI)</SpecDocLink> 참조
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-indigo-600 font-bold">•</span>
+                  <span>
+                    <strong>하단 네비게이션 바</strong>: 커뮤니티 탭 포함 —{' '}
+                    <SpecDocLink to="commonLayout">공통 탭 4절(레이아웃)</SpecDocLink> 참조
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-indigo-600 font-bold">•</span>
+                  <span>
+                    <strong>통합 검색 전체 창 (통합 검색)</strong>: 상단 돋보기 아이콘 진입 —{' '}
+                    <SpecDocLink to="commonModals">공통 탭 통합 검색 안내</SpecDocLink> /{' '}
+                    <SpecDocLink to="searchGuestOverview">통합검색 탭</SpecDocLink> 참조
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-indigo-600 font-bold">•</span>
+                  <span>
+                    <strong>무료 이용 한도 안내 배너 · 한도 초과 안내 팝업</strong>: 비회원에게 남은 검색·프로필 보기·글 보기 횟수를 알려
+                    주는 상단 띠와, 한도를 넘겼을 때 뜨는 가운데 안내 창입니다. 커뮤니티에서는 주로 <strong>게시글 보기</strong> 한도를
+                    안내합니다. 정책·전역 합산은 본 문서 6절 및{' '}
+                    <SpecDocLink to="searchGuestTabScrollSummary">통합검색 정의서 §8</SpecDocLink>을 참고하세요.
                   </span>
                 </li>
               </ul>
@@ -858,11 +889,18 @@ export function CommunityTabSpec() {
               <ul className="space-y-1 text-sm text-amber-900">
                 <li className="flex items-start gap-2">
                   <span className="text-amber-600 font-bold">•</span>
-                  <span><strong>신고하기 창 (신고 모달)</strong>: 커뮤니티 전용. 게시글 7종 / 댓글 6종 사유 — 본 문서 5절 참조</span>
+                  <span>
+                    <strong>신고하기 창 (신고 모달)</strong>: 커뮤니티 전용. 게시글 7종 / 댓글 6종 사유 — 본 문서{' '}
+                    <SpecDocLink to="communityGuestReport">5절(신고 기능)</SpecDocLink> 참조
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-amber-600 font-bold">•</span>
-                  <span><strong>글쓰기·수정 화면 (글쓰기)</strong>: 게시글 작성/수정. 임시저장 기능 포함 — 본 문서 <strong>9절(화면정의)</strong> · <strong>10절(임시저장)</strong> 참조</span>
+                  <span>
+                    <strong>글쓰기·수정 화면 (글쓰기)</strong>: 게시글 작성/수정. 임시저장 기능 포함 — 본 문서{' '}
+                    <SpecDocLink to="communityGuestCompose">9절(화면정의)</SpecDocLink> ·{' '}
+                    <SpecDocLink to="communityGuestDraftDetail">10절(임시저장)</SpecDocLink> 참조
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-amber-600 font-bold">•</span>
@@ -871,17 +909,17 @@ export function CommunityTabSpec() {
               </ul>
             </div>
 
-            <button
-              onClick={() => setSpecTab('common')}
-              className="w-full bg-indigo-600 text-white font-bold px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors text-sm"
+            <SpecDocLink
+              to="commonModals"
+              className="w-full block text-center bg-indigo-600 text-white font-bold px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors text-sm no-underline hover:text-white"
             >
               공통 탭으로 이동하기 →
-            </button>
+            </SpecDocLink>
           </div>
         </section>
 
         {/* 9. 글쓰기·수정 화면 화면정의서 (회원 · 커뮤니티) */}
-        <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <section id="community-spec-section-9" className="scroll-mt-36 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <h2 className="text-xl font-bold text-gray-900 mb-4 pb-3 border-b border-gray-200">📝 글쓰기·수정 화면 (회원 · 커뮤니티)</h2>
           <p className="text-xs text-gray-500 mb-5">
             <strong className="text-gray-700">UI/UX 정의</strong> — 진입: 커뮤니티 탭 <strong className="text-gray-700">글쓰기(+)</strong> 또는 <strong className="text-gray-700">게시글 수정</strong>.
@@ -918,7 +956,11 @@ export function CommunityTabSpec() {
                   </tr>
                   <tr>
                     <td className="py-2 pr-3 align-top">임시저장 배너</td>
-                    <td className="py-2">이전에 이 기기에 <strong>임시 저장된 초안</strong>이 있으면, 글쓰기 창을 연 직후 맨 앞에 <strong>「불러오시겠습니까?」</strong> 확인 창이 뜬다(10절). 반투명 배경으로 글쓰기 폼을 덮는다.</td>
+                    <td className="py-2">
+                      이전에 이 기기에 <strong>임시 저장된 초안</strong>이 있으면, 글쓰기 창을 연 직후 맨 앞에{' '}
+                      <strong>「불러오시겠습니까?」</strong> 확인 창이 뜬다(
+                      <SpecDocLink to="communityGuestDraftDetail">10절</SpecDocLink>). 반투명 배경으로 글쓰기 폼을 덮는다.
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -932,7 +974,10 @@ export function CommunityTabSpec() {
                   <ul className="mt-1 ml-4 list-disc space-y-1 text-gray-600">
                     <li>타이틀: 신규 <strong>「치료 정보 나누기」</strong> / 수정 <strong>「게시글 수정」</strong></li>
                     <li>자동저장 표시: 마지막 저장 시각 또는 「저장됨」(간헐적)</li>
-                    <li>X 버튼: 입력이 있으면 <strong>임시저장 후</strong> 닫기(10절). 푸터 「취소」와 동작 구분.</li>
+                    <li>
+                      X 버튼: 입력이 있으면 <strong>임시저장 후</strong> 닫기(
+                      <SpecDocLink to="communityGuestDraftDetail">10절</SpecDocLink>). 푸터 「취소」와 동작 구분.
+                    </li>
                   </ul>
                 </li>
                 <li>
@@ -986,14 +1031,16 @@ export function CommunityTabSpec() {
               <ul className="space-y-1 text-xs text-amber-900">
                 <li>• 민감정보: 경고 배너 상시 + 사진 추가 직전 시각적 강조.</li>
                 <li>• 게시에 성공한 뒤에는, 입력 멈춤 후 잠깐 뒤에 도는 <strong>자동 임시저장</strong>이 초안을 다시 만들지 않도록 처리한다.</li>
-                <li>• 임시저장이 어디에·어떻게 쌓이는지는 <strong>10절</strong> 참조.</li>
+                <li>
+                  • 임시저장이 어디에·어떻게 쌓이는지는 <SpecDocLink to="communityGuestDraftDetail">10절</SpecDocLink> 참조.
+                </li>
               </ul>
             </div>
           </div>
         </section>
 
         {/* 10. 글쓰기·수정 화면 — 임시저장(기기 저장) 상세 */}
-        <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <section id="community-spec-section-10" className="scroll-mt-36 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <h2 className="text-xl font-bold text-gray-900 mb-4 pb-3 border-b border-gray-200">💾 글쓰기·수정 화면 — 임시저장(이 기기에 보관)</h2>
           <p className="text-xs text-gray-500 mb-4">사용자 관점에서는 &quot;작성 중이던 글이 이 폰/PC에 남아 있다&quot;로 이해하면 된다. (구현: 브라우저 저장소)</p>
 

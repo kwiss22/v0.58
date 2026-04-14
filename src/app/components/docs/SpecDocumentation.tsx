@@ -11,12 +11,47 @@ import { CommunityTabSpecBiz } from './CommunityTabSpecBiz';
 import { MyPageSpec } from './MyPageSpec';
 import { UpdateSummary } from './UpdateSummary';
 import { AigaChatbotSpec } from './AigaChatbotSpec';
+import { useEffect } from 'react';
 import { useUser } from '../../contexts/UserContext';
 import { useAppNavigation } from '../../contexts/AppNavigationContext';
 
 export function SpecDocumentation() {
-  const { specTab, setSpecTab, openGlobalSearch } = useAppNavigation();
+  const { specTab, setSpecTab, openGlobalSearch, pendingSpecSectionId, clearPendingSpecSection } =
+    useAppNavigation();
   const { role } = useUser();
+
+  useEffect(() => {
+    if (!pendingSpecSectionId) return;
+
+    const targetId = pendingSpecSectionId;
+    let cancelled = false;
+    const timers: ReturnType<typeof setTimeout>[] = [];
+
+    const tryScroll = () => {
+      if (cancelled) return;
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        clearPendingSpecSection();
+      }
+    };
+
+    timers.push(setTimeout(tryScroll, 0));
+    timers.push(setTimeout(tryScroll, 80));
+    timers.push(setTimeout(tryScroll, 200));
+    timers.push(
+      setTimeout(() => {
+        if (cancelled) return;
+        if (document.getElementById(targetId)) tryScroll();
+        else clearPendingSpecSection();
+      }, 450),
+    );
+
+    return () => {
+      cancelled = true;
+      timers.forEach(clearTimeout);
+    };
+  }, [specTab, role, pendingSpecSectionId, clearPendingSpecSection]);
 
   return (
     <div className="min-h-screen bg-gray-50">

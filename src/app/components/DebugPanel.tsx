@@ -4,6 +4,8 @@ import { X, RefreshCw, Zap, ShieldOff, ShieldCheck } from 'lucide-react';
 import { loadUsage, saveUsage, USAGE_LIMITS } from '@/app/hooks/useUsageLimit';
 import { useUser } from '@/app/contexts/UserContext';
 import { useUsageLimitContext } from '@/app/contexts/UsageLimitContext';
+import { useAppNavigation } from '@/app/contexts/AppNavigationContext';
+import { SEARCH_SPEC_ANCHOR_ITEMS } from '@/app/components/docs/searchSpecAnchors';
 
 export type DebugPanelPlacement = 'viewport' | 'spec';
 
@@ -20,6 +22,8 @@ export function DebugPanel({ placement = 'viewport' }: DebugPanelProps) {
   const [, forceUpdate] = useState(0);
   const { role, setRole } = useUser();
   const { refreshRemaining } = useUsageLimitContext();
+  const { openSpecSection } = useAppNavigation();
+  const [searchSpecAnchor, setSearchSpecAnchor] = useState('');
 
   const refresh = () => forceUpdate(n => n + 1);
 
@@ -158,6 +162,39 @@ export function DebugPanel({ placement = 'viewport' }: DebugPanelProps) {
               </div>
             );
           })}
+        </div>
+
+        <div className="border-t border-gray-200 pt-3 space-y-2">
+          <p className="text-xs text-gray-500 font-medium">📄 통합검색 정의서 점프</p>
+          <select
+            value={searchSpecAnchor}
+            onChange={(e) => setSearchSpecAnchor(e.target.value)}
+            className="w-full text-[11px] border border-gray-200 rounded-lg px-2 py-1.5 bg-white text-gray-800"
+          >
+            <option value="">섹션 선택…</option>
+            {SEARCH_SPEC_ANCHOR_ITEMS.map((item) => (
+              <option key={item.id} value={`${item.role}:${item.id}`}>
+                {item.label}
+              </option>
+            ))}
+          </select>
+          <button
+            type="button"
+            disabled={!searchSpecAnchor}
+            onClick={() => {
+              const colon = searchSpecAnchor.indexOf(':');
+              const docRole = searchSpecAnchor.slice(0, colon) as 'guest' | 'member';
+              const sectionId = searchSpecAnchor.slice(colon + 1);
+              if (docRole === 'guest' || docRole === 'member') setRole(docRole);
+              openSpecSection({ tab: 'search-spec', sectionId });
+            }}
+            className="w-full py-2 rounded-xl text-xs font-semibold bg-amber-50 text-amber-900 border border-amber-200 hover:bg-amber-100 disabled:opacity-40 disabled:pointer-events-none transition-colors"
+          >
+            정의서 탭으로 이동
+          </button>
+          <p className="text-[10px] text-gray-400 leading-snug">
+            PC 분할 화면에서 오른쪽 정의서가 스크롤됩니다. 좁은 창에서는 정의서 열이 숨겨져 있을 수 있습니다.
+          </p>
         </div>
 
         {/* 빠른 액션 버튼 */}

@@ -1,6 +1,6 @@
 // @refresh reset
 // 앱 네비게이션 상태를 전역 관리하는 Context
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import type { Doctor } from '@/types/chat.types';
 
 export type Tab = 'home' | 'chat' | 'search' | 'community' | 'mypage';
@@ -52,6 +52,10 @@ interface AppNavigationState {
   navigateToMyPage: () => void;
   openDoctorProfile: (doctor: Doctor) => void;
   navigateToCommonSpec: () => void;
+
+  pendingSpecSectionId: string | null;
+  openSpecSection: (args: { tab: SpecTab; sectionId: string }) => void;
+  clearPendingSpecSection: () => void;
 }
 
 const AppNavigationContext = createContext<AppNavigationState | undefined>(undefined);
@@ -63,6 +67,7 @@ export function AppNavigationProvider({ children }: { children: ReactNode }) {
   const [doctorSearchQuery, setDoctorSearchQuery] = useState<string>('');
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
   const [specTab, setSpecTab] = useState<SpecTab>('home');
+  const [pendingSpecSectionId, setPendingSpecSectionId] = useState<string | null>(null);
 
   const [globalSearchQuery, setGlobalSearchQuery] = useState<string>('');
   const [isGlobalSearchOpen, setIsGlobalSearchOpen] = useState<boolean>(false);
@@ -115,6 +120,15 @@ export function AppNavigationProvider({ children }: { children: ReactNode }) {
     setSpecTab('common');
   };
 
+  const openSpecSection = useCallback(({ tab, sectionId }: { tab: SpecTab; sectionId: string }) => {
+    setSpecTab(tab);
+    setPendingSpecSectionId(sectionId);
+  }, []);
+
+  const clearPendingSpecSection = useCallback(() => {
+    setPendingSpecSectionId(null);
+  }, []);
+
   const openGlobalSearch = (query?: string) => {
     if (query) {
       setGlobalSearchQuery(query);
@@ -149,6 +163,9 @@ export function AppNavigationProvider({ children }: { children: ReactNode }) {
         specTab,
         setSpecTab,
         navigateToCommonSpec,
+        pendingSpecSectionId,
+        openSpecSection,
+        clearPendingSpecSection,
         globalSearchQuery,
         isGlobalSearchOpen,
         openGlobalSearch,

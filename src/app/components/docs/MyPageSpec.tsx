@@ -20,7 +20,7 @@ export function MyPageSpec() {
       </div>
 
       <div className="max-w-5xl mx-auto px-6 py-8 space-y-6">
-        <section className="bg-white rounded-xl border border-gray-200 p-5">
+        <section id="mypage-overview" className="scroll-mt-36 bg-white rounded-xl border border-gray-200 p-5">
           <h2 className="text-lg font-bold text-gray-900 mb-3">📌 개요</h2>
           <ul className="space-y-2 text-sm text-gray-700 leading-relaxed">
             <li>

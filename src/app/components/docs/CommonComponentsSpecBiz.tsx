@@ -1,4 +1,6 @@
-// 공통 컴포넌트 정의서 — 회원(Delta) 전용
+// 공통 컴포넌트 정의서 — 회원전용
+import type { ReactNode } from 'react';
+import { SpecDocLink } from './SpecDocLink';
 
 export function CommonComponentsSpecBiz(_props: { onTestSearch?: (keyword: string) => void }) {
   return (
@@ -7,7 +9,7 @@ export function CommonComponentsSpecBiz(_props: { onTestSearch?: (keyword: strin
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-2 mb-3">
             <span className="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">공통 컴포넌트 정의서 v0.6</span>
-            <span className="bg-white/10 text-purple-100 text-xs px-3 py-1 rounded-full">회원 탭 (Delta)</span>
+            <span className="bg-white/10 text-purple-100 text-xs px-3 py-1 rounded-full">회원전용</span>
           </div>
           <h1 className="text-3xl font-black mb-2">🔗 공통 UI 컴포넌트 — 회원 확장</h1>
           <p className="text-purple-200 text-sm">
@@ -22,7 +24,10 @@ export function CommonComponentsSpecBiz(_props: { onTestSearch?: (keyword: strin
           <ul className="text-xs text-violet-900 leading-relaxed list-disc pl-4 space-y-1">
             <li>
               팝업·모달의 <strong>레이아웃, 섹션 순서, 타이포·버튼 배치</strong> 등 시각·구조 스펙은 비회원 문서{' '}
-              <strong>[CommonComponentsSpec]</strong>과 <strong>동일</strong>합니다. 본 문서에서는 &quot;비회원 안내와 동일&quot;로 두고 넘어갑니다.
+              <SpecDocLink to="commonModals">
+                <strong>[CommonComponentsSpec]</strong>
+              </SpecDocLink>
+              과 <strong>동일</strong>합니다. 본 문서에서는 &quot;비회원 안내와 동일&quot;로 두고 넘어갑니다.
             </li>
             <li>
               아래에서는 <strong>회원이 되었을 때만</strong> 열리는 기능, 사라지는 제약, 그리고 <strong>다음 화면·계정으로 이어지는 동작</strong>만 상세히 적습니다.
@@ -30,7 +35,7 @@ export function CommonComponentsSpecBiz(_props: { onTestSearch?: (keyword: strin
           </ul>
         </section>
 
-        <Section title="1. 회원이 되면 달라지는 것 (한눈에)">
+        <Section id="common-biz-root" title="1. 회원이 되면 달라지는 것 (한눈에)">
           <ul className="text-xs text-gray-800 leading-relaxed list-disc pl-4 space-y-1.5">
             <li>
               <strong>전역 한도·경고 배너·검색창 잠금</strong> 등 &quot;오늘 남은 횟수&quot;에 묶인 안내가 사라지거나, 회원 정책상 적용되지 않아 <strong>목록·검색 영역이 막히지 않고</strong> 이어집니다 (탭별 세부 한도는 각 Base 문서·통합검색 스펙과 정합).
@@ -49,8 +54,9 @@ export function CommonComponentsSpecBiz(_props: { onTestSearch?: (keyword: strin
 
         <Section title="2. 제약 해제 — 한도·배너·잠금이 풀린 뒤 화면">
           <Narrative>
-            비회원에게는 홈·명의찾기·커뮤니티·통합검색 등에서 <strong>검색 실행·프로필 열람·게시글 열람</strong>이 같은 전역 카운터와 연동되고, 잔여 1회/0회 배너·검색창 비활성 등이 나올 수 있습니다. 이 동작의 수치·문구·노출 위치는 비회원 탭 및{' '}
-            <strong>SearchScenarioSpec</strong> 등 Base 쪽에 있습니다.
+            비회원에게는 홈·명의찾기·커뮤니티·통합검색 등에서 <strong>검색 실행·프로필 열람·게시글 열람</strong>이 같은 전역 카운터와
+            연동되고, 잔여 1회/0회 배너·검색창 비활성 등이 나올 수 있습니다. 이 동작의 수치·문구·노출 위치는 비회원 탭 및{' '}
+            <SpecDocLink to="searchGuestOverview">SearchScenarioSpec</SpecDocLink> 등 Base 쪽에 있습니다.
           </Narrative>
           <Narrative>
             <strong>회원이 되면</strong> 그 정책 범위에서 위 제약이 적용되지 않거나 완화되어, 동일한 화면 골격 안에서 <strong>상단 경고/잠금 줄이 사라지고</strong> 스크롤 영역이 위쪽부터 자연스럽게 이어집니다. 사용자 입장에서는 &quot;막혀 있던 입력·탐색&quot;이 끊기지 않고 이어지는 것이 핵심 UX입니다.
@@ -118,30 +124,38 @@ export function CommonComponentsSpecBiz(_props: { onTestSearch?: (keyword: strin
 
         <Section title="5. 로그인 필요 안내 팝업">
           <Narrative>
-            비회원은 제한 기능(즐겨찾기·리뷰·댓글 등)을 눌렀을 때 <strong>로그인 유도</strong>가 먼저 뜨는 것이 기본입니다. <strong>회원</strong>은 동일 버튼에서 <strong>대개 안내 없이 실제 기능</strong>이 실행됩니다. 가입·로그인 버튼을 눌렀을 때의 공통 플로우는 <strong>마이페이지 화면정의서</strong>의 로그인/회원가입 정책을 따릅니다.
+            비회원은 제한 기능(즐겨찾기·리뷰·댓글 등)을 눌렀을 때 <strong>로그인 유도</strong>가 먼저 뜨는 것이 기본입니다.{' '}
+            <strong>회원</strong>은 동일 버튼에서 <strong>대개 안내 없이 실제 기능</strong>이 실행됩니다. 가입·로그인 버튼을 눌렀을 때의
+            공통 플로우는 <SpecDocLink to="mypageOverview">마이페이지 화면정의서</SpecDocLink>의 로그인/회원가입 정책을 따릅니다.
           </Narrative>
         </Section>
 
         <Section title="6. 계정과 이어지는 경험">
           <ul className="text-xs text-gray-800 leading-relaxed list-disc pl-4 space-y-1.5">
             <li>
-              <strong>즐겨찾기한 의사:</strong> 저장 이후 마이페이지 등에서 &quot;내가 저장한 의사&quot; 류 목록으로 조회하는 흐름(세부는 마이페이지 스펙).
+              <strong>즐겨찾기한 의사:</strong> 저장 이후 <SpecDocLink to="mypageOverview">마이페이지</SpecDocLink> 등에서 &quot;내가 저장한
+              의사&quot; 류 목록으로 조회하는 흐름(세부는 마이페이지 스펙).
             </li>
             <li>
               <strong>리뷰 초안:</strong> 프로필을 나갔다 들어와도 동일 의사에 한해 이어쓰기 배너로 복귀 가능.
             </li>
             <li>
-              <strong>커뮤니티 글쓰기(FAB):</strong> 회원에게만 노출되는 진입에서 글 작성·수정 화면으로 이동하며, 커뮤니티 탭에 초안이 있으면 <strong>불러오기/삭제 후 새로 시작</strong> 확인이 켜집니다(CommunityTabSpecBiz·비회원 공통과 정합).
+              <strong>커뮤니티 글쓰기(FAB):</strong> 회원에게만 노출되는 진입에서 글 작성·수정 화면으로 이동하며, 커뮤니티 탭에 초안이 있으면{' '}
+              <strong>불러오기/삭제 후 새로 시작</strong> 확인이 켜집니다(
+              <SpecDocLink to="communityMemberBizOverview">CommunityTabSpecBiz</SpecDocLink>·비회원 공통과 정합).
             </li>
             <li>
-              <strong>챗봇 대화 이력·최근 본 의사</strong> 등 장기 보존이 필요한 데이터는 <strong>AI 챗봇·마이페이지</strong> 쪽 정의서를 참조합니다. 공통 컴포넌트 문서에서는 &quot;팝업에서 저장·작성한 결과가 계정으로 귀속된다&quot;는 연결만 명시합니다.
+              <strong>챗봇 대화 이력·최근 본 의사</strong> 등 장기 보존이 필요한 데이터는{' '}
+              <SpecDocLink to="aigaDevRef">AI 챗봇</SpecDocLink>·<SpecDocLink to="mypageOverview">마이페이지</SpecDocLink> 쪽 정의서를
+              참조합니다. 공통 컴포넌트 문서에서는 &quot;팝업에서 저장·작성한 결과가 계정으로 귀속된다&quot;는 연결만 명시합니다.
             </li>
           </ul>
         </Section>
 
         <Section title="7. 회원 확장 요약 (참조용 표)">
           <p className="text-xs text-gray-600 mb-3">
-            비회원 쪽 상세·수치는 <strong>CommonComponentsSpec</strong>을 기준으로 하고, 아래는 <strong>회원에서 가능해지는 일</strong>만 압축했습니다.
+            비회원 쪽 상세·수치는 <SpecDocLink to="commonModals">CommonComponentsSpec</SpecDocLink>을 기준으로 하고, 아래는{' '}
+            <strong>회원에서 가능해지는 일</strong>만 압축했습니다.
           </p>
           <Table
             headers={['영역', '회원에서 가능해지는 일', '비고']}
@@ -149,7 +163,7 @@ export function CommonComponentsSpecBiz(_props: { onTestSearch?: (keyword: strin
               ['의사 프로필', '즉시 즐겨찾기·리뷰 작성·초안 이어쓰기', '레이아웃은 비회원과 동일'],
               ['의료진 인증 요청', '동작 가능(운영 정책·별도 문서)', '버튼 위치 동일'],
               ['게시글 상세', '공감 토글·댓글/답글·작성자 메뉴', '본문 레이아웃 동일'],
-              ['글쓰기 FAB 등', '작성·초안 복원 흐름', '커뮤니티 회원 Delta와 연계'],
+              ['글쓰기 FAB 등', '작성·초안 복원 흐름', '커뮤니티 회원전용과 연계'],
               ['전역 한도 UI', '제약 완화로 배너·잠금 체감 감소', '탭·통합검색 Base와 정합'],
             ]}
           />
@@ -158,13 +172,16 @@ export function CommonComponentsSpecBiz(_props: { onTestSearch?: (keyword: strin
         <Section title="8. 참조 경계">
           <ul className="text-xs text-gray-700 space-y-1.5 list-disc pl-5">
             <li>
-              <strong>CommonComponentsSpec</strong>: 공통 UI의 기본 구조, 비회원 잠금·모양, 로딩/에러/Empty, 하단 탭·통합검색 연동.
+              <SpecDocLink to="commonModals">CommonComponentsSpec</SpecDocLink>: 공통 UI의 기본 구조, 비회원 잠금·모양, 로딩/에러/Empty,
+              하단 탭·통합검색 연동.
             </li>
             <li>
-              <strong>SearchScenarioSpec</strong>: 통합검색 창 안의 한도·배너·탭 결과(회원은 제약 체감이 달라짐).
+              <SpecDocLink to="searchGuestOverview">SearchScenarioSpec</SpecDocLink>: 통합검색 창 안의 한도·배너·탭 결과(회원은 제약 체감이
+              달라짐).
             </li>
             <li>
-              <strong>마이페이지·챗봇·커뮤니티 회원 탭</strong>: 계정 저장·글쓰기·대화 이력의 상세 규칙.
+              <SpecDocLink to="mypageOverview">마이페이지</SpecDocLink>·<SpecDocLink to="aigaDevRef">챗봇</SpecDocLink>·
+              <SpecDocLink to="communityMemberBizOverview">커뮤니티 회원 탭</SpecDocLink>: 계정 저장·글쓰기·대화 이력의 상세 규칙.
             </li>
           </ul>
         </Section>
@@ -173,9 +190,20 @@ export function CommonComponentsSpecBiz(_props: { onTestSearch?: (keyword: strin
   );
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({
+  id,
+  title,
+  children,
+}: {
+  id?: string;
+  title: string;
+  children: React.ReactNode;
+}) {
   return (
-    <section className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
+    <section
+      id={id}
+      className={`bg-white rounded-2xl border border-gray-200 p-5 shadow-sm${id ? ' scroll-mt-36' : ''}`}
+    >
       <h2 className="text-base font-black text-gray-900 mb-4 pb-2 border-b border-gray-200">{title}</h2>
       {children}
     </section>
@@ -190,7 +218,7 @@ function Narrative({ children }: { children: React.ReactNode }) {
   return <p className="text-xs text-gray-800 leading-relaxed">{children}</p>;
 }
 
-function Table({ headers, rows }: { headers: string[]; rows: string[][] }) {
+function Table({ headers, rows }: { headers: string[]; rows: ReactNode[][] }) {
   return (
     <div className="overflow-x-auto rounded-lg border border-gray-100">
       <table className="w-full text-xs border-collapse">

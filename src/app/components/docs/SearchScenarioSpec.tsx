@@ -1,6 +1,7 @@
 // 통합 검색 전체 창 화면정의서 — 홈·명의 찾기·커뮤니티 탭에서 공통으로 사용
 
-import React from 'react';
+import React, { Fragment } from 'react';
+import { SpecDocLink } from './SpecDocLink';
 
 interface SearchScenarioSpecProps {
   onTestSearch?: (keyword: string) => void;
@@ -28,7 +29,7 @@ function SectionHeader({ emoji, title, color = 'violet' }: { emoji: string; titl
 function SpecRow({ label, value, sub, isNew, isModified }: { 
   label: string; 
   value: React.ReactNode; 
-  sub?: string;
+  sub?: React.ReactNode;
   isNew?: boolean;
   isModified?: boolean;
 }) {
@@ -39,7 +40,7 @@ function SpecRow({ label, value, sub, isNew, isModified }: {
       </span>
       <div className="flex-1">
         <span className={`text-xs ${isModified ? 'text-red-600 font-semibold' : 'text-gray-900'}`}>{value}</span>
-        {sub && <p className="text-[11px] text-gray-400 mt-0.5">{sub}</p>}
+        {sub != null && sub !== '' && <div className="text-[11px] text-gray-400 mt-0.5">{sub}</div>}
       </div>
     </div>
   );
@@ -159,11 +160,12 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
         </div>
         <div className="bg-blue-50 border border-blue-200 rounded-xl px-3 py-2.5 text-[11px] text-blue-900 leading-relaxed">
           <strong>운영 원칙:</strong> 이 문서는 통합검색의 <strong>비회원·공통(Base) 화면</strong>만 다룹니다(검색창·탭·목록·비회원 한도 등).
-          <strong> 회원 전용 이용 경험</strong>(한도 안내가 사라진 뒤의 체감, 카드 열기 이후 저장·댓글 등)은 <strong>회원 역할</strong>로 볼 때 열리는 <strong>SearchScenarioSpecBiz</strong> 문서에 모았습니다.
+          <strong> 회원 전용 이용 경험</strong>(한도 안내가 사라진 뒤의 체감, 카드 열기 이후 저장·댓글 등)은 <strong>회원 역할</strong>로 볼 때 열리는{' '}
+          <SpecDocLink to="searchMemberBizRoot">SearchScenarioSpecBiz</SpecDocLink> 문서에 모았습니다.
         </div>
 
         {/* ── 1. 개요 ── */}
-        <section>
+        <section id="spec-search-overview" className="scroll-mt-36">
           <SectionHeader emoji="📋" title="1. 개요" color="violet" />
           <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-100">
             <SpecRow label="화면 이름"   value="통합 검색 전체 창 (기획·디자인 기준)" />
@@ -190,7 +192,7 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
         </section>
 
         {/* ── 2. UI 구조 ── */}
-        <section>
+        <section id="spec-search-ui-structure" className="scroll-mt-36">
           <SectionHeader emoji="🧩" title="2. UI 구조" color="teal" />
 
           {/* 헤더 영역 */}
@@ -271,57 +273,86 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
           {/* 하위 창 */}
           <p className="text-xs font-bold text-gray-700 mb-2">하위 창 (결과에서 카드를 눌렀을 때)</p>
           <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-100">
-            <SpecRow label="명의 탭"   value="명의 프로필 상세 창" sub="비회원: 프로필 조회 횟수 차감 (하루 3회, 홈·명의 찾기·통합 검색이 같은 남은 횟수를 씀)" />
+            <SpecRow
+              label="명의 탭"
+              value="명의 프로필 상세 창"
+              sub={
+                <>
+                  비회원: 프로필 조회 횟수 차감 (하루 3회, 홈·명의 찾기·통합 검색이 같은 남은 횟수를 씀). UI 골격은{' '}
+                  <SpecDocLink to="commonModals">공통 컴포넌트 문서(의사 프로필)</SpecDocLink> 참조.
+                </>
+              }
+            />
             <SpecRow label="병원 탭"   value="병원 정보 창 (소속 명의 포함)" sub="사용량 제한 없음" />
-            <SpecRow label="게시글 탭" value="게시글 상세(홈·통합검색)" sub="비회원: 게시글 열람 횟수 차감 (하루 5회, 홈·커뮤니티·통합 검색이 같은 남은 횟수를 씀). 회원 경험은 SearchScenarioSpecBiz·CommunityTabSpecBiz 참조" />
+            <SpecRow
+              label="게시글 탭"
+              value="게시글 상세(홈·통합검색)"
+              sub={
+                <>
+                  비회원: 게시글 열람 횟수 차감 (하루 5회, 홈·커뮤니티·통합 검색이 같은 남은 횟수를 씀). 회원 경험은{' '}
+                  <SpecDocLink to="searchMemberBizRoot">SearchScenarioSpecBiz</SpecDocLink>·
+                  <SpecDocLink to="communityMemberBizOverview">CommunityTabSpecBiz</SpecDocLink> 참조
+                </>
+              }
+            />
           </div>
         </section>
 
         {/* ── 3. 화면 상태 ── */}
-        <section>
+        <section id="spec-search-states" className="scroll-mt-36">
           <SectionHeader emoji="📺" title="3. 화면 상태" color="blue" />
           <p className="text-xs text-red-600 font-semibold mb-2">🔴 수정: 4종 → 5종 (한도 차단 상태 추가)</p>
           <div className="space-y-2.5">
-            <StateCard
-              color="gray"
-              title="① 검색어 없음 (처음 열었을 때)"
-              condition="검색창이 비어 있음(처음 들어왔거나 X로 지운 뒤)"
-              ui="Aiga 안내 배너 («증상이 있으신가요?» · «질문하기» 버튼)"
-              sub="AI 챗봇과 연결된 경우에만 이 배너가 보임"
-            />
-            <StateCard
-              color="blue"
-              title="② 증상·상담형으로 이해한 경우"
-              condition="«배가 아파요»처럼 증상을 말하는 문장으로 판단될 때"
-              ui="챗봇 안내 + «Aiga에게 질문하기» 버튼 · 명의·병원·게시글 목록은 숨김"
-              sub="버튼을 누르면 AI 챗봇 탭으로 이동하며, 입력했던 말이 첫 메시지로 넘어감"
-            />
-            <StateCard
-              color="gray"
-              title="③ 결과 없음"
-              condition="검색어는 있는데 증상형이 아니고, 찾은 결과가 0건일 때"
-              ui="검색 없음 아이콘 + «결과 없음» 문구 + 챗봇으로 유도하는 카드"
-            />
-            <StateCard
-              color="teal"
-              title="④ 검색 결과가 있을 때"
-              condition="검색어가 있고 증상형이 아니며, 결과가 1건 이상일 때"
-              ui="탭 줄 + [질환일 때 Aiga 배너] + 선택한 탭의 목록(더 보기 방식)"
-              sub="탭마다 명의·병원·커뮤니티 결과를 나눠 보여줌"
-            />
-            <StateCard
-              color="amber"
-              title="🆕 ⑤ 한도까지 쓴 경우 (비회원)"
-              condition="비회원이고, 오늘 무료 검색을 이미 다 썼을 때"
-              ui="가운데 자물쇠 + «오늘 무료 검색을 모두 사용했어요» + 회원가입·로그인 버튼"
-              sub="검색창은 읽기 전용 · 오른쪽에 «가입하기» 버튼 표시"
-              isNew
-            />
+            <div id="spec-search-state-1" className="scroll-mt-36">
+              <StateCard
+                color="gray"
+                title="① 검색어 없음 (처음 열었을 때)"
+                condition="검색창이 비어 있음(처음 들어왔거나 X로 지운 뒤)"
+                ui="Aiga 안내 배너 («증상이 있으신가요?» · «질문하기» 버튼)"
+                sub="AI 챗봇과 연결된 경우에만 이 배너가 보임"
+              />
+            </div>
+            <div id="spec-search-state-2" className="scroll-mt-36">
+              <StateCard
+                color="blue"
+                title="② 증상·상담형으로 이해한 경우"
+                condition="«배가 아파요»처럼 증상을 말하는 문장으로 판단될 때"
+                ui="챗봇 안내 + «Aiga에게 질문하기» 버튼 · 명의·병원·게시글 목록은 숨김"
+                sub="버튼을 누르면 AI 챗봇 탭으로 이동하며, 입력했던 말이 첫 메시지로 넘어감"
+              />
+            </div>
+            <div id="spec-search-state-3" className="scroll-mt-36">
+              <StateCard
+                color="gray"
+                title="③ 결과 없음"
+                condition="검색어는 있는데 증상형이 아니고, 찾은 결과가 0건일 때"
+                ui="검색 없음 아이콘 + «결과 없음» 문구 + 챗봇으로 유도하는 카드"
+              />
+            </div>
+            <div id="spec-search-state-4" className="scroll-mt-36">
+              <StateCard
+                color="teal"
+                title="④ 검색 결과가 있을 때"
+                condition="검색어가 있고 증상형이 아니며, 결과가 1건 이상일 때"
+                ui="탭 줄 + [질환일 때 Aiga 배너] + 선택한 탭의 목록(더 보기 방식)"
+                sub="탭마다 명의·병원·커뮤니티 결과를 나눠 보여줌"
+              />
+            </div>
+            <div id="spec-search-state-5" className="scroll-mt-36">
+              <StateCard
+                color="amber"
+                title="🆕 ⑤ 한도까지 쓴 경우 (비회원)"
+                condition="비회원이고, 오늘 무료 검색을 이미 다 썼을 때"
+                ui="가운데 자물쇠 + «오늘 무료 검색을 모두 사용했어요» + 회원가입·로그인 버튼"
+                sub="검색창은 읽기 전용 · 오른쪽에 «가입하기» 버튼 표시"
+                isNew
+              />
+            </div>
           </div>
         </section>
 
         {/* ── 4. 검색어 분류 로직 ── */}
-        <section>
+        <section id="spec-search-branch-logic" className="scroll-mt-36">
           <SectionHeader emoji="🔀" title="4. 검색어 분류 로직 (순서대로 판단하는 3단계)" color="amber" />
 
           <div className="space-y-2.5 mb-4">
@@ -400,7 +431,7 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
         </section>
 
         {/* ── 5. 결과 영역 상세 ── */}
-        <section>
+        <section id="spec-search-results-detail" className="scroll-mt-36">
           <SectionHeader emoji="📊" title="5. 결과 영역 상세 스펙" color="purple" />
 
           {/* 명의 탭 */}
@@ -514,7 +545,7 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
         </section>
 
         {/* ── 6. 검색 아이콘 배치 ── */}
-        <section>
+        <section id="spec-search-icon-placement" className="scroll-mt-36">
           <SectionHeader emoji="📍" title="6. 검색 아이콘 배치 (탭별 공통)" color="gray" />
           <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-100 mb-3">
             <SpecRow label="위치"     value="메인 화면 본문 오른쪽 위(스크롤해도 같은 자리에 보이게 배치)" sub="전체 브라우저 창에 딱 붙는 방식은 아님" />
@@ -537,7 +568,7 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
         </section>
 
         {/* 🆕 ── 7. 비회원 사용량 제한 ── */}
-        <section>
+        <section id="spec-search-usage-limit" className="scroll-mt-36">
           <div className="bg-pink-50 border-2 border-pink-400 rounded-xl p-5">
             <SectionHeader emoji="🔒" title="7. 비회원 사용량 제한" color="rose" />
             
@@ -546,7 +577,8 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
                 <strong>전역 통합:</strong> 여기서 말하는 검색·프로필·게시글 열람 한도는 <strong>통합 검색 창 안에서만 따로 도는 숫자가 아닙니다.</strong> 홈, 명의 찾기, 커뮤니티와 <strong>같은 «오늘 남은 횟수»</strong>를 씁니다(프로토타입: 이 브라우저에 저장된 같은 기준값). 한 화면에서 1회를 쓰면 다른 화면의 안내 배너·검색창 잠금·한도 안내 창에도 같이 반영되는 것이 맞습니다.
               </p>
               <p className="text-[11px] text-indigo-900 bg-indigo-50 border border-indigo-200 rounded-lg px-3 py-2">
-                👉 본 절의 한도 차단·가입/로그인 CTA 버튼 탭 시 이후의 진행 흐름은 마이페이지 화면정의서에 정리된 [공통 로그인/회원가입 플로우 정책]을 공통으로 따름.
+                👉 본 절의 한도 차단·가입/로그인 CTA 버튼 탭 시 이후의 진행 흐름은{' '}
+                <SpecDocLink to="mypageOverview">마이페이지 화면정의서</SpecDocLink>에 정리된 [공통 로그인/회원가입 플로우 정책]을 공통으로 따름.
               </p>
               {/* 한도 정책 */}
               <div className="bg-white rounded-xl border border-pink-200 p-4">
@@ -675,7 +707,7 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
         </section>
 
         {/* 🆕 ── 8. 탭/무한스크롤 운영 요약 ── */}
-        <section>
+        <section id="spec-search-tab-scroll-summary" className="scroll-mt-36">
           <div className="bg-pink-50 border-2 border-pink-400 rounded-xl p-5">
             <SectionHeader emoji="📑" title="8. 탭/무한스크롤 운영 요약" color="rose" />
             
@@ -693,7 +725,7 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
         </section>
 
         {/* ── 9. 테스트 시나리오 ── */}
-        <section>
+        <section id="spec-search-test-scenarios" className="scroll-mt-36">
           <SectionHeader emoji="🧪" title="9. 검증 시나리오" color="amber" />
 
           {onTestSearch && (
@@ -730,7 +762,9 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="text-[11px] text-gray-400">예상:</span>
                   {s.expects.length > 0 ? s.expects.map((e) => (
-                    <Tag key={e} color={e === '명의' ? 'teal' : e === '병원' ? 'blue' : 'purple'}>{e}</Tag>
+                    <Fragment key={e}>
+                      <Tag color={e === '명의' ? 'teal' : e === '병원' ? 'blue' : 'purple'}>{e}</Tag>
+                    </Fragment>
                   )) : <Tag color="blue">챗봇 연결</Tag>}
                   <span className="text-[11px] text-gray-400 ml-1">— {s.desc}</span>
                 </div>

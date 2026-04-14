@@ -1,5 +1,7 @@
 // 공통 컴포넌트 정의서 — 기획·디자인 논의용
+import type { ReactNode } from 'react';
 import { Pencil, Trash2, Flag } from 'lucide-react';
+import { SpecDocLink } from './SpecDocLink';
 
 export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword: string) => void }) {
   return (
@@ -807,49 +809,183 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
               </div>
             </div>
             <Note>
-              홈·명의 찾기·커뮤니티 3개 탭에 <strong>공통 배치</strong>됩니다. 검색 아이콘(돋보기) 스펙은 <strong>4. 레이아웃 → 2번 통합 검색 아이콘 (메인 뷰 우상단 고정)</strong>을 참조하세요.
+              홈·명의 찾기·커뮤니티 3개 탭에 <strong>공통 배치</strong>됩니다. 검색 아이콘(돋보기) 스펙은{' '}
+              <SpecDocLink to="commonLayout">4. 레이아웃 → 2번 통합 검색 아이콘 (메인 뷰 우상단 고정)</SpecDocLink>을 참조하세요.
             </Note>
           </SubSection>
 
         </Section>
 
-        {/* ───── 2. 알림 UI ──── */}
-        <Section id="toasts" title="2. 알림 UI (토스트)" color="amber">
+        {/* ───── 2. 로그인·한도 모달 (코드: LoginRequiredToast, GuestLimitModal) ──── */}
+        <Section id="toasts" title="2. 로그인 필요·비회원 한도 모달 (전역)" color="amber">
+          <div className="mb-4 bg-amber-50 border border-amber-200 rounded-xl p-4">
+            <p className="text-sm font-bold text-amber-900 mb-1">🔗 전역 적용 원칙</p>
+            <p className="text-sm text-amber-950">
+              아래 두 모달은 구현상 <code className="text-xs bg-white/80 px-1 rounded">LoginRequiredToast.tsx</code> ·{' '}
+              <code className="text-xs bg-white/80 px-1 rounded">GuestLimitModal.tsx</code>로 앱 전역에 두며, 홈·명의 찾기·커뮤니티 등{' '}
+              <strong>개별 화면정의서에서 UI를 다시 정의하지 않습니다.</strong> 하단 짧은 토스트 알림과 별개이며, 화면 중앙 카드형 모달입니다.
+            </p>
+          </div>
 
-          <SubSection label="1" title="로그인 필요 안내">
-            <div className="mb-4 bg-emerald-50 border border-emerald-200 rounded-xl p-4">
-              <p className="text-sm font-bold text-emerald-800 mb-1">🔗 전역 공통 알림</p>
-              <p className="text-sm text-emerald-900">앱 전체에서 비회원이 회원 전용 기능을 사용하려 할 때 표시</p>
-            </div>
+          <SubSection label="2-1" title="로그인 필요 모달 (LoginRequiredToast)">
+            <h4 className="text-sm font-bold text-gray-900 mb-2">📍 진입 조건</h4>
+            <ul className="text-sm text-gray-700 space-y-1.5 list-disc pl-5 mb-4">
+              <li>비회원이 <strong>회원 전용 기능</strong> 버튼을 눌렀을 때</li>
+              <li>
+                <strong>한도 소진과 무관</strong>하게, 기능 자체가 비회원에게 막혀 있을 때
+              </li>
+              <li>
+                트리거 예: <strong>공감 · 댓글 · 리뷰 쓰기 · 즐겨찾기 · 신고</strong> 등 — 호출부에서{' '}
+                <code className="text-xs bg-gray-100 px-1 rounded">feature</code> 문자열로 구분
+              </li>
+            </ul>
 
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">📍 언제 나타나나요?</h4>
-            <div className="space-y-2">
-              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                <p className="text-sm font-bold text-red-900">비회원이 즐겨찾기 버튼 터치</p>
-                <p className="text-xs text-red-700">→ 의사 프로필 팝업에서</p>
-              </div>
-              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                <p className="text-sm font-bold text-red-900">비회원이 리뷰쓰기 버튼 터치</p>
-                <p className="text-xs text-red-700">→ 의사 프로필 팝업에서</p>
-              </div>
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                <p className="text-sm font-bold text-gray-700">향후 확장 예정</p>
-                <p className="text-xs text-gray-500">→ 명의찾기, 커뮤니티 등 모든 로그인 필요 기능</p>
-              </div>
-            </div>
+            <h4 className="text-sm font-bold text-gray-900 mb-2">🧱 모달 구성 (구현 기준)</h4>
+            <ol className="text-sm text-gray-700 space-y-3 list-decimal pl-5 mb-4">
+              <li>
+                <strong>헤더</strong> — <code className="text-xs">bg-gradient-to-r from-blue-500 to-blue-600</code>, 자물쇠 아이콘 +{' '}
+                <strong>&quot;로그인 필요&quot;</strong> (고정), 우측 <strong>X</strong> → <code className="text-xs">onClose()</code>
+              </li>
+              <li>
+                <strong>본문</strong> — 큰 자물쇠(파란 원형 배경 <code className="text-xs">bg-blue-100</code>), 고정 문구{' '}
+                <strong>&quot;로그인이 필요한 기능입니다&quot;</strong>, 이어서{' '}
+                <strong>
+                  &quot;<span className="text-blue-600">{'{feature}'}</span> 기능을 사용하려면 로그인이 필요합니다&quot;
+                </strong>{' '}
+                (<code className="text-xs">feature</code>는 진입한 기능명으로 동적 — 예: 저장, 리뷰 작성, 공감, 댓글)
+              </li>
+              <li>
+                <strong>혜택 목록</strong> — <code className="text-xs">bg-blue-50</code> 박스, 제목 &quot;회원가입하면 더 많은 기능을!&quot;, 항목
+                고정:
+                <ul className="mt-1.5 space-y-0.5 list-disc pl-5 text-xs text-gray-600">
+                  <li>의사 프로필 무제한 저장</li>
+                  <li>리뷰 작성 및 공유</li>
+                  <li>AI 챗봇 더 많은 대화</li>
+                  <li>대화 이력 영구 저장</li>
+                </ul>
+              </li>
+              <li>
+                <strong>CTA 버튼</strong> (순서·색상 고정)
+                <ul className="mt-1.5 space-y-1 list-disc pl-5 text-xs">
+                  <li>
+                    1순위: <code className="bg-yellow-100 px-1 rounded">bg-yellow-400</code> — &quot;카카오톡으로 3초 만에 시작&quot;
+                  </li>
+                  <li>
+                    2순위: <code className="bg-green-100 px-1 rounded">bg-green-600</code> — &quot;네이버로 시작하기&quot;
+                  </li>
+                </ul>
+                (두 버튼 모두 현재 <code className="text-xs">onLogin</code> 연결)
+              </li>
+              <li>
+                <strong>하단 텍스트 링크</strong> — &quot;나중에 하기&quot; → <code className="text-xs">onClose()</code>
+              </li>
+            </ol>
 
-            <h4 className="text-sm font-bold text-gray-900 mb-2 mt-4">🎨 화면에 표시되는 모습</h4>
-            <div className="bg-gradient-to-br from-slate-700 to-slate-800 text-white rounded-xl p-4 text-center">
-              <p className="text-sm mb-3">로그인이 필요한 기능입니다</p>
-              <button className="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-bold pointer-events-none">
-                로그인하기
-              </button>
-            </div>
-            <p className="text-xs text-indigo-900 bg-indigo-50 border border-indigo-200 rounded-lg px-2.5 py-2 mt-2 text-center">
-              👉 버튼 탭 시 이후의 진행 흐름은 마이페이지 화면정의서에 정리된 [공통 로그인/회원가입 플로우 정책]을 공통으로 따름.
+            <h4 className="text-sm font-bold text-gray-900 mb-2">닫기 동작</h4>
+            <ul className="text-sm text-gray-700 space-y-1 list-disc pl-5 mb-4">
+              <li>X 버튼 → <code className="text-xs">onClose()</code></li>
+              <li>&quot;나중에 하기&quot; → <code className="text-xs">onClose()</code></li>
+              <li>
+                딤(반투명 배경) 클릭 → <strong>닫기 없음</strong> (오버레이에 클릭 핸들러 없음)
+              </li>
+            </ul>
+
+            <p className="text-xs text-emerald-900 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2 mb-4">
+              ✅ 문구·라벨 확정: 메인 문구 &quot;로그인이 필요한 기능입니다&quot;, CTA &quot;카카오톡으로 3초 만에 시작&quot; / &quot;네이버로
+              시작하기&quot;, <code className="text-xs">feature</code> 동적 표기 방식.
+            </p>
+
+            <p className="text-xs text-indigo-900 bg-indigo-50 border border-indigo-200 rounded-lg px-2.5 py-2 text-center">
+              👉 소셜 로그인 버튼 탭 이후 흐름은{' '}
+              <SpecDocLink to="mypageOverview">마이페이지 화면정의서</SpecDocLink>의 [공통 로그인/회원가입 플로우 정책]과 맞춥니다.
             </p>
           </SubSection>
 
+          <SubSection label="2-2" title="비회원 한도 초과 모달 (GuestLimitModal)">
+            <h4 className="text-sm font-bold text-gray-900 mb-2">📍 진입 조건</h4>
+            <ul className="text-sm text-gray-700 space-y-1.5 list-disc pl-5 mb-4">
+              <li>비회원이 <strong>하루 한도를 모두 소진한 뒤</strong> 같은 유형의 사용을 또 시도할 때</li>
+              <li>
+                한도 타입별 진입 (<code className="text-xs">UsageLimitContext</code> · <code className="text-xs">LimitType</code>):
+              </li>
+            </ul>
+            <ul className="text-sm text-gray-700 space-y-1.5 list-disc pl-8 mb-4">
+              <li>
+                <strong>검색</strong> — 검색 3회 소진 후 검색 시도 (<code className="text-xs">search</code>)
+              </li>
+              <li>
+                <strong>프로필</strong> — 프로필 3회 소진 후 명의 카드 클릭 등 (<code className="text-xs">profileView</code>)
+              </li>
+              <li>
+                <strong>게시글</strong> — 게시글 열람 5회 소진 후 게시글 카드 클릭 등 (<code className="text-xs">postView</code>)
+              </li>
+            </ul>
+
+            <h4 className="text-sm font-bold text-gray-900 mb-2">🧱 모달 구성 (구현 기준)</h4>
+            <p className="text-xs text-gray-500 mb-2">
+              헤더·혜택·CTA는 LoginRequiredToast와 동일 스타일. 본문만 한도 타입별 <code className="text-xs">LIMIT_COPY</code>로 분기합니다.
+            </p>
+            <ol className="text-sm text-gray-700 space-y-3 list-decimal pl-5 mb-4">
+              <li>
+                <strong>헤더</strong> — 동적 문구 (코드 그대로):
+                <ul className="mt-1 text-xs space-y-0.5 list-disc pl-5 text-gray-600">
+                  <li>검색 한도 초과</li>
+                  <li>프로필 조회 한도 초과</li>
+                  <li>게시글 열람 한도 초과</li>
+                </ul>
+              </li>
+              <li>
+                <strong>본문 타이틀</strong> (타입별)
+                <ul className="mt-1 text-xs space-y-0.5 list-disc pl-5 text-gray-600">
+                  <li>검색: &quot;오늘 무료 검색을 모두 사용했어요&quot;</li>
+                  <li>프로필: &quot;오늘 명의 프로필 조회를 모두 사용했어요&quot;</li>
+                  <li>게시글: &quot;오늘 게시글 열람을 모두 사용했어요&quot;</li>
+                </ul>
+              </li>
+              <li>
+                <strong>본문 서브텍스트</strong> (타입별, 숫자는 <code className="text-xs">USAGE_LIMITS</code>와 연동)
+                <ul className="mt-1 text-xs space-y-0.5 list-disc pl-5 text-gray-600">
+                  <li>검색: &quot;비회원은 하루 3회까지 검색할 수 있어요&quot;</li>
+                  <li>프로필: &quot;비회원은 하루 3회까지 프로필을 열 수 있어요&quot;</li>
+                  <li>게시글: &quot;비회원은 하루 5회까지 본문을 읽을 수 있어요&quot;</li>
+                </ul>
+              </li>
+              <li>
+                <strong>혜택 목록</strong> — LoginRequiredToast와 <strong>동일 고정</strong> 4항목
+              </li>
+              <li>
+                <strong>CTA 버튼</strong> — LoginRequiredToast와 <strong>동일 순서·색상</strong> (데모에선 탭 시{' '}
+                <code className="text-xs">setRole(&apos;member&apos;)</code> + <code className="text-xs">closeLimitModal()</code>)
+              </li>
+              <li>
+                <strong>하단 링크</strong> — &quot;나중에 하기&quot; → <code className="text-xs">closeLimitModal()</code>
+              </li>
+            </ol>
+
+            <h4 className="text-sm font-bold text-gray-900 mb-2">닫기 동작</h4>
+            <ul className="text-sm text-gray-700 space-y-1 list-disc pl-5 mb-4">
+              <li>X 버튼 → <code className="text-xs">closeLimitModal()</code></li>
+              <li>&quot;나중에 하기&quot; → <code className="text-xs">closeLimitModal()</code></li>
+              <li>
+                딤(배경) 클릭 → <code className="text-xs">closeLimitModal()</code> (
+                <code className="text-xs">onClick=&#123;closeLimitModal&#125;</code> — LoginRequiredToast와 <strong>다름</strong>)
+              </li>
+            </ul>
+          </SubSection>
+
+          <SubSection label="2-3" title="두 모달 비교">
+            <Table
+              headers={['항목', 'LoginRequiredToast', 'GuestLimitModal']}
+              rows={[
+                ['진입 조건', '기능 자체가 비회원에게 막힌 경우', '해당 한도를 모두 쓴 뒤 추가 시도'],
+                ['헤더 문구', '"로그인 필요" 고정', '한도 타입별 동적 (검색/프로필/게시글)'],
+                ['본문 문구', 'feature 변수 + 고정 안내', '한도 타입별 타이틀·서브텍스트'],
+                ['딤(배경) 클릭', '❌ 닫기 없음', '✅ closeLimitModal()'],
+                ['혜택 목록', '동일 4항목', '동일 4항목'],
+                ['CTA 버튼', '카카오(노랑) → 네이버(초록) 동일', '동일 순서·색상'],
+              ]}
+            />
+          </SubSection>
         </Section>
 
         {/* ───── 3. 데이터 상태 UI ───── */}
@@ -1012,7 +1148,13 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
                 ['2 · AIGA챗봇', 'AI 챗봇 화면 (ChatPage)', '홈 AI 배너 등과 동일한 목적지'],
                 ['3 · 명의 찾기', '명의 찾기 화면 (DoctorSearchPage)', '질환·지역 등 의료진 검색·탐색'],
                 ['4 · 커뮤니티', '커뮤니티 화면 (CommunityPage)', '게시글 피드·글쓰기 등'],
-                ['5 · MY', '마이페이지 (MyPage)', '프로필·설정·활동 등(상세는 마이 스펙 참조)'],
+                [
+                  '5 · MY',
+                  '마이페이지 (MyPage)',
+                  <>
+                    프로필·설정·활동 등(상세는 <SpecDocLink to="mypageOverview">마이 스펙</SpecDocLink> 참조)
+                  </>,
+                ],
               ]}
             />
 
@@ -1080,7 +1222,8 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
             </div>
 
             <Note>
-              이 아이콘을 터치했을 때 열리는 모달의 상세 스펙은 <strong>1. 팝업 UI → 5번 통합 검색 모달</strong>을 참조하세요.
+              이 아이콘을 터치했을 때 열리는 모달의 상세 스펙은{' '}
+              <SpecDocLink to="searchGuestOverview">통합검색 정의서(전체 창)</SpecDocLink>를 참조하세요.
             </Note>
           </SubSection>
 
@@ -1103,7 +1246,7 @@ function Section({ id, title, color, children }: { id: string; title: string; co
     amber: 'bg-amber-50 text-amber-900',
   };
   return (
-    <section id={id}>
+    <section id={id} className="scroll-mt-36">
       <div className={`flex items-center gap-3 mb-5 pb-3 border-b-2 ${borderColors[color]}`}>
         <h2 className={`text-lg font-black px-3 py-1 rounded-lg ${bgColors[color]}`}>{title}</h2>
       </div>
@@ -1124,7 +1267,7 @@ function SubSection({ label, title, children }: { label: string; title: string; 
   );
 }
 
-function Table({ headers, rows }: { headers: string[]; rows: string[][] }) {
+function Table({ headers, rows }: { headers: string[]; rows: ReactNode[][] }) {
   return (
     <div className="overflow-x-auto rounded-xl border border-gray-100">
       <table className="w-full text-sm border-collapse">
