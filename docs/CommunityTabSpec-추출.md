@@ -1,7 +1,7 @@
 # 커뮤니티 탭 화면정의서 (UI/UX)
 
 - **소스:** `src/app/components/docs/CommunityTabSpec.tsx`
-- **버전:** v0.6 · UI/UX 중심
+- **버전:** v0.58 · UI/UX 중심
 - **참고:** 프로토타입 화면·더미 데이터와 구분
 
 ---

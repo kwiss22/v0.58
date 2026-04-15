@@ -7,21 +7,31 @@ interface SearchScenarioSpecProps {
   onTestSearch?: (keyword: string) => void;
 }
 
-/* ─── 재사용 UI ─── */
+/* ─── 재사용 UI (홈·명의찾기 탭 정의서와 동일 톤) ─── */
 function SectionHeader({ emoji, title, color = 'violet' }: { emoji: string; title: string; color?: string }) {
-  const borderMap: Record<string, string> = {
-    violet: 'border-violet-400',
-    teal:   'border-teal-400',
-    blue:   'border-blue-400',
-    amber:  'border-amber-400',
-    purple: 'border-purple-400',
-    gray:   'border-gray-300',
-    rose:   'border-rose-400',
+  const borderColors: Record<string, string> = {
+    violet: 'border-violet-500',
+    teal: 'border-teal-500',
+    blue: 'border-blue-500',
+    amber: 'border-amber-500',
+    purple: 'border-purple-500',
+    gray: 'border-gray-400',
+    rose: 'border-rose-500',
+  };
+  const bgColors: Record<string, string> = {
+    violet: 'bg-violet-50 text-violet-900',
+    teal: 'bg-teal-50 text-teal-900',
+    blue: 'bg-blue-50 text-blue-900',
+    amber: 'bg-amber-50 text-amber-900',
+    purple: 'bg-purple-50 text-purple-900',
+    gray: 'bg-gray-100 text-gray-900',
+    rose: 'bg-rose-50 text-rose-900',
   };
   return (
-    <div className={`flex items-center gap-2 pb-2 mb-4 border-b-2 ${borderMap[color] ?? borderMap.violet}`}>
-      <span className="text-base">{emoji}</span>
-      <span className="text-sm font-black text-gray-900">{title}</span>
+    <div className={`flex items-center gap-1.5 mb-3 pb-2 border-b ${borderColors[color] ?? borderColors.violet}`}>
+      <h2 className={`text-sm font-black px-2.5 py-1 rounded ${bgColors[color] ?? bgColors.violet}`}>
+        {emoji} {title}
+      </h2>
     </div>
   );
 }
@@ -66,8 +76,9 @@ function Tag({ children, color = 'gray' }: { children: React.ReactNode; color?: 
 
 function Note({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mt-3 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-[11px] text-amber-800 leading-relaxed">
-      {children}
+    <div className="mt-2 flex items-start gap-2 bg-blue-50 border border-blue-100 rounded-lg px-3 py-2.5">
+      <span className="text-blue-500 text-sm mt-0.5">ℹ️</span>
+      <p className="text-xs text-blue-800 leading-relaxed">{children}</p>
     </div>
   );
 }
@@ -134,34 +145,44 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-2xl mx-auto px-4 py-6 space-y-7">
-
-        {/* ── 문서 헤더 ── */}
-        <div className="bg-gradient-to-br from-violet-50 to-amber-50 border-2 border-violet-200 rounded-2xl p-5">
-          <div className="flex items-start justify-between gap-3 mb-3">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-xl">🔎</span>
-                <p className="text-base font-black text-violet-900">통합 검색 전체 창</p>
-              </div>
-              <p className="text-xs text-violet-600">홈·명의 찾기·커뮤니티에서 동일하게 쓰는 검색 화면</p>
-            </div>
-            <div className="flex flex-col items-end gap-1.5">
-              <span className="text-[10px] font-bold bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full">공통</span>
-              <span className="text-[10px] font-bold bg-green-100 text-green-700 px-2 py-0.5 rounded-full">UI 스펙</span>
-              <span className="text-[10px] font-bold bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full">v0.58</span>
-            </div>
-          </div>
-          <p className="text-xs text-gray-700 leading-relaxed">
-            홈·명의 찾기·커뮤니티에서 <strong>화면 오른쪽 위 돋보기</strong>로 진입하는 전체 화면 검색입니다.
-            <strong> UI/UX·분기·레이아웃</strong>을 정의하며, 프로토타입의 검색 대상 데이터는 <strong>더미</strong>입니다. 실서비스는 API·인덱스에 따릅니다.
-          </p>
+    <div className="min-h-screen bg-gray-50 font-sans text-sm">
+      {/* 문서 헤더 — 홈·명의찾기 탭과 동일 패턴 */}
+      <div className="bg-gradient-to-r from-violet-700 to-indigo-700 text-white px-3 py-3">
+        <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+          <span className="bg-white/20 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">v0.58</span>
+          <span className="bg-yellow-400/90 text-yellow-900 text-[10px] font-bold px-2 py-0.5 rounded-full">🎨 UI/UX</span>
+          <span className="bg-white/15 text-violet-100 text-[10px] font-semibold px-2 py-0.5 rounded-full">공통</span>
         </div>
-        <div className="bg-blue-50 border border-blue-200 rounded-xl px-3 py-2.5 text-[11px] text-blue-900 leading-relaxed">
-          <strong>운영 원칙:</strong> 이 문서는 통합검색의 <strong>비회원·공통(Base) 화면</strong>만 다룹니다(검색창·탭·목록·비회원 한도 등).
-          <strong> 회원 전용 이용 경험</strong>(한도 안내가 사라진 뒤의 체감, 카드 열기 이후 저장·댓글 등)은 <strong>회원 역할</strong>로 볼 때 열리는{' '}
-          <SpecDocLink to="searchMemberBizRoot">회원용 통합검색 안내 문서</SpecDocLink>에 모았습니다.
+        <h1 className="text-base font-black mb-1">🔎 통합 검색 전체 창</h1>
+        <p className="text-violet-200 text-[10px] leading-relaxed">
+          홈·명의 찾기·커뮤니티에서 동일하게 쓰는 검색 화면 · 화면·분기·레이아웃 (옆 시범 화면 참고)
+        </p>
+      </div>
+
+      <div className="px-3 py-4 space-y-4">
+        <div className="bg-amber-50 border border-amber-200 rounded-xl px-3 py-3">
+          <p className="text-xs font-bold text-amber-900 mb-1">📌 이 문서의 범위</p>
+          <ul className="text-[11px] text-amber-900 space-y-1 list-disc list-inside leading-relaxed">
+            <li>
+              <strong>다루는 것:</strong> 화면 오른쪽 위 <strong>돋보기</strong>로 열리는 전체 화면 검색의 UI/UX·탭·목록·비회원 한도·분기 패턴.
+            </li>
+            <li>
+              <strong>참고만 하는 것:</strong> 프로토타입의 검색 결과·건수는 <strong>더미</strong>이며, 실서비스는 API·인덱스에 따릅니다.
+            </li>
+          </ul>
+        </div>
+
+        <div className="bg-blue-50 border border-blue-200 rounded-xl px-3 py-3">
+          <p className="text-xs font-bold text-blue-900 mb-1">🧭 비회원 기준 정책</p>
+          <ul className="text-[11px] text-blue-900 space-y-1 list-disc list-inside leading-relaxed">
+            <li>
+              <strong>기본 경험:</strong> 이 문서는 통합검색의 <strong>비회원·공통(Base) 화면</strong>만 다룹니다(검색창·탭·목록·비회원 한도 등).
+            </li>
+            <li>
+              <strong>회원 확장:</strong> 한도 안내가 사라진 뒤의 체감, 카드 열기 이후 저장·댓글 등은{' '}
+              <SpecDocLink to="searchMemberBizRoot">회원용 통합검색 안내 문서</SpecDocLink>에서 다룹니다.
+            </li>
+          </ul>
         </div>
 
         {/* ── 1. 개요 ── */}

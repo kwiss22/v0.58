@@ -78,7 +78,7 @@ export function SpecDocumentation() {
 
             {/* 버전 정보 */}
             <span className="bg-blue-50 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full">
-              v0.6
+              v0.58
             </span>
           </div>
 

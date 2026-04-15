@@ -1,6 +1,7 @@
 // 화면정의서 슬라이딩 사이드패널
 
 import { SpecDocumentation } from './docs/SpecDocumentation';
+import { SpecRolePolicyBox } from './SpecRolePolicyBox';
 import { DebugPanel } from './DebugPanel';
 import { useUser } from '../contexts/UserContext';
 import { Smartphone, ShieldCheck } from 'lucide-react';
@@ -69,8 +70,11 @@ export function SpecPanel({ onMobilePreview, onAdminPage }: SpecPanelProps) {
         </div>
       </div>
 
+      {/* 비회원/회원 공통 정책 — Aiga 정의서 탭바 바로 위 */}
+      <SpecRolePolicyBox />
+
       {/* 내용 */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto min-h-0">
         <SpecDocumentation />
       </div>
 
