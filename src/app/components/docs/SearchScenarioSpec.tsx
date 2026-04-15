@@ -291,7 +291,14 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
             <SpecRow 
               label="병원 탭" 
               value="처음 10곳 표시, 아래로 내리면 10곳씩 더 불러옴 · 로딩 중에는 돌아가는 표시" 
-              sub="하단 «소속 명의 보기» 버튼은 항상 노출"
+              sub={
+                <span className="block leading-relaxed space-y-1">
+                  <span className="block">카드 구성: 병원명·소속 명의 수·진료과 태그</span>
+                  <span className="block">카드 클릭 시 병원 정보 창 오픈:</span>
+                  <span className="block">병원명·주소·전화번호·지도보기·홈페이지 이동 버튼</span>
+                  <span className="block">(소속 명의 상세 연결 현재 미지원)</span>
+                </span>
+              }
               isModified
             />
             <SpecRow 
@@ -337,13 +344,62 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
 
         {/* ── 3. 화면 상태 ── */}
         <section id="spec-search-states" className="scroll-mt-36">
-          <SectionHeader emoji="📺" title="3. 화면 상태" color="blue" />
-          <p className="text-xs text-red-600 font-semibold mb-2">🔴 수정: 4종 → 5종 (한도 차단 상태 추가)</p>
+          <SectionHeader emoji="📺" title="3. 화면 상태 (주 상태 × 하위 상태)" color="blue" />
+          <div className="mb-3 space-y-2 text-[11px] sm:text-xs text-gray-700 leading-relaxed">
+            <p>
+              같은 주 상태 안에서도 비회원 한도에 따라 하위 상태가 달라집니다.
+              하위 상태가 여러 개 겹칠 경우 아래 우선순위 순서대로 노출합니다.
+            </p>
+            <p className="rounded-lg border border-blue-200 bg-blue-50/80 px-3 py-2 text-blue-950">
+              <span className="font-bold">우선순위 규칙 (강조)</span> — ① 전체 차단 → ② 검색창 잠금 → ③ 경고 배너 → ④ 일반 UI
+            </p>
+          </div>
+
+          <div className="overflow-x-auto rounded-lg border border-gray-200 mb-3">
+            <table className="w-full min-w-[640px] text-[11px] border-collapse">
+              <thead>
+                <tr className="bg-gray-50 border-b border-gray-200">
+                  <th className="px-2.5 py-2 text-left font-bold text-gray-700 whitespace-nowrap">주 상태</th>
+                  <th className="px-2.5 py-2 text-left font-bold text-gray-700">조건</th>
+                  <th className="px-2.5 py-2 text-left font-bold text-gray-700 whitespace-nowrap">하위 상태</th>
+                  <th className="px-2.5 py-2 text-left font-bold text-gray-700">노출 UI</th>
+                  <th className="px-2.5 py-2 text-left font-bold text-gray-700 whitespace-nowrap">우선순위</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ['검색어 없음', '입력값 없음 + 한도 소진', '전체 차단', '자물쇠 + 회원가입 CTA', '①'],
+                  ['검색어 없음', '입력값 없음 + 한도 정상', '기본', 'Aiga 안내 배너', '④'],
+                  ['결과 있음', '한도 소진', '전체 차단', '결과 영역 전체 대체 + 회원가입 CTA', '①'],
+                  ['결과 있음', '검색창 잠금 조건', '검색창 잠금', '입력 차단 + 가입하기 버튼', '②'],
+                  ['결과 있음', '잔여 1회', '경고 배너', '결과 유지 + 헤더 아래 황색 경고 배너', '③'],
+                  ['결과 있음', '한도 정상', '일반', '탭바 + 결과 목록', '④'],
+                  ['결과 있음', '카드 클릭 + 해당 한도 소진', '개별 차단', '한도 초과 팝업 (결과 화면 유지)', '①'],
+                  ['결과 없음', '한도 무관', '결과 없음', '빈 상태 문구 + 챗봇 유도', '④'],
+                  ['증상형', '한도 무관', '챗봇 연결', '챗봇 안내 + 결과 미표시', '④'],
+                ].map((row, i) => (
+                  <tr key={i} className={i % 2 === 0 ? 'bg-white border-b border-gray-100' : 'bg-gray-50/50 border-b border-gray-100'}>
+                    {row.map((cell, j) => (
+                      <td key={j} className={`px-2.5 py-2 text-gray-800 align-top ${j === 0 ? 'font-medium whitespace-nowrap' : ''}`}>
+                        {cell}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <p className="text-[11px] text-gray-600 mb-3 leading-relaxed">
+            <strong>③</strong> 경고 배너(잔여 1회) 및 <strong>②</strong> 검색창 잠금의 조건·UI는 위 표의 해당 행과, 아래{' '}
+            <strong>④</strong> 검색 결과 카드·<strong>①</strong> 전체 차단 카드 및 7절 상세를 함께 참고합니다.
+          </p>
+
           <div className="space-y-2.5">
             <div id="spec-search-state-1" className="scroll-mt-36">
               <StateCard
                 color="gray"
-                title="① 검색어 없음 (처음 열었을 때)"
+                title="④ 검색어 없음 (처음 열었을 때)"
                 condition="검색창이 비어 있음(처음 들어왔거나 X로 지운 뒤)"
                 ui="Aiga 안내 배너 («증상이 있으신가요?» · «질문하기» 버튼)"
                 sub="AI 챗봇과 연결된 경우에만 이 배너가 보임"
@@ -352,7 +408,7 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
             <div id="spec-search-state-2" className="scroll-mt-36">
               <StateCard
                 color="blue"
-                title="② 증상·상담형으로 이해한 경우"
+                title="④ 증상·상담형으로 이해한 경우"
                 condition="«배가 아파요»처럼 증상을 말하는 문장으로 판단될 때"
                 ui="챗봇 안내 + «Aiga에게 질문하기» 버튼 · 명의·병원·게시글 목록은 숨김"
                 sub="버튼을 누르면 AI 챗봇 탭으로 이동하며, 입력했던 말이 첫 메시지로 넘어감"
@@ -361,7 +417,7 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
             <div id="spec-search-state-3" className="scroll-mt-36">
               <StateCard
                 color="gray"
-                title="③ 결과 없음"
+                title="④ 결과 없음"
                 condition="검색어는 있는데 증상형이 아니고, 찾은 결과가 0건일 때"
                 ui="검색 없음 아이콘 + «결과 없음» 문구 + 챗봇으로 유도하는 카드"
               />
@@ -369,16 +425,16 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
             <div id="spec-search-state-4" className="scroll-mt-36">
               <StateCard
                 color="teal"
-                title="④ 검색 결과가 있을 때"
+                title="④ 검색 결과가 있을 때 (③ 잔여 1회: 헤더 아래 경고 배너 병행)"
                 condition="검색어가 있고 증상형이 아니며, 결과가 1건 이상일 때"
                 ui="탭 줄 + [질환일 때 Aiga 배너] + 선택한 탭의 목록(더 보기 방식)"
-                sub="탭마다 명의·병원·커뮤니티 결과를 나눠 보여줌"
+                sub="탭마다 명의·병원·커뮤니티 결과를 나눠 보여줌. 검색창 잠금 ②·전체/개별 차단 ①은 위 표·7절 우선순위에 따름"
               />
             </div>
             <div id="spec-search-state-5" className="scroll-mt-36">
               <StateCard
                 color="amber"
-                title="🆕 ⑤ 한도까지 쓴 경우 (비회원)"
+                title="① 🆕 한도까지 쓴 경우 (비회원)"
                 condition="비회원이고, 오늘 무료 검색을 이미 다 썼을 때"
                 ui="가운데 자물쇠 + «오늘 무료 검색을 모두 사용했어요» + 회원가입·로그인 버튼"
                 sub="검색창은 읽기 전용 · 오른쪽에 «가입하기» 버튼 표시"
@@ -527,7 +583,18 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
                 } 
                 isNew
               />
-              <SpecRow label="카드 클릭"      value="병원 정보 창 열림 (사용량 제한 없음)" />
+              <SpecRow
+                label="카드 클릭"
+                value="병원 정보 창 열림 (사용량 제한 없음)"
+                sub={
+                  <span className="block leading-relaxed space-y-1">
+                    <span className="block">카드 구성: 병원명·소속 명의 수·진료과 태그</span>
+                    <span className="block">카드 클릭 시 병원 정보 창 오픈:</span>
+                    <span className="block">병원명·주소·전화번호·지도보기·홈페이지 이동 버튼</span>
+                    <span className="block">(소속 명의 상세 연결 현재 미지원)</span>
+                  </span>
+                }
+              />
               <SpecRow 
                 label="무한 스크롤" 
                 value="10곳씩 불러옴 · 목록 맨 아래에 닿으면 10곳 더 불러옴" 
@@ -607,6 +674,11 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
         {/* 🆕 ── 7. 비회원 사용량 제한 ── */}
         <section id="spec-search-usage-limit" className="scroll-mt-36">
           <div className="bg-pink-50 border-2 border-pink-400 rounded-xl p-5">
+            <div className="mb-4 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2.5 text-[11px] sm:text-xs text-amber-950 leading-relaxed">
+              <p className="font-bold text-amber-900">⚠️ 한도별 UI 노출 우선순위는 3절 화면 상태표를 기준으로 합니다.</p>
+              <p className="mt-1">본 절은 각 UI의 상세 스펙만 정의합니다.</p>
+            </div>
+
             <SectionHeader emoji="🔒" title="7. 비회원 사용량 제한" color="rose" />
             
             <div className="space-y-4">

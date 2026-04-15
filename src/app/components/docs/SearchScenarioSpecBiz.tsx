@@ -82,7 +82,7 @@ export function SearchScenarioSpecBiz({ onTestSearch }: SearchScenarioSpecBizPro
             <span className="block">* 위 횟수는 홈·명의찾기·커뮤니티와 공유되는 전역 기준입니다.</span>
             <span className="block">
               * Base 문서{' '}
-              <SpecDocLink to="searchGuestStates">3절 화면 상태</SpecDocLink> ⑤ 한도 차단 화면은 회원에게 표시되지 않습니다.
+              <SpecDocLink to="searchGuestStates">3절 화면 상태</SpecDocLink> ① 한도 차단 화면은 회원에게 표시되지 않습니다.
             </span>
           </p>
         </section>
@@ -101,58 +101,73 @@ export function SearchScenarioSpecBiz({ onTestSearch }: SearchScenarioSpecBizPro
             <li>
               카드를 열면 <strong>공감·댓글</strong>처럼 비회원에게 막혀 있던 행동이 <strong>로그인 창 없이</strong> 이어집니다. 의사
               저장·리뷰 작성 등 <strong>카드 안 세부 기능</strong>은{' '}
-              <SpecDocLink to="commonBizRoot">공통 모달 회원 문서(CommonComponentsSpecBiz)</SpecDocLink>를 참조하세요.
+              <SpecDocLink to="commonBizRoot">공통 UI 컴포넌트 정의서</SpecDocLink>를 참조하세요.
             </li>
+            <li>결과: 검색창이 항상 열려 있고, 탭·목록이 바로 보이는 상태가 기본값입니다.</li>
           </ul>
         </BizSection>
 
-        <BizSection id="spec-search-biz-ui-when-unlimited" title="2. 제한 안내가 사라질 때 — 어떤 화면이 되나요?">
-          <p className="text-xs text-gray-800 leading-relaxed mb-3">
-            비회원에게는 헤더 아래에 <strong>남은 횟수</strong> 안내가 붙거나, 횟수를 다 쓰면 <strong>입력창이 회색</strong>으로 바뀌고
-            연관 검색어가 숨겨지기도 합니다. 이 내용의 위치·문구는 전부{' '}
-            <SpecDocLink to="searchGuestUsage">비회원 문서 7절</SpecDocLink>과 같습니다.
-          </p>
-          <p className="text-xs text-gray-800 leading-relaxed">
-            <strong>회원</strong>으로 들어오면, 같은 자리의 레이아웃은 그대로 두되 위와 같은 <strong>막는 느낌의 안내</strong>가 나오지 않아, 사용자는{' '}
-            <strong>검색창에 바로 글을 이어 쓰고</strong>, 아래로 내려 <strong>명의·병원·커뮤니티 탭</strong>을 고르는 데 집중할 수 있습니다. 즉 &quot;시원하게 열린 검색 창&quot;이 기본 경험에 가깝습니다.
-          </p>
+        <BizSection id="spec-search-biz-flow" title="2. 검색과 목록 — 회원 기준 동작">
+          <div className="space-y-3">
+            <div className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-3">
+              <p className="text-xs font-bold text-gray-900 mb-2">비회원과 동일한 것</p>
+              <ul className="text-xs text-gray-800 leading-relaxed list-disc pl-4 space-y-1.5">
+                <li>탭 자동 전환 (결과 있는 첫 번째 탭으로 이동)</li>
+                <li>10개씩 무한 스크롤</li>
+                <li>더 보기 버튼 동작</li>
+                <li>검색어 분류 로직 (증상형·병원명·질환·진료과)</li>
+              </ul>
+            </div>
+            <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-3">
+              <p className="text-[10px] font-bold text-emerald-800 mb-1.5">회원 전용</p>
+              <p className="text-xs font-bold text-emerald-950 mb-2">회원에서만 달라지는 것</p>
+              <ul className="text-xs text-emerald-950 leading-relaxed list-disc pl-4 space-y-1.5 marker:text-emerald-800">
+                <li>사용량 배너 미표시 (헤더 아래 잔여 횟수 영역 없음)</li>
+                <li>검색창 잠금 없음 (입력 항상 가능)</li>
+                <li>횟수 차감 없음 (카드 클릭 시 한도 팝업 없음)</li>
+                <li>검색·스크롤·탭 전환 횟수 제한 없음</li>
+              </ul>
+            </div>
+          </div>
         </BizSection>
 
-        <BizSection id="spec-search-biz-flow" title="3. 검색과 목록 — 멈추지 않고 이어 쓰기">
-          <p className="text-xs text-gray-800 leading-relaxed">
-            탭이 결과 있는 쪽으로 맞춰지고, 한 번에 10개씩 더 불러오는 방식 등은 <strong>비회원 정책과 동일</strong>합니다. 회원에게 달라지는 점은{' '}
-            <strong>검색·스크롤·탭 전환을 반복해도 «오늘은 여기까지»</strong>에 가로막히지 않는다는 <strong>심리적·실제 여유</strong>입니다. 하단 «명의찾기에서 더 보기» «커뮤니티에서 더 보기»로 넘어가는 길도 같은 버튼을 쓰며, 넘어간 뒤 탭별 회원 경험은 각 탭의 회원 문서를 보면 됩니다.
-          </p>
-        </BizSection>
-
-        <BizSection id="spec-search-biz-cards" title="4. 결과 카드를 눌렀을 때 — 열리는 뒷장면">
-          <SubBlock title="명의(의사) 카드" />
+        <BizSection id="spec-search-biz-cards" title="3. 결과 카드를 눌렀을 때 — 열리는 뒷장면">
+          <SubBlock title="명의(의사) 카드" lead />
           <p className="text-xs text-gray-800 leading-relaxed mb-2">
             <strong>최소 흐름:</strong> 목록에서 의사 카드를 누르면 통합 검색은 닫히거나 뒤로 가고,{' '}
             <strong>의사 프로필(공통 모달)</strong>이 열립니다. 프로필 안의 저장·리뷰 등 버튼 동작·문구는 통합검색 문서가 아니라{' '}
-            <SpecDocLink to="commonBizRoot">CommonComponentsSpecBiz</SpecDocLink> 기준입니다.
+            <SpecDocLink to="commonBizRoot">공통 UI 컴포넌트 정의서</SpecDocLink> 기준입니다.
           </p>
+          <p className="text-xs text-gray-800 leading-relaxed mb-2">회원 추가 권한: 즐겨찾기·리뷰 작성 버튼 활성화</p>
+          <SubBlock title="병원 카드" />
+          <div className="text-xs text-gray-800 leading-relaxed mb-2 space-y-1.5">
+            <p>카드 구성: 병원명·소속 명의 수·진료과 태그</p>
+            <p>
+              <strong>최소 흐름:</strong> 병원 카드 클릭 → 병원 정보 창 오픈
+            </p>
+            <p>병원 정보 창 구성: 병원명·주소·전화번호·지도보기·홈페이지 이동 버튼</p>
+            <p>회원/비회원 모두 제한 없음 (한도 차감 없음)</p>
+            <p>소속 명의 상세 연결 현재 미지원</p>
+          </div>
           <SubBlock title="게시글 카드" />
           <p className="text-xs text-gray-800 leading-relaxed mb-2">
             <strong>최소 흐름:</strong> 게시글 카드를 누르면 <strong>글 상세(공통 패턴)</strong>가 열리고 본문·댓글 영역이 보입니다.
             공감·댓글·신고 등 상호작용 세부는 <SpecDocLink to="communityMemberBizOverview">CommunityTabSpecBiz</SpecDocLink>와 동일하게
             적용합니다.
           </p>
+          <p className="text-xs text-gray-800 leading-relaxed mb-2">회원 추가 권한: 공감·댓글·신고 활성화</p>
         </BizSection>
 
-        <BizSection id="spec-search-biz-after-login" title="5. 로그인 뒤에 이어지는 편의">
+        <BizSection id="spec-search-biz-after-login" title="4. 로그인 뒤에 이어지는 편의">
           <ul className="text-xs text-gray-800 leading-relaxed list-disc pl-4 space-y-1.5">
             <li>
               통합 검색에서 <strong>저장·작성</strong>한 내용은 계정에 묶여, 나중에{' '}
               <SpecDocLink to="mypageOverview">마이페이지</SpecDocLink>나 해당 탭에서 다시 찾기 쉽습니다(세부는 마이페이지·각 탭 정의서).
             </li>
-            <li>
-              검색만 하고 나가도, 회원 세션에서는 <strong>맛보기 때 쌓인 제약 메시지</strong> 대신 <strong>실제로 해본 행동</strong>이 남는 쪽에 가깝게 설계하는 것이 목표입니다.
-            </li>
           </ul>
         </BizSection>
 
-        <BizSection id="spec-search-biz-verify" title="6. 검증할 때 (비회원 문서와 같이 쓰기)">
+        <BizSection id="spec-search-biz-verify" title="5. 검증할 때 (비회원 문서와 같이 쓰기)">
           <p className="text-xs text-gray-800 leading-relaxed mb-3">
             <SpecDocLink to="searchGuestOverview">비회원 통합검색 문서</SpecDocLink>의 <strong>검증 시나리오(키워드 목록)</strong>를 그대로
             써도 됩니다. 회원으로 미리볼 때는 <strong>한도 배너·자물쇠 전체 화면</strong>이 뜨지 않는 것이 자연스럽습니다.
@@ -173,21 +188,21 @@ export function SearchScenarioSpecBiz({ onTestSearch }: SearchScenarioSpecBizPro
           )}
         </BizSection>
 
-        <BizSection id="spec-search-biz-refs" title="7. 참조 문서">
+        <BizSection id="spec-search-biz-refs" title="6. 참조 문서">
           <p className="text-[11px] text-gray-600 mb-2">위 한도 표·4절에 없는 세부만 아래에서 보완합니다.</p>
           <ul className="text-xs text-gray-700 space-y-1.5 list-disc pl-5">
             <li>
-              <SpecDocLink to="searchGuestOverview">SearchScenarioSpec</SpecDocLink> — 통합검색 화면·비회원 한도·탭·무한 스크롤{' '}
+              <SpecDocLink to="searchGuestOverview">공통(통합검색) 정의서 [비회원 탭]</SpecDocLink> — 통합검색 화면·비회원 한도·탭·무한 스크롤{' '}
               <strong>기준(Base)</strong>
             </li>
             <li>
-              <SpecDocLink to="commonBizRoot">CommonComponentsSpecBiz</SpecDocLink> — 의사 프로필 레이아웃·리뷰 작성 단계
+              <SpecDocLink to="commonBizRoot">공통 UI 컴포넌트 정의서</SpecDocLink> — 의사 프로필 레이아웃·리뷰 작성 단계
             </li>
             <li>
-              <SpecDocLink to="communityMemberBizOverview">CommunityTabSpecBiz</SpecDocLink> — 게시글 ⋮ 메뉴·답글·글쓰기 등
+              <SpecDocLink to="communityMemberBizOverview">커뮤니티 탭 회원 정의서</SpecDocLink> — 게시글 ⋮ 메뉴·답글·글쓰기 등
             </li>
             <li>
-              <SpecDocLink to="doctorMemberDelta">DoctorSearchSpecBiz</SpecDocLink> · <SpecDocLink to="homeMemberDelta">HomeTabSpecBiz</SpecDocLink>{' '}
+              <SpecDocLink to="doctorMemberDelta">명의찾기 탭 회원 정의서</SpecDocLink> · <SpecDocLink to="homeMemberDelta">홈 탭 회원 정의서</SpecDocLink>{' '}
               — «더 보기»로 이동한 뒤 탭별 회원 경험
             </li>
           </ul>
@@ -228,6 +243,8 @@ function BizSection({
   );
 }
 
-function SubBlock({ title }: { title: string }) {
-  return <p className="text-[11px] font-bold text-gray-700 mt-2 first:mt-0 mb-1">{title}</p>;
+function SubBlock({ title, lead }: { title: string; lead?: boolean }) {
+  return (
+    <p className={`text-base font-bold text-blue-600 mb-2 ${lead ? 'mt-3' : 'mt-4'}`}>{title}</p>
+  );
 }
