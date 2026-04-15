@@ -288,6 +288,95 @@ export function CommunityTabSpec() {
               </div>
             </div>
 
+            {/* 작성자 프로필 창 — 팝업 상세 정의 (신규) */}
+            <div className="ml-8 space-y-3">
+              <h4 className="text-sm font-bold text-gray-900">👤 작성자 프로필 창 — 팝업 상세 정의</h4>
+
+              <div className="bg-white border border-gray-200 rounded-lg p-4">
+                <div className="font-medium text-gray-900 mb-2 text-sm">형태</div>
+                <p className="text-xs text-gray-700">화면 중앙 카드 팝업</p>
+              </div>
+
+              <div className="bg-white border border-gray-200 rounded-lg p-4">
+                <div className="font-medium text-gray-900 mb-2 text-sm">표시 항목</div>
+                <ul className="space-y-1 text-xs text-gray-700">
+                  <li>• 프로필 이미지 (없으면 기본 아이콘)</li>
+                  <li>• 닉네임 (익명XX 형식)</li>
+                  <li>• 의사 인증 배지 (해당 시)</li>
+                  <li>• 작성한 게시글 수</li>
+                </ul>
+              </div>
+
+              <div className="bg-white border border-gray-200 rounded-lg p-4">
+                <div className="font-medium text-gray-900 mb-2 text-sm">버튼 구성 (역할별 분기)</div>
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[680px] text-xs border-collapse">
+                    <thead>
+                      <tr className="bg-gray-50 border-b border-gray-200">
+                        <th className="px-2.5 py-2 text-left font-bold text-gray-700">버튼</th>
+                        <th className="px-2.5 py-2 text-left font-bold text-gray-700">일반 (비회원·회원 공통)</th>
+                        <th className="px-2.5 py-2 text-left font-bold text-gray-700">회원(본인)</th>
+                        <th className="px-2.5 py-2 text-left font-bold text-gray-700">의사 회원 (추후 논의 후 적용)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="border-b border-gray-100">
+                        <td className="px-2.5 py-2 text-gray-900 font-medium">이 사용자 글만 보기</td>
+                        <td className="px-2.5 py-2 text-gray-700">✅ 활성</td>
+                        <td className="px-2.5 py-2 text-gray-700">미노출</td>
+                        <td className="px-2.5 py-2 text-gray-700">✅ 활성</td>
+                      </tr>
+                      <tr className="border-b border-gray-100 bg-gray-50/50">
+                        <td className="px-2.5 py-2 text-gray-900 font-medium">마이페이지로 이동</td>
+                        <td className="px-2.5 py-2 text-gray-700">미노출</td>
+                        <td className="px-2.5 py-2 text-gray-700">✅ 활성</td>
+                        <td className="px-2.5 py-2 text-gray-700">미노출</td>
+                      </tr>
+                      <tr>
+                        <td className="px-2.5 py-2 text-gray-900 font-medium">의사 프로필 보기</td>
+                        <td className="px-2.5 py-2 text-gray-700">미노출</td>
+                        <td className="px-2.5 py-2 text-gray-700">미노출</td>
+                        <td className="px-2.5 py-2 text-gray-700">✅ 활성</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="font-medium text-blue-900 mb-2 text-sm">동작 — 이 사용자 글만 보기</div>
+                <ul className="space-y-1 text-xs text-blue-900">
+                  <li>• 비회원·회원 모두 로그인 없이 이용 가능 (게시글 목록 보기 허용 기능에 해당)</li>
+                  <li>• 클릭 시 팝업 닫힘 → 커뮤니티 피드 상단에 &quot;{'{닉네임}'}님의 글만 보는 중&quot; 유저 필터 배너 표시</li>
+                  <li>• 배너 형태: 파란색 텍스트 + 우측 X 버튼</li>
+                  <li>• 피드 목록은 해당 유저의 게시글만 필터링, 상단 총 건수 즉시 갱신</li>
+                  <li>• 카테고리 필터(질병별/진료과별) 자동 숨김</li>
+                  <li>• X 버튼 클릭 시 유저 필터 해제 → 전체 피드 복귀</li>
+                </ul>
+              </div>
+
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <div className="font-medium text-gray-900 mb-2 text-sm">동작 — 마이페이지로 이동</div>
+                <ul className="space-y-1 text-xs text-gray-700">
+                  <li>• 본인 프로필 아이콘 클릭 시에만 표시</li>
+                  <li>• 클릭 → 마이페이지 탭으로 이동</li>
+                </ul>
+              </div>
+
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                <div className="font-medium text-amber-900 mb-2 text-sm">동작 — 의사 프로필 보기 (추후 논의 후 적용)</div>
+                <ul className="space-y-1 text-xs text-amber-900">
+                  <li>• 의사 인증 배지가 있는 작성자 클릭 시에만 표시</li>
+                  <li>• 클릭 → 해당 의사의 프로필 상세 팝업 표시 (공통 탭 1절 의사 프로필 상세 팝업과 동일)</li>
+                </ul>
+              </div>
+
+              <div className="bg-white border border-gray-200 rounded-lg p-4">
+                <div className="font-medium text-gray-900 mb-2 text-sm">팝업 닫기</div>
+                <p className="text-xs text-gray-700">X 버튼 또는 배경 딤 클릭</p>
+              </div>
+            </div>
+
             {/* 2.6 게시글 카드 (목록) */}
             <div>
               <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
