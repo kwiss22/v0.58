@@ -2,6 +2,7 @@
 
 import { SpecDocumentation } from './docs/SpecDocumentation';
 import { SpecRolePolicyBox } from './SpecRolePolicyBox';
+import { SpecDocReferencePriority } from './SpecDocReferencePriority';
 import { DebugPanel } from './DebugPanel';
 import { useUser } from '../contexts/UserContext';
 import { Smartphone, ShieldCheck } from 'lucide-react';
@@ -72,6 +73,9 @@ export function SpecPanel({ onMobilePreview, onAdminPage }: SpecPanelProps) {
 
       {/* 비회원/회원 공통 정책 — Aiga 정의서 탭바 바로 위 */}
       <SpecRolePolicyBox />
+
+      {/* 문서 참조 우선순위 — 역할과 무관·항상 표시 */}
+      <SpecDocReferencePriority />
 
       {/* 내용 */}
       <div className="flex-1 overflow-y-auto min-h-0">
