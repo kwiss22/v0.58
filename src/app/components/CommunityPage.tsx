@@ -1,5 +1,5 @@
 // 커뮤니티 페이지 - 신뢰도와 공감이 느껴지는 피드 디자인
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Heart, MessageCircle, Plus, User, X, Search, ArrowLeft } from 'lucide-react';
 import { WritePostModal } from '@/app/components/WritePostModal';
@@ -15,6 +15,9 @@ import { DISEASE_LIST, POPULAR_DISEASES } from '@/constants/disease-list';
 import { useUsageLimitContext } from '@/app/contexts/UsageLimitContext';
 import { UsageLimitBanner } from '@/app/components/UsageLimitBanner';
 import { ResizedImage } from '@/app/utils/imageResize';
+import { useAppNavigation } from '@/app/contexts/AppNavigationContext';
+import { SpecDemoTagChip } from '@/app/components/tagMatching/SpecDemoTagChip';
+import { COMMUNITY_DEMO_TAG_MAP, type CommunityDemoTagId } from '@/app/components/tagMatching/communityTabTagRegistry';
 
 interface CommunityPageProps {
   onNavigateToChat: () => void;
@@ -30,8 +33,18 @@ const departmentCategories: DepartmentCategory[] = ['전체', '내과', '외과'
 const DRAFT_KEY = 'aiga_post_draft';
 
 export function CommunityPage({ onNavigateToChat, onNavigateToDoctors }: CommunityPageProps) {
-  const { isMember, isGuest, user } = useUser();
+  const { isMember, isGuest, user, setRole } = useUser();
+  const { setActiveTab, openSpecSection } = useAppNavigation();
   const { consumePostView } = useUsageLimitContext();
+
+  const navigateCommunitySpecTag = useCallback(
+    (tagId: CommunityDemoTagId) => {
+      setRole('guest');
+      setActiveTab('community');
+      openSpecSection({ tab: 'community', sectionId: COMMUNITY_DEMO_TAG_MAP[tagId].specSectionId });
+    },
+    [setRole, setActiveTab, openSpecSection],
+  );
 
   const [filterType, setFilterType] = useState<FilterType>('disease');
   const [sortOption, setSortOption] = useState<'latest' | 'popular'>('latest');
@@ -257,13 +270,18 @@ export function CommunityPage({ onNavigateToChat, onNavigateToDoctors }: Communi
 
   return (
     <div className="flex flex-col h-full relative">
-      {/* ─── 헤더 ─────────────────────────────────────────────── */}
+      {/* ─── 헤더 — C01 (우측은 앱 통합검색과 겹치지 않게 inset) ─ */}
       <div className="sticky top-0 z-10 bg-white border-b border-gray-100">
-        <div className="flex items-center justify-between px-4 py-3">
-          <h1 className="text-lg font-bold text-gray-900">커뮤니티</h1>
+        <div className="relative flex items-center justify-between px-4 py-3">
+          <h1 className="text-lg font-bold text-gray-900 pr-14">커뮤니티</h1>
+          <SpecDemoTagChip
+            tagId="C01"
+            onNavigate={(id) => navigateCommunitySpecTag(id as CommunityDemoTagId)}
+            style={{ top: '0.5rem', right: '3.5rem' }}
+          />
         </div>
 
-        {/* ─── 카테고리 필터 (유저 필터 없을 때만) ─────────────── */}
+        {/* ─── 카테고리 필터 — C02 (유저 필터 없을 때만) ───────── */}
         <AnimatePresence initial={false}>
           {!userFilter && (
             <motion.div
@@ -272,7 +290,13 @@ export function CommunityPage({ onNavigateToChat, onNavigateToDoctors }: Communi
               animate={{ opacity: 1, height: 'auto', y: 0 }}
               exit={{ opacity: 0, height: 0, y: -8 }}
               transition={{ duration: 0.22, ease: 'easeInOut' }}
+              className="relative"
             >
+              <SpecDemoTagChip
+                tagId="C02"
+                onNavigate={(id) => navigateCommunitySpecTag(id as CommunityDemoTagId)}
+                style={{ top: '0.25rem', right: '3.5rem' }}
+              />
               {/* 1차 필터: 질병별 / 진료과별 */}
               <div className="flex gap-2 px-4 pt-1 pb-2">
                 <button
@@ -406,10 +430,15 @@ export function CommunityPage({ onNavigateToChat, onNavigateToDoctors }: Communi
         </AnimatePresence>
       </div>
 
-      {/* ─── 배너 영역 ──────────────────────────────────────────── */}
-      <div className="bg-white border-b border-gray-100">
+      {/* ─── 배너 영역 — C03 ───────────────────────────────────── */}
+      <div className="relative bg-white border-b border-gray-100">
+        <SpecDemoTagChip
+          tagId="C03"
+          onNavigate={(id) => navigateCommunitySpecTag(id as CommunityDemoTagId)}
+          style={{ top: '0.35rem', right: '0.5rem' }}
+        />
         {/* 면책 고지 — 항상 표시 */}
-        <div className="px-4 py-2 flex items-center gap-2">
+        <div className="px-4 py-2 flex items-center gap-2 pr-12">
           <div className="w-4 h-4 rounded-full border border-gray-300 flex items-center justify-center text-gray-400 text-[9px] flex-shrink-0">i</div>
           <p className="text-xs text-gray-400">이 커뮤니티의 내용은 의료 전문가의 조언을 대체하지 않습니다.</p>
         </div>
@@ -438,10 +467,14 @@ export function CommunityPage({ onNavigateToChat, onNavigateToDoctors }: Communi
       {/* ─── 피드 ──────────────────────────────────────────────── */}
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-3xl mx-auto">
-
-          {/* 유저 필터 배너 */}
+          {/* 유저 필터 배너 — C05 */}
           {userFilter && (
-            <div className="mx-4 mt-3 mb-1 flex items-center justify-between bg-blue-50 rounded-xl px-4 py-3">
+            <div className="relative mx-4 mt-3 mb-1 flex items-center justify-between bg-blue-50 rounded-xl px-4 py-3 pr-12">
+              <SpecDemoTagChip
+                tagId="C05"
+                onNavigate={(id) => navigateCommunitySpecTag(id as CommunityDemoTagId)}
+                style={{ top: '0.5rem', right: '0.5rem' }}
+              />
               <span className="text-sm text-blue-700">
                 <span className="font-bold">익명{userFilter.slice(-2)}</span>님의 글만 보는 중
               </span>
@@ -454,8 +487,13 @@ export function CommunityPage({ onNavigateToChat, onNavigateToDoctors }: Communi
             </div>
           )}
 
-          {/* 총 건수 + 정렬 */}
-          <div className="flex items-center justify-between px-4 mt-3 mb-2">
+          {/* 총 건수 + 정렬 — C04 */}
+          <div className="relative flex items-center justify-between px-4 mt-3 mb-2 pr-14">
+            <SpecDemoTagChip
+              tagId="C04"
+              onNavigate={(id) => navigateCommunitySpecTag(id as CommunityDemoTagId)}
+              style={{ top: '0.15rem', right: '3.5rem' }}
+            />
             <span className="text-sm text-gray-500 font-medium">총 {filteredPosts.length}건</span>
             <div className="flex items-center gap-3">
               <button
@@ -474,9 +512,14 @@ export function CommunityPage({ onNavigateToChat, onNavigateToDoctors }: Communi
             </div>
           </div>
 
-          {/* 게시글 목록 */}
+          {/* 게시글 목록 — C06 (첫 카드·빈 상태 공통) */}
           {filteredPosts.length > 0 ? (
-            <div className="divide-y divide-gray-100">
+            <div className="relative divide-y divide-gray-100">
+              <SpecDemoTagChip
+                tagId="C06"
+                onNavigate={(id) => navigateCommunitySpecTag(id as CommunityDemoTagId)}
+                style={{ top: '0.35rem', right: '0.5rem' }}
+              />
               {filteredPosts.map(post => (
                 <div
                   key={post.id}
@@ -579,7 +622,12 @@ export function CommunityPage({ onNavigateToChat, onNavigateToDoctors }: Communi
               ))}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-16 text-center px-4">
+            <div className="relative flex flex-col items-center justify-center py-16 text-center px-4">
+              <SpecDemoTagChip
+                tagId="C06"
+                onNavigate={(id) => navigateCommunitySpecTag(id as CommunityDemoTagId)}
+                style={{ top: '0.5rem', right: '0.5rem' }}
+              />
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <MessageCircle className="w-8 h-8 text-gray-400" />
               </div>
@@ -594,14 +642,22 @@ export function CommunityPage({ onNavigateToChat, onNavigateToDoctors }: Communi
         </div>
       </div>
 
-      {/* ─── 글쓰기 FAB ────────────────────────────────────────── */}
+      {/* ─── 글쓰기 FAB — C08 (회원만) ─ */}
       {isMember && (
-        <button
-          onClick={() => setShowWriteModal(true)}
-          className="absolute bottom-4 right-4 w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all hover:scale-110 flex items-center justify-center z-40"
-        >
-          <Plus className="w-6 h-6" />
-        </button>
+        <div className="absolute bottom-4 right-4 z-40 flex flex-col items-end gap-1">
+          <SpecDemoTagChip
+            tagId="C08"
+            onNavigate={(id) => navigateCommunitySpecTag(id as CommunityDemoTagId)}
+            className="!relative !right-auto !top-auto !left-auto"
+          />
+          <button
+            type="button"
+            onClick={() => setShowWriteModal(true)}
+            className="w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all hover:scale-110 flex items-center justify-center"
+          >
+            <Plus className="w-6 h-6" />
+          </button>
+        </div>
       )}
 
       {/* ─── 모달 ──────────────────────────────────────────────── */}

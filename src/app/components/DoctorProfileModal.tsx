@@ -59,9 +59,20 @@ interface DoctorProfileModalProps {
   onClose: () => void;
   currentConversationId?: string | null;
   onDoctorSaved?: (doctorId: string) => void;
+  /** 공통 정의서 CM03 — 프로필과 함께 리뷰 작성 모달까지 연다 */
+  openReviewWriteOnMount?: boolean;
+  onOpenReviewWriteConsumed?: () => void;
 }
 
-export function DoctorProfileModal({ doctor, isOpen, onClose, currentConversationId, onDoctorSaved }: DoctorProfileModalProps) {
+export function DoctorProfileModal({
+  doctor,
+  isOpen,
+  onClose,
+  currentConversationId,
+  onDoctorSaved,
+  openReviewWriteOnMount,
+  onOpenReviewWriteConsumed,
+}: DoctorProfileModalProps) {
   const { isGuest, setRole, role } = useUser();
   // 논문만 아코디언 (경력·학력은 항상 표시)
   const [papersExpanded, setPapersExpanded] = useState(false);
@@ -187,6 +198,13 @@ export function DoctorProfileModal({ doctor, isOpen, onClose, currentConversatio
       }
     } catch { /* ignore */ }
   }, [doctorId]);
+
+  // 공통 스펙 «대표 예시» 진입 시 리뷰 작성까지 한 번에 (CM03)
+  useEffect(() => {
+    if (!isOpen || !openReviewWriteOnMount) return;
+    setReviewWriteModalOpen(true);
+    onOpenReviewWriteConsumed?.();
+  }, [isOpen, openReviewWriteOnMount, onOpenReviewWriteConsumed, doctor.id]);
 
   const { isSaved, toggleSave } = useSavedDoctors();
   const saved = isSaved(doctorId);

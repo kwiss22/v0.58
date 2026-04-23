@@ -18,8 +18,13 @@ export function DoctorSearchSpec() {
       </div>
 
       <div className="px-3 py-4 space-y-4">
-        <div className="bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5 text-[11px] text-amber-900 leading-relaxed">
-          <span className="font-bold">문서 범위:</span> 레이아웃·검색·카드·모달 등 사용자 경험. 데모에 나오는 의사·병원 데이터는 샘플이며 실제 DB/API와 동일하지 않습니다.
+        <div className="bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5 text-[11px] text-amber-900 leading-relaxed space-y-1">
+          <p>
+            <span className="font-bold">문서 범위:</span> 레이아웃·검색·카드·모달 등 사용자 경험. 데모에 나오는 의사·병원 데이터는 샘플이며 실제 DB/API와 동일하지 않습니다.
+          </p>
+          <p>
+            <span className="font-bold">데모 번호(D01~D07):</span> 시범 화면의 동그란 번호와 이 문서의 동일 번호 블록이 짝입니다. 번호를 누르면 이쪽으로 스크롤됩니다.
+          </p>
         </div>
 
         {/* ───── 1. 화면 개요 ───── */}
@@ -40,7 +45,7 @@ export function DoctorSearchSpec() {
         {/* ───── 2. 화면 구성 ───── */}
         <Section id="layout" title="2. 화면 구성 (위에서 아래 순서)" color="cyan">
 
-          <SubSection label="구역 1" title="상단 헤더">
+          <SubSection label="구역 1" title="상단 헤더" specAnchorId="doctor-tag-d01" tagCode="D01">
             <div className="mb-3 bg-cyan-50 border border-cyan-200 rounded-xl px-3 py-2">
               <p className="text-xs font-bold text-cyan-900 mb-1">통합 검색 — UI 배치 (프로토타입과 동일)</p>
               <p className="text-xs text-cyan-800">
@@ -56,7 +61,7 @@ export function DoctorSearchSpec() {
             />
           </SubSection>
 
-          <SubSection label="구역 2" title="통합 검색창">
+          <SubSection label="구역 2" title="통합 검색창" specAnchorId="doctor-tag-d02" tagCode="D02">
             <Table
               headers={['요소', '설명', '비고']}
               rows={[
@@ -107,7 +112,7 @@ export function DoctorSearchSpec() {
             </div>
           </SubSection>
 
-          <SubSection label="구역 3" title="연관검색어 드롭다운">
+          <SubSection label="구역 3" title="연관검색어 드롭다운" specAnchorId="doctor-tag-d03" tagCode="D03">
             <div className="mb-3 bg-teal-50 border border-teal-200 rounded-xl px-3 py-2.5">
               <p className="text-xs font-bold text-teal-800 mb-1">💡 동작 방식</p>
               <p className="text-xs text-teal-900">검색창에 글자를 입력하면 마지막 단어를 기준으로 연관 검색어를 추천합니다. 앞 단어는 유지하고 마지막 단어만 교체하여 자연스러운 다중 검색을 지원합니다.</p>
@@ -127,7 +132,7 @@ export function DoctorSearchSpec() {
             />
           </SubSection>
 
-          <SubSection label="구역 4" title="카테고리 필터">
+          <SubSection label="구역 4" title="카테고리 필터" specAnchorId="doctor-tag-d04" tagCode="D04">
             <Table
               headers={['요소', '설명', '비고']}
               rows={[
@@ -153,7 +158,7 @@ export function DoctorSearchSpec() {
             </div>
           </SubSection>
 
-          <SubSection label="구역 5" title="검색 결과 헤더">
+          <SubSection label="구역 5" title="검색 결과 헤더" specAnchorId="doctor-tag-d05" tagCode="D05">
             <Table
               headers={['요소', '설명', '비고']}
               rows={[
@@ -182,7 +187,7 @@ export function DoctorSearchSpec() {
             </div>
           </SubSection>
 
-          <SubSection label="구역 6" title="의사 카드 목록">
+          <SubSection label="구역 6" title="의사 카드 목록" specAnchorId="doctor-tag-d06" tagCode="D06">
             <Table
               headers={['요소', '설명', '비고']}
               rows={[
@@ -238,7 +243,7 @@ export function DoctorSearchSpec() {
             </Note>
           </SubSection>
 
-          <SubSection label="구역 7" title="과 0건 — 빈 상태 화면">
+          <SubSection label="구역 7" title="과 0건 — 빈 상태 화면" specAnchorId="doctor-tag-d07" tagCode="D07">
             <div className="mb-3 bg-teal-50 border border-teal-200 rounded-xl px-3 py-2.5">
               <p className="text-xs font-bold text-teal-800 mb-1">✅ 정책 확정</p>
               <p className="text-xs text-teal-900">검색 결과가 0건일 때 검색어 수정 안내 + AI 챗봇 유도 배너를 표시합니다.</p>
@@ -611,10 +616,33 @@ function Section({ id, title, color, children }: { id: string; title: string; co
   );
 }
 
-function SubSection({ label, title, children }: { label: string; title: string; children: React.ReactNode }) {
+function SubSection({
+  label,
+  title,
+  children,
+  specAnchorId,
+  tagCode,
+}: {
+  label: string;
+  title: string;
+  children: React.ReactNode;
+  specAnchorId?: string;
+  tagCode?: string;
+}) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-3.5">
-      <div className="flex items-center gap-2 mb-3">
+    <div
+      id={specAnchorId}
+      className={`bg-white rounded-lg border border-gray-200 p-3.5 ${specAnchorId ? 'scroll-mt-32' : ''}`}
+    >
+      <div className="flex items-center gap-2 mb-3 flex-wrap">
+        {tagCode && (
+          <span
+            className="inline-flex h-6 min-w-[1.5rem] items-center justify-center rounded-full bg-amber-500 px-1.5 text-[10px] font-bold text-white shadow-sm"
+            title="데모 화면과 동일 번호"
+          >
+            {tagCode}
+          </span>
+        )}
         <span className="bg-gray-800 text-white text-xs font-bold px-2 py-0.5 rounded flex-shrink-0">{label}</span>
         <h3 className="text-sm font-bold text-gray-900 truncate">{title}</h3>
       </div>

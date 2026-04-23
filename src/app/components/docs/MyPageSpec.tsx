@@ -22,6 +22,13 @@ export function MyPageSpec() {
       <div className="max-w-5xl mx-auto px-6 py-8 space-y-6">
         <section id="mypage-overview" className="scroll-mt-36 bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
           <h2 className="text-lg font-black text-gray-900 mb-4 pb-2 border-b border-gray-100">📌 개요</h2>
+          {isMember && (
+            <div className="mb-4 bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-900 leading-relaxed">
+              <span className="font-bold">데모 번호(M01~M05):</span> 회원 마이 시범 화면의 동그란 번호와 아래{' '}
+              <strong>로그인 후 화면</strong> 절의 동일 번호가 짝입니다. 번호를 누르면 이쪽으로 스크롤됩니다. 비회원 로그인
+              유도 화면은 단일 화면이라 번호를 두지 않습니다.
+            </div>
+          )}
           <ul className="space-y-2 text-sm text-gray-700 leading-relaxed">
             <li>
               • <strong>역할:</strong> 이용자 본인의 계정 정보, 닉네임, 커뮤니티 활동(글·댓글·후기), 저장한 명의, 고객지원 링크를 한곳에서 제공합니다.
@@ -119,8 +126,16 @@ export function MyPageSpec() {
           <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-6">
             <h2 className="text-lg font-black text-gray-900 mb-1 pb-2 border-b border-gray-100">✅ 로그인 후 화면</h2>
 
-            <div>
-              <h3 className="text-sm font-bold text-blue-900 mb-2">1) 프로필 요약</h3>
+            <div id="mypage-tag-m01" className="scroll-mt-32">
+              <h3 className="text-sm font-bold text-blue-900 mb-2 flex flex-wrap items-center gap-2">
+                <span
+                  className="inline-flex h-6 min-w-[1.5rem] items-center justify-center rounded-full bg-amber-500 px-1.5 text-[10px] font-bold text-white shadow-sm"
+                  title="데모 화면과 동일 번호"
+                >
+                  M01
+                </span>
+                1) 프로필 요약
+              </h3>
               <ul className="space-y-2 text-sm text-gray-700 leading-relaxed list-disc pl-5">
                 <li>왼쪽: 원형 프로필 영역(그라데이션 배경 + 사람 아이콘).</li>
                 <li>로그인 계정 라벨 아래 <strong>이메일</strong>을 표시합니다. (데모에서는 샘플 주소)</li>
@@ -158,8 +173,16 @@ export function MyPageSpec() {
               </div>
             </div>
 
-            <div>
-              <h3 className="text-sm font-bold text-blue-900 mb-2">2) 닉네임</h3>
+            <div id="mypage-tag-m02" className="scroll-mt-32">
+              <h3 className="text-sm font-bold text-blue-900 mb-2 flex flex-wrap items-center gap-2">
+                <span
+                  className="inline-flex h-6 min-w-[1.5rem] items-center justify-center rounded-full bg-amber-500 px-1.5 text-[10px] font-bold text-white shadow-sm"
+                  title="데모 화면과 동일 번호"
+                >
+                  M02
+                </span>
+                2) 닉네임
+              </h3>
               <ul className="space-y-2 text-sm text-gray-700 leading-relaxed list-disc pl-5">
                 <li>필수 입력 필드로, 표시 이름에 쓰입니다.</li>
                 <li>가입 시 시스템이 부여한 기본 닉네임이 초기값으로 들어갑니다.</li>
@@ -186,7 +209,7 @@ export function MyPageSpec() {
               </ul>
             </div>
 
-            <section className="rounded-lg border border-red-200 bg-red-50/80 p-4">
+            <section className="rounded-lg border border-red-200 bg-red-50/80 p-4 scroll-mt-32">
               <h3 className="text-sm font-bold text-red-900 mb-2">중요 노티스 — SNS 로그인·계정 통합</h3>
               <ul className="space-y-2 text-sm text-red-950/90 leading-relaxed list-disc pl-5">
                 <li>
@@ -206,8 +229,16 @@ export function MyPageSpec() {
               </ul>
             </section>
 
-            <div>
-              <h3 className="text-sm font-bold text-blue-900 mb-2">3) 내 활동</h3>
+            <div id="mypage-tag-m03" className="scroll-mt-32">
+              <h3 className="text-sm font-bold text-blue-900 mb-2 flex flex-wrap items-center gap-2">
+                <span
+                  className="inline-flex h-6 min-w-[1.5rem] items-center justify-center rounded-full bg-amber-500 px-1.5 text-[10px] font-bold text-white shadow-sm"
+                  title="데모 화면과 동일 번호"
+                >
+                  M03
+                </span>
+                3) 내 활동
+              </h3>
               <p className="text-sm text-gray-600 mb-3 leading-relaxed">
                 섹션 제목 아래 <strong>흰 카드</strong> 안에 네 가지 탭을 두고, 탭마다 목록이 바뀝니다. 목록 영역은{' '}
                 <strong>높이를 일정하게 두고 안에서만 스크롤</strong>되어, 위·아래 다른 블록과 레이아웃이 흔들리지 않습니다.
@@ -286,11 +317,22 @@ export function MyPageSpec() {
               </ul>
             </div>
 
-            <div>
-              <h3 className="text-sm font-bold text-blue-900 mb-2">5) 고객지원 · 탈퇴</h3>
+            <div id="mypage-tag-m04" className="scroll-mt-32">
+              <h3 className="text-sm font-bold text-blue-900 mb-2 flex flex-wrap items-center gap-2">
+                <span
+                  className="inline-flex h-6 min-w-[1.5rem] items-center justify-center rounded-full bg-amber-500 px-1.5 text-[10px] font-bold text-white shadow-sm"
+                  title="데모 화면과 동일 번호"
+                >
+                  M04
+                </span>
+                5) 고객지원 · 탈퇴
+              </h3>
               <ul className="space-y-2 text-sm text-gray-700 leading-relaxed list-disc pl-5">
                 <li>공지사항, 이용약관, 개인정보 처리방침, 의견 보내기를 한 블록에 모아, 행마다 오른쪽 화살표로 ‘다음 단계가 있다’는 느낌을 줍니다. (연결 동작은 서비스 정책에 맞게 구현)</li>
-                <li>
+                <li id="mypage-tag-m05" className="scroll-mt-32">
+                  <span className="inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-amber-500 px-1 text-[9px] font-bold text-white mr-1.5 align-middle" title="데모 화면과 동일 번호">
+                    M05
+                  </span>
                   맨 아래 <strong>탈퇴하기</strong>는 보조적인 회색 톤의 텍스트 링크로 두어, 실수로 누르기 어렵게 하되 찾을 수는 있게 합니다. 확인 후 비로그인 상태가 됩니다.
                 </li>
               </ul>

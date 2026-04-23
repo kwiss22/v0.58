@@ -9,6 +9,7 @@ import { Doctor } from '@/types/chat.types';
 import { communityPosts } from '@/constants/community-data';
 import type { CommunityPost } from '@/constants/community-data';
 import { useAppNavigation } from '../contexts/AppNavigationContext';
+import { useUser } from '../contexts/UserContext';
 import { useUsageLimitContext } from '../contexts/UsageLimitContext';
 import {
   HomeHeader,
@@ -19,6 +20,8 @@ import {
   HealthInfoCard,
   CommunityPostCard,
 } from './home';
+import { HomeDemoTagChip } from './tagMatching/HomeDemoTagChip';
+import { HOME_DEMO_TAG_MAP, type HomeDemoTagId } from './tagMatching/homeTabTagRegistry';
 
 interface HomePageProps {
   onNavigateToChat: () => void;
@@ -102,7 +105,26 @@ const allHealthArticles = [
 ];
 
 export function HomePage({ onNavigateToChat, onNavigateToCommunity }: HomePageProps) {
-  const { homeSelectedCategory, setHomeSelectedCategory, selectedDoctor, setSelectedDoctor } = useAppNavigation();
+  const {
+    homeSelectedCategory,
+    setHomeSelectedCategory,
+    selectedDoctor,
+    setSelectedDoctor,
+    setActiveTab,
+    openSpecSection,
+    pendingCommunityPostPreviewId,
+    clearPendingCommunityPostPreview,
+    pendingOpenReviewWriteOnProfile,
+    clearPendingOpenReviewWriteOnProfile,
+  } = useAppNavigation();
+
+  const { setRole } = useUser();
+  const navigateHomeSpecTag = (tagId: HomeDemoTagId) => {
+    const entry = HOME_DEMO_TAG_MAP[tagId];
+    setRole('guest');
+    setActiveTab('home');
+    openSpecSection({ tab: 'home', sectionId: entry.specSectionId });
+  };
   const { consumePostView, consumeProfileView } = useUsageLimitContext();
   const [showPostModal, setShowPostModal] = useState(false);
   const [visibleArticles, setVisibleArticles] = useState(() =>
@@ -116,6 +138,17 @@ export function HomePage({ onNavigateToChat, onNavigateToCommunity }: HomePagePr
   );
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  /** 공통 정의서 CM02 — 스펙 버튼으로 게시글 상세 열기 (조회 한도와 무관) */
+  useEffect(() => {
+    if (!pendingCommunityPostPreviewId) return;
+    const post = communityPosts.find((p) => p.id === pendingCommunityPostPreviewId);
+    if (post) {
+      setRandomPost(post);
+      setShowPostModal(true);
+    }
+    clearPendingCommunityPostPreview();
+  }, [pendingCommunityPostPreviewId, clearPendingCommunityPostPreview]);
 
   const topDoctors = getTopDoctors(6);
 
@@ -192,21 +225,47 @@ export function HomePage({ onNavigateToChat, onNavigateToCommunity }: HomePagePr
   return (
     <>
       <div className="h-full bg-gray-50 flex flex-col">
-        {/* Header */}
-        <HomeHeader />
+        {/* Header — H01 (우측은 App 레벨 통합검색 버튼과 겹치지 않게 왼쪽으로 배치) */}
+        <div className="relative shrink-0">
+          <HomeHeader />
+          <HomeDemoTagChip
+            tagId="H01"
+            onNavigate={navigateHomeSpecTag}
+            style={{ top: '0.875rem', right: '3.5rem' }}
+          />
+        </div>
 
-        {/* 사용량 제한 통합 배너 */}
-        <UsageLimitBanner types={['profileView', 'postView']} />
+        {/* 사용량 제한 통합 배너 — H02 */}
+        <div className="relative shrink-0">
+          <UsageLimitBanner types={['profileView', 'postView']} />
+          <HomeDemoTagChip
+            tagId="H02"
+            onNavigate={navigateHomeSpecTag}
+            style={{ top: '0.5rem', right: '0.5rem' }}
+          />
+        </div>
 
         {/* Scrollable Content */}
         <div ref={scrollContainerRef} className="flex-1 overflow-y-auto">
           <div className="max-w-2xl mx-auto p-4 space-y-6 pb-32">
-            {/* AI Chatbot Banner */}
-            <AigaBanner onClick={onNavigateToChat} />
+            {/* AI Chatbot Banner — H03 */}
+            <div className="relative">
+              <AigaBanner onClick={onNavigateToChat} />
+              <HomeDemoTagChip
+                tagId="H03"
+                onNavigate={navigateHomeSpecTag}
+                style={{ top: '0.5rem', right: '0.5rem' }}
+              />
+            </div>
 
-            {/* Disease Categories */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-bold text-gray-900">주요 질환 인기 명의</h3>
+            {/* Disease Categories — H04 */}
+            <div className="relative space-y-4">
+              <HomeDemoTagChip
+                tagId="H04"
+                onNavigate={navigateHomeSpecTag}
+                style={{ top: 0, right: 0 }}
+              />
+              <h3 className="text-lg font-bold text-gray-900 pr-14">주요 질환 인기 명의</h3>
               <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
                 {DISEASE_CATEGORIES.map((category) => (
                   <DiseaseTab
@@ -217,22 +276,26 @@ export function HomePage({ onNavigateToChat, onNavigateToCommunity }: HomePagePr
                   />
                 ))}
               </div>
+
+              <div className="space-y-3">
+                {displayDoctors.slice(0, 7).map((doctor) => (
+                  <PopularDoctorCard
+                    key={doctor.id}
+                    doctor={doctor}
+                    onClick={() => { const allowed = consumeProfileView(); if (!allowed) return; setSelectedDoctor(doctor); }}
+                  />
+                ))}
+              </div>
             </div>
 
-            {/* Top Doctors */}
-            <div className="space-y-3">
-              {displayDoctors.slice(0, 7).map((doctor) => (
-                <PopularDoctorCard
-                  key={doctor.id}
-                  doctor={doctor}
-                  onClick={() => { const allowed = consumeProfileView(); if (!allowed) return; setSelectedDoctor(doctor); }}
-                />
-              ))}
-            </div>
-
-            {/* 커뮤니티 추천글 */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
+            {/* 커뮤니티 추천글 — H05 */}
+            <div className="relative space-y-3">
+              <HomeDemoTagChip
+                tagId="H05"
+                onNavigate={navigateHomeSpecTag}
+                style={{ top: 0, right: 0 }}
+              />
+              <div className="flex items-center justify-between pr-14">
                 <h3 className="text-base text-gray-900" style={{ fontWeight: 700 }}>커뮤니티 추천글</h3>
                 <button
                   onClick={() => onNavigateToCommunity()}
@@ -260,9 +323,16 @@ export function HomePage({ onNavigateToChat, onNavigateToCommunity }: HomePagePr
               </div>
             </div>
 
-            {/* Health Info */}
-            <div className="space-y-4">
-              <SectionHeader title="건강 정보" />
+            {/* Health Info — H06 */}
+            <div className="relative space-y-4">
+              <HomeDemoTagChip
+                tagId="H06"
+                onNavigate={navigateHomeSpecTag}
+                style={{ top: 0, right: 0 }}
+              />
+              <div className="pr-14">
+                <SectionHeader title="건강 정보" />
+              </div>
               <div className="space-y-3">
                 {visibleArticles.map((article) => (
                   <HealthInfoCard
@@ -293,7 +363,12 @@ export function HomePage({ onNavigateToChat, onNavigateToCommunity }: HomePagePr
           <DoctorProfileModal
             doctor={selectedDoctor}
             isOpen={!!selectedDoctor}
-            onClose={() => setSelectedDoctor(null)}
+            onClose={() => {
+              setSelectedDoctor(null);
+              clearPendingOpenReviewWriteOnProfile();
+            }}
+            openReviewWriteOnMount={pendingOpenReviewWriteOnProfile}
+            onOpenReviewWriteConsumed={clearPendingOpenReviewWriteOnProfile}
           />
         )}
 

@@ -21,6 +21,8 @@ import { useAppNavigation } from '@/app/contexts/AppNavigationContext';
 import { useUsageLimitContext } from '@/app/contexts/UsageLimitContext';
 import { useUser } from '@/app/contexts/UserContext';
 import { UsageLimitBanner } from './UsageLimitBanner';
+import { SpecDemoTagChip } from './tagMatching/SpecDemoTagChip';
+import { DOCTOR_DEMO_TAG_MAP, type DoctorDemoTagId } from './tagMatching/doctorTabTagRegistry';
 
 const LOCATION_PERM_KEY = 'aiga_location_permission';
 const PAGE_SIZE = 10;
@@ -38,9 +40,14 @@ interface DoctorSearchPageProps {
 }
 
 export function DoctorSearchPage({ onNavigateToChat }: DoctorSearchPageProps = {}) {
-  const { doctorSearchQuery, setDoctorSearchQuery } = useAppNavigation();
+  const { doctorSearchQuery, setDoctorSearchQuery, setActiveTab, openSpecSection } = useAppNavigation();
+  const { isGuest, setRole } = useUser();
+  const navigateDoctorSpecTag = useCallback((tagId: DoctorDemoTagId) => {
+    setRole('guest');
+    setActiveTab('search');
+    openSpecSection({ tab: 'doctor', sectionId: DOCTOR_DEMO_TAG_MAP[tagId].specSectionId });
+  }, [setRole, setActiveTab, openSpecSection]);
   const { consumeSearch, consumeProfileView, searchRemaining, profileViewRemaining, canSearch, canViewProfile, openLimitModal } = useUsageLimitContext();
-  const { isGuest } = useUser();
   const [searchQuery, setSearchQuery] = useState(doctorSearchQuery ?? '');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState<any>(null);
@@ -269,9 +276,27 @@ export function DoctorSearchPage({ onNavigateToChat }: DoctorSearchPageProps = {
       {/* Header */}
       <div className="border-b border-gray-200 pb-4">
         <div className="max-w-3xl mx-auto space-y-4 pt-4 px-4">
-          <DoctorSearchHeader />
-          {/* 검색창 + 드롭다운을 relative 래퍼로 감싸기 */}
+          {/* D01 — 통합검색(앱)과 겹치지 않게 우측 여백 */}
           <div className="relative">
+            <DoctorSearchHeader />
+            <SpecDemoTagChip
+              tagId="D01"
+              onNavigate={(id) => navigateDoctorSpecTag(id as DoctorDemoTagId)}
+              style={{ top: '0.25rem', right: '3.5rem' }}
+            />
+          </div>
+          {/* 검색창 + 드롭다운 — D02·D03은 앱 통합검색 아이콘과 겹치지 않게 우측 inset */}
+          <div className="relative min-h-[2.75rem]">
+            <SpecDemoTagChip
+              tagId="D02"
+              onNavigate={(id) => navigateDoctorSpecTag(id as DoctorDemoTagId)}
+              style={{ top: 0, right: '3.5rem' }}
+            />
+            <SpecDemoTagChip
+              tagId="D03"
+              onNavigate={(id) => navigateDoctorSpecTag(id as DoctorDemoTagId)}
+              style={{ top: '2.875rem', right: '3.5rem' }}
+            />
             <SearchInput
               value={searchQuery}
               onChange={setSearchQuery}
@@ -289,7 +314,16 @@ export function DoctorSearchPage({ onNavigateToChat }: DoctorSearchPageProps = {
               />
             )}
           </div>
-          <CategoryFilter onFilterChange={setCategoryFilters} />
+          <div className="relative">
+            <SpecDemoTagChip
+              tagId="D04"
+              onNavigate={(id) => navigateDoctorSpecTag(id as DoctorDemoTagId)}
+              style={{ top: 0, right: 0 }}
+            />
+            <div className="pr-10">
+              <CategoryFilter onFilterChange={setCategoryFilters} />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -300,8 +334,13 @@ export function DoctorSearchPage({ onNavigateToChat }: DoctorSearchPageProps = {
           <UsageLimitBanner types={['search', 'profileView']} />
         )}
 
-        <div className="px-4 py-3 border-b border-gray-100">
-          <div className="max-w-3xl mx-auto">
+        <div className="relative px-4 py-3 border-b border-gray-100">
+          <SpecDemoTagChip
+            tagId="D05"
+            onNavigate={(id) => navigateDoctorSpecTag(id as DoctorDemoTagId)}
+            style={{ top: '0.5rem', right: '1rem' }}
+          />
+          <div className="max-w-3xl mx-auto pr-12">
             <ResultsHeader
               count={sortedDoctors.length}
               currentSort={sortBy}
@@ -312,9 +351,21 @@ export function DoctorSearchPage({ onNavigateToChat }: DoctorSearchPageProps = {
 
         <div className="max-w-3xl mx-auto pb-20">
           {isLoading ? (
-            <DoctorCardSkeletonList count={PAGE_SIZE} />
+            <div className="relative">
+              <SpecDemoTagChip
+                tagId="D06"
+                onNavigate={(id) => navigateDoctorSpecTag(id as DoctorDemoTagId)}
+                style={{ top: '0.25rem', right: '1rem' }}
+              />
+              <DoctorCardSkeletonList count={PAGE_SIZE} />
+            </div>
           ) : sortedDoctors.length > 0 ? (
-            <>
+            <div className="relative">
+              <SpecDemoTagChip
+                tagId="D06"
+                onNavigate={(id) => navigateDoctorSpecTag(id as DoctorDemoTagId)}
+                style={{ top: '0.25rem', right: '1rem' }}
+              />
               {visibleDoctors.map((doctor) => (
                 <DoctorCard
                   key={doctor.id}
@@ -345,10 +396,15 @@ export function DoctorSearchPage({ onNavigateToChat }: DoctorSearchPageProps = {
                   </div>
                 </div>
               )}
-            </>
+            </div>
           ) : (
-            <div className="py-8 px-4">
-              <div className="text-center mb-8">
+            <div className="relative py-8 px-4">
+              <SpecDemoTagChip
+                tagId="D07"
+                onNavigate={(id) => navigateDoctorSpecTag(id as DoctorDemoTagId)}
+                style={{ top: '0.5rem', right: '1rem' }}
+              />
+              <div className="text-center mb-8 pr-10">
                 <div className="flex justify-center mb-4">
                   <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
                     <SearchX className="w-8 h-8 text-gray-400" />

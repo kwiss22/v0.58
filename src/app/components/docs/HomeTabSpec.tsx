@@ -29,6 +29,9 @@ export function HomeTabSpec() {
             <li><strong>다루는 것:</strong> 영역 구획, 시각적 패턴, 터치·스크롤·모달 등 사용자 경험, 회원/비회원 구분 같은 정책 방향.</li>
             <li><strong>참고만 하는 것:</strong> 옆에 띄운 <strong>시범·데모 화면</strong>의 배치와 동작. 화면에 보이는 숫자·글·명의·게시글 목록은 <strong>가짜 예시</strong>이므로, 실제 서비스의 순위·노출 방식과 같다고 보지 않습니다.</li>
             <li><strong>실서비스:</strong> 어떤 글·의사가 올라올지, 한도 숫자 등은 시스템·운영 정책에 따르며, 본 문서는 그때 화면이 어떻게 보이고 사용자에게 어떻게 보여야 하는지를 적습니다.</li>
+            <li>
+              <strong>데모 번호(H01~H06):</strong> 시범 화면 왼쪽의 동그란 번호와 이 문서의 동일 번호 블록이 서로 짝입니다. 번호를 누르면 이쪽으로 스크롤됩니다.
+            </li>
           </ul>
         </div>
         <div className="bg-blue-50 border border-blue-200 rounded-xl px-3 py-3">
@@ -61,7 +64,7 @@ export function HomeTabSpec() {
         {/* ───── 2. 화면 구성 ───── */}
         <Section id="layout" title="2. 화면 구성 (위에서 아래 순서)" color="indigo">
 
-          <SubSection label="구역 1" title="상단 헤더">
+          <SubSection label="구역 1" title="상단 헤더" specAnchorId="home-tag-h01" tagCode="H01">
             <div className="mb-3 bg-blue-50 border border-blue-200 rounded-xl px-3 py-2">
               <p className="text-xs font-bold text-blue-800 mb-1">🔍 통합 검색 — 화면 배치 (시범 화면과 동일)</p>
               <p className="text-xs text-blue-900">
@@ -78,7 +81,14 @@ export function HomeTabSpec() {
             />
           </SubSection>
 
-          <SubSection label="구역 2" title="AI 챗봇 배너">
+          <SubSection label="배너" title="사용량 안내 배너" specAnchorId="home-tag-h02" tagCode="H02">
+            <p className="text-xs text-gray-700 leading-relaxed">
+              로고·헤더 바로 아래에 붙는 <strong>전역 사용량·한도 안내</strong> 줄입니다. 비회원·회원에 따라 문구가 달라질 수 있으며, 시범
+              화면에서는 노란/주황 배너 형태로 표시됩니다.
+            </p>
+          </SubSection>
+
+          <SubSection label="구역 2" title="AI 챗봇 배너" specAnchorId="home-tag-h03" tagCode="H03">
             <Table
               headers={['요소', '설명', '비고']}
               rows={[
@@ -99,7 +109,7 @@ export function HomeTabSpec() {
             </div>
           </SubSection>
 
-          <SubSection label="구역 3" title="주요 질환 인기 명의">
+          <SubSection label="구역 3" title="주요 질환 인기 명의" specAnchorId="home-tag-h04" tagCode="H04">
             <Table
               headers={['요소', '설명', '비고']}
               rows={[
@@ -160,7 +170,7 @@ export function HomeTabSpec() {
             </div>
           </SubSection>
 
-          <SubSection label="구역 4" title="커뮤니티 추천글 가로 스크롤">
+          <SubSection label="구역 4" title="커뮤니티 추천글 가로 스크롤" specAnchorId="home-tag-h05" tagCode="H05">
             <Table
               headers={['요소', '설명', '비고']}
               rows={[
@@ -243,7 +253,7 @@ export function HomeTabSpec() {
             </div>
           </SubSection>
 
-          <SubSection label="구역 5" title="건강 정보 — 외부 소스 실시간 무한 스크롤">
+          <SubSection label="구역 5" title="건강 정보 — 외부 소스 실시간 무한 스크롤" specAnchorId="home-tag-h06" tagCode="H06">
             <div className="mb-3 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3">
               <p className="text-sm font-bold text-blue-800 mb-1">🔄 변경 — 코메디닷컴 등 외부에서 실시간으로 기사 가져오기</p>
               <p className="text-xs text-blue-900">건강 정보를 코메디닷컴 같은 외부 건강 미디어에서 실시간으로 가져와 표시합니다. 스크롤을 내릴 때마다 계속해서 새로운 기사가 추가되는 무한 스크롤입니다.</p>
@@ -484,13 +494,38 @@ function Section({ id, title, color, children }: { id: string; title: string; co
   );
 }
 
-function SubSection({ label, title, children }: { label: string; title: string; children: React.ReactNode }) {
+function SubSection({
+  label,
+  title,
+  children,
+  specAnchorId,
+  tagCode,
+}: {
+  label: string;
+  title: string;
+  children: React.ReactNode;
+  /** 데모 번호 탭과 동일한 스크롤 앵커 */
+  specAnchorId?: string;
+  /** 데모 화면 번호 배지 (예: H01) */
+  tagCode?: string;
+}) {
   const { navigateToCommonSpec } = useAppNavigation();
   const isCommonComponentLink = title.includes('🔗 공통 UI');
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-3.5">
-      <div className="flex items-center gap-2 mb-3">
+    <div
+      id={specAnchorId}
+      className={`bg-white rounded-lg border border-gray-200 p-3.5 ${specAnchorId ? 'scroll-mt-32' : ''}`}
+    >
+      <div className="flex items-center gap-2 mb-3 flex-wrap">
+        {tagCode && (
+          <span
+            className="inline-flex h-6 min-w-[1.5rem] items-center justify-center rounded-full bg-amber-500 px-1.5 text-[10px] font-bold text-white shadow-sm"
+            title="데모 화면과 동일 번호"
+          >
+            {tagCode}
+          </span>
+        )}
         <span className="bg-gray-800 text-white text-xs font-bold px-2 py-0.5 rounded flex-shrink-0">{label}</span>
         {isCommonComponentLink ? (
           <button

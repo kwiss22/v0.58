@@ -3,6 +3,9 @@
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import type { Doctor } from '@/types/chat.types';
 
+/** 공통 스펙 CM02 — 라이브에서 열 게시글 id (community-data) */
+export const COMMON_PREVIEW_COMMUNITY_POST_ID = '1';
+
 export type Tab = 'home' | 'chat' | 'search' | 'community' | 'mypage';
 export type HomeSubTab = 'popular' | 'department' | 'findDoctor';
 export type SpecTab =
@@ -51,6 +54,14 @@ interface AppNavigationState {
   navigateToCommunity: (searchQuery?: string) => void;
   navigateToMyPage: () => void;
   openDoctorProfile: (doctor: Doctor) => void;
+  /** 홈 + 의사 프로필 + 리뷰 작성 모달까지 (CM03, 회원 전제 — 호출부에서 setRole) */
+  openDoctorProfileWithReviewWrite: (doctor: Doctor) => void;
+  /** 홈 + 커뮤니티 게시글 상세 모달 (CM02, UsageLimit 우회는 HomePage에서 처리) */
+  requestCommunityPostPreview: (postId: string) => void;
+  pendingCommunityPostPreviewId: string | null;
+  clearPendingCommunityPostPreview: () => void;
+  pendingOpenReviewWriteOnProfile: boolean;
+  clearPendingOpenReviewWriteOnProfile: () => void;
   navigateToCommonSpec: () => void;
 
   pendingSpecSectionId: string | null;
@@ -68,6 +79,8 @@ export function AppNavigationProvider({ children }: { children: ReactNode }) {
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
   const [specTab, setSpecTab] = useState<SpecTab>('home');
   const [pendingSpecSectionId, setPendingSpecSectionId] = useState<string | null>(null);
+  const [pendingCommunityPostPreviewId, setPendingCommunityPostPreviewId] = useState<string | null>(null);
+  const [pendingOpenReviewWriteOnProfile, setPendingOpenReviewWriteOnProfile] = useState(false);
 
   const [globalSearchQuery, setGlobalSearchQuery] = useState<string>('');
   const [isGlobalSearchOpen, setIsGlobalSearchOpen] = useState<boolean>(false);
@@ -112,9 +125,29 @@ export function AppNavigationProvider({ children }: { children: ReactNode }) {
   };
 
   const openDoctorProfile = (doctor: Doctor) => {
+    setPendingOpenReviewWriteOnProfile(false);
     setSelectedDoctor(doctor);
     setActiveTab('home');
   };
+
+  const openDoctorProfileWithReviewWrite = useCallback((doctor: Doctor) => {
+    setSelectedDoctor(doctor);
+    setActiveTab('home');
+    setPendingOpenReviewWriteOnProfile(true);
+  }, []);
+
+  const requestCommunityPostPreview = useCallback((postId: string) => {
+    setPendingCommunityPostPreviewId(postId);
+    setActiveTab('home');
+  }, []);
+
+  const clearPendingCommunityPostPreview = useCallback(() => {
+    setPendingCommunityPostPreviewId(null);
+  }, []);
+
+  const clearPendingOpenReviewWriteOnProfile = useCallback(() => {
+    setPendingOpenReviewWriteOnProfile(false);
+  }, []);
 
   const navigateToCommonSpec = () => {
     setSpecTab('common');
@@ -160,6 +193,12 @@ export function AppNavigationProvider({ children }: { children: ReactNode }) {
         navigateToCommunity,
         navigateToMyPage,
         openDoctorProfile,
+        openDoctorProfileWithReviewWrite,
+        requestCommunityPostPreview,
+        pendingCommunityPostPreviewId,
+        clearPendingCommunityPostPreview,
+        pendingOpenReviewWriteOnProfile,
+        clearPendingOpenReviewWriteOnProfile,
         specTab,
         setSpecTab,
         navigateToCommonSpec,

@@ -120,7 +120,13 @@ function StateCard({ title, condition, ui, sub, color = 'gray', isNew }: {
 export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
 
   /** 검증 시나리오 분류(기획·검증용 표기 — 내부 코드명 사용 안 함) */
-  type ScenarioKind = '질환·진료과 검색' | '병원명 검색' | '증상·상담형 질문';
+  type ScenarioKind =
+    | '질환·진료과 검색'
+    | '병원명 검색'
+    | '증상·상담형 질문'
+    | '복합어·공백(다중 토큰)'
+    | '커뮤니티 우선(탭·카운트)'
+    | '결과 없음';
 
   const scenarios: {
     label: string;
@@ -136,12 +142,55 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
     { label: '진료과 검색', keyword: '소화기내과', expects: ['명의', '게시글'], desc: '소화기내과 전문 명의', kind: '질환·진료과 검색', status: '✅' },
     { label: '병원 검색 2', keyword: '세브란스', expects: ['병원', '게시글'], desc: '세브란스 병원 + 게시글', kind: '병원명 검색', status: '✅' },
     { label: '증상어 감지', keyword: '배가 아파요', expects: [], desc: 'Aiga 챗봇 연결 화면 — 검색 결과 미표시', kind: '증상·상담형 질문', status: '✅' },
+    {
+      label: '복합어·공백',
+      keyword: '소화기 내과',
+      expects: ['명의', '게시글'],
+      desc: '공백으로 나뉜 토큰을 각각 AND(명의·게시글 필드에서) 매칭 — 풀네임「소화기내과」와 다른 입력 패턴',
+      kind: '복합어·공백(다중 토큰)',
+      status: '✅',
+    },
+    {
+      label: '병원 부분 일치',
+      keyword: '아산',
+      expects: ['병원', '게시글'],
+      desc: '정식 명칭 전체가 아닌 짧은 부분 문자열로 병원 카드·관련 게시글 노출',
+      kind: '병원명 검색',
+      status: '✅',
+    },
+    {
+      label: '증상어 감지 2',
+      keyword: '머리가 아파요',
+      expects: [],
+      desc: '배가 아파요와 다른 분기 — 증상형 문장·챗봇 유도 화면',
+      kind: '증상·상담형 질문',
+      status: '✅',
+    },
+    {
+      label: '커뮤니티 치우침',
+      keyword: '첫 댓글',
+      expects: ['커뮤니티'],
+      desc: '명의·병원 탭 없이 커뮤니티 탭·카운트만 확인(더미 게시글 요약)',
+      kind: '커뮤니티 우선(탭·카운트)',
+      status: '✅',
+    },
+    {
+      label: '결과 없음',
+      keyword: '검색결과없음xyz123',
+      expects: ['결과 없음'],
+      desc: '더미에 매칭 없음 → 빈 결과 UI; 실데이터 전환 시 §9 밖 상태 시나리오로 이관 가능',
+      kind: '결과 없음',
+      status: '✅',
+    },
   ];
 
   const kindTagColor: Record<ScenarioKind, 'blue' | 'teal' | 'violet'> = {
     '증상·상담형 질문': 'blue',
     '병원명 검색': 'teal',
     '질환·진료과 검색': 'violet',
+    '복합어·공백(다중 토큰)': 'violet',
+    '커뮤니티 우선(탭·카운트)': 'teal',
+    '결과 없음': 'blue',
   };
 
   return (
@@ -872,7 +921,19 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
                   <span className="text-[11px] text-gray-400">예상:</span>
                   {s.expects.length > 0 ? s.expects.map((e) => (
                     <Fragment key={e}>
-                      <Tag color={e === '명의' ? 'teal' : e === '병원' ? 'blue' : 'purple'}>{e}</Tag>
+                      <Tag
+                        color={
+                          e === '명의'
+                            ? 'teal'
+                            : e === '병원'
+                              ? 'blue'
+                              : e === '결과 없음'
+                                ? 'gray'
+                                : 'purple'
+                        }
+                      >
+                        {e}
+                      </Tag>
                     </Fragment>
                   )) : <Tag color="blue">챗봇 연결</Tag>}
                   <span className="text-[11px] text-gray-400 ml-1">— {s.desc}</span>
@@ -880,6 +941,11 @@ export function SearchScenarioSpec({ onTestSearch }: SearchScenarioSpecProps) {
               </div>
             ))}
           </div>
+
+          <Note>
+            <strong>빈·근사 빈 결과:</strong> 위 «결과 없음» 키워드는 현재 더미 데이터에 의도적으로 매칭되지 않습니다. 실제/스테이징에서 항상 히트가 나오면 §9 대신{' '}
+            <strong>상태·한도 시나리오</strong> 문서에서 빈 결과·유도 UI를 검증하세요.
+          </Note>
 
           <div className="mt-3 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-[11px] text-gray-500">
             이 시나리오는 <strong className="text-gray-700">화면정의서에서만 관리</strong>됩니다. 실제 서비스 화면에 표시되지 않습니다.

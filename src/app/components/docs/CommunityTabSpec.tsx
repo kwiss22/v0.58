@@ -25,9 +25,12 @@ export function CommunityTabSpec() {
         {/* 1. 개요 */}
         <section id="community-overview" className="scroll-mt-36 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <h2 className="text-xl font-bold text-gray-900 mb-4 pb-3 border-b border-gray-200">📌 개요</h2>
-          <div className="mb-4 bg-amber-50 border border-amber-200 rounded-lg p-4 text-xs text-amber-900 leading-relaxed">
+          <div className="mb-4 bg-amber-50 border border-amber-200 rounded-lg p-4 text-xs text-amber-900 leading-relaxed space-y-1">
             <p className="font-bold text-amber-950 mb-1">문서 범위</p>
             <p>본 문서는 <strong>UI/UX·정책·인터랙션</strong>을 정의합니다. 옆 <strong>데모 화면</strong>의 게시글·숫자·댓글 등은 <strong>더미</strong>이며 실제 서비스 데이터와 동일하지 않습니다. API·신고 처리·저장소 등은 실서비스 설계에 맞게 별도 확정합니다.</p>
+            <p>
+              <span className="font-bold">데모 번호(C01~C08):</span> 시범 화면의 동그란 번호와 이 문서의 동일 번호 블록이 짝입니다. 번호를 누르면 이쪽으로 스크롤됩니다. (C07은 상세가 모달·공통 탭 연결이라 피드에는 번호가 없을 수 있습니다.)
+            </p>
           </div>
           <div className="space-y-3 text-sm text-gray-700">
             <p>
@@ -61,8 +64,14 @@ export function CommunityTabSpec() {
           <div className="space-y-8">
 
             {/* 2.1 헤더 */}
-            <div>
-              <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+            <div id="community-tag-c01" className="scroll-mt-32">
+              <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2 flex-wrap">
+                <span
+                  className="inline-flex h-6 min-w-[1.5rem] items-center justify-center rounded-full bg-amber-500 px-1.5 text-[10px] font-bold text-white shadow-sm"
+                  title="데모 화면과 동일 번호"
+                >
+                  C01
+                </span>
                 <span className="w-6 h-6 bg-purple-100 text-purple-700 rounded-full flex items-center justify-center text-xs font-bold">1</span>
                 헤더
               </h3>
@@ -85,8 +94,14 @@ export function CommunityTabSpec() {
             </div>
 
             {/* 2.2 카테고리 필터 */}
-            <div>
-              <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+            <div id="community-tag-c02" className="scroll-mt-32">
+              <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2 flex-wrap">
+                <span
+                  className="inline-flex h-6 min-w-[1.5rem] items-center justify-center rounded-full bg-amber-500 px-1.5 text-[10px] font-bold text-white shadow-sm"
+                  title="데모 화면과 동일 번호"
+                >
+                  C02
+                </span>
                 <span className="w-6 h-6 bg-purple-100 text-purple-700 rounded-full flex items-center justify-center text-xs font-bold">2</span>
                 카테고리 필터
               </h3>
@@ -177,8 +192,14 @@ export function CommunityTabSpec() {
             </div>
 
             {/* 2.3 헤더~피드 사이 배너 */}
-            <div>
-              <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+            <div id="community-tag-c03" className="scroll-mt-32">
+              <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2 flex-wrap">
+                <span
+                  className="inline-flex h-6 min-w-[1.5rem] items-center justify-center rounded-full bg-amber-500 px-1.5 text-[10px] font-bold text-white shadow-sm"
+                  title="데모 화면과 동일 번호"
+                >
+                  C03
+                </span>
                 <span className="w-6 h-6 bg-purple-100 text-purple-700 rounded-full flex items-center justify-center text-xs font-bold">3</span>
                 헤더 하단 배너 영역
               </h3>
@@ -237,8 +258,14 @@ export function CommunityTabSpec() {
             </div>
 
             {/* 2.4 피드 목록 헤더 (총 건수 + 정렬) */}
-            <div>
-              <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+            <div id="community-tag-c04" className="scroll-mt-32">
+              <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2 flex-wrap">
+                <span
+                  className="inline-flex h-6 min-w-[1.5rem] items-center justify-center rounded-full bg-amber-500 px-1.5 text-[10px] font-bold text-white shadow-sm"
+                  title="데모 화면과 동일 번호"
+                >
+                  C04
+                </span>
                 <span className="w-6 h-6 bg-purple-100 text-purple-700 rounded-full flex items-center justify-center text-xs font-bold">4</span>
                 피드 목록 헤더 (총 건수 + 정렬)
               </h3>
@@ -266,8 +293,14 @@ export function CommunityTabSpec() {
             </div>
 
             {/* 2.5 유저 필터 배너 */}
-            <div>
-              <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+            <div id="community-tag-c05" className="scroll-mt-32">
+              <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2 flex-wrap">
+                <span
+                  className="inline-flex h-6 min-w-[1.5rem] items-center justify-center rounded-full bg-amber-500 px-1.5 text-[10px] font-bold text-white shadow-sm"
+                  title="데모 화면과 동일 번호"
+                >
+                  C05
+                </span>
                 <span className="w-6 h-6 bg-purple-100 text-purple-700 rounded-full flex items-center justify-center text-xs font-bold">5</span>
                 유저 필터 배너 (조건부)
               </h3>
@@ -378,8 +411,14 @@ export function CommunityTabSpec() {
             </div>
 
             {/* 2.6 게시글 카드 (목록) */}
-            <div>
-              <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+            <div id="community-tag-c06" className="scroll-mt-32">
+              <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2 flex-wrap">
+                <span
+                  className="inline-flex h-6 min-w-[1.5rem] items-center justify-center rounded-full bg-amber-500 px-1.5 text-[10px] font-bold text-white shadow-sm"
+                  title="데모 화면과 동일 번호"
+                >
+                  C06
+                </span>
                 <span className="w-6 h-6 bg-purple-100 text-purple-700 rounded-full flex items-center justify-center text-xs font-bold">6</span>
                 게시글 카드 (목록)
               </h3>
@@ -459,8 +498,14 @@ export function CommunityTabSpec() {
             </div>
 
             {/* 2.7 게시글 상세 화면 */}
-            <div>
-              <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+            <div id="community-tag-c07" className="scroll-mt-32">
+              <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2 flex-wrap">
+                <span
+                  className="inline-flex h-6 min-w-[1.5rem] items-center justify-center rounded-full bg-amber-500 px-1.5 text-[10px] font-bold text-white shadow-sm"
+                  title="데모 화면과 동일 번호"
+                >
+                  C07
+                </span>
                 <span className="w-6 h-6 bg-purple-100 text-purple-700 rounded-full flex items-center justify-center text-xs font-bold">7</span>
                 게시글 상세 화면 (게시글 상세(피드))
               </h3>
@@ -483,8 +528,14 @@ export function CommunityTabSpec() {
             </div>
 
             {/* 2.8 글쓰기 FAB */}
-            <div>
-              <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+            <div id="community-tag-c08" className="scroll-mt-32">
+              <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2 flex-wrap">
+                <span
+                  className="inline-flex h-6 min-w-[1.5rem] items-center justify-center rounded-full bg-amber-500 px-1.5 text-[10px] font-bold text-white shadow-sm"
+                  title="데모 화면과 동일 번호"
+                >
+                  C08
+                </span>
                 <span className="w-6 h-6 bg-purple-100 text-purple-700 rounded-full flex items-center justify-center text-xs font-bold">8</span>
                 글쓰기 버튼 (우하단 둥근 버튼)
               </h3>

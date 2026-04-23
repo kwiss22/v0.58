@@ -15,7 +15,7 @@ import {
   Star,
   CheckCircle2,
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useUser } from '@/app/contexts/UserContext';
 import { useAppNavigation } from '@/app/contexts/AppNavigationContext';
 import { useSavedDoctors } from '@/hooks/useSavedDoctors';
@@ -26,6 +26,8 @@ import { getDoctorById } from '@/constants/doctor-data';
 import type { CommunityPost } from '@/constants/community-data';
 import { communityPosts } from '@/constants/community-data';
 import { checkNicknameAvailableMock, isValidNickname } from '@/utils/nicknameValidation';
+import { SpecDemoTagChip } from '@/app/components/tagMatching/SpecDemoTagChip';
+import { MY_PAGE_MEMBER_DEMO_TAG_MAP, type MyPageMemberDemoTagId } from '@/app/components/tagMatching/myPageMemberTabRegistry';
 
 interface MyPost {
   id: string;
@@ -229,7 +231,22 @@ function resolvePostForComment(comment: Comment, posts: MyPost[], nickname: stri
 
 export function MyPage() {
   const { isGuest, isMember, setRole, user } = useUser();
-  const { navigateToPreviousTab, navigateToChat, navigateToDoctorSearch } = useAppNavigation();
+  const {
+    navigateToPreviousTab,
+    navigateToChat,
+    navigateToDoctorSearch,
+    setActiveTab: setAppActiveTab,
+    openSpecSection,
+  } = useAppNavigation();
+
+  const navigateMyPageMemberSpecTag = useCallback(
+    (tagId: MyPageMemberDemoTagId) => {
+      setRole('member');
+      setAppActiveTab('mypage');
+      openSpecSection({ tab: 'mypage-spec', sectionId: MY_PAGE_MEMBER_DEMO_TAG_MAP[tagId].specSectionId });
+    },
+    [setRole, setAppActiveTab, openSpecSection],
+  );
   const { isSaved, toggleSave, savedDoctors: savedDoctorsList, removeDoctor } = useSavedDoctors();
   const [nickname, setNickname] = useState('팔팔9988');
   /** 서버(또는 목)에 반영된 마지막 닉네임 — 성공 저장 후 갱신 */
@@ -779,10 +796,10 @@ export function MyPage() {
 
   return (
     <div className="h-screen flex flex-col bg-white">
-      {/* Header - Fixed */}
+      {/* Header — 회원 데모 번호는 본문 블록(M01~)에만 표시 */}
       <div className="flex-shrink-0">
         <div className="max-w-2xl mx-auto bg-blue-600 px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-semibold text-white">마이페이지</h1>
+          <h1 className="text-xl font-semibold text-white pr-12">마이페이지</h1>
         </div>
       </div>
 
@@ -833,24 +850,38 @@ export function MyPage() {
       {isMember && (
         <div className="flex-1 overflow-y-auto">
           <div className="max-w-2xl mx-auto p-6 space-y-6 pb-24">
-            {/* Email Display with Logout */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
+            {/* M01 프로필 요약 — 데모 번호는 로그아웃과 같은 줄·흐름 배치(absolute 겹침 방지) */}
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex min-w-0 flex-1 items-center gap-3">
+                <div className="w-10 h-10 shrink-0 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
                   <User className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-sm text-gray-700">fassionmap@kakao.com</span>
+                <span className="truncate text-sm text-gray-700">fassionmap@kakao.com</span>
               </div>
-              <button
-                onClick={handleLogout}
-                className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <LogOut className="w-5 h-5 text-gray-600" />
-              </button>
+              <div className="flex shrink-0 items-center gap-2">
+                <SpecDemoTagChip
+                  tagId="M01"
+                  onNavigate={(id) => navigateMyPageMemberSpecTag(id as MyPageMemberDemoTagId)}
+                  className="!relative !left-auto !right-auto !top-auto"
+                />
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors hover:bg-gray-100"
+                  aria-label="로그아웃"
+                >
+                  <LogOut className="h-5 w-5 text-gray-600" />
+                </button>
+              </div>
             </div>
 
-            {/* Nickname Setting */}
-            <div className="space-y-3">
+            {/* M02 닉네임 */}
+            <div className="relative space-y-3 pr-12">
+              <SpecDemoTagChip
+                tagId="M02"
+                onNavigate={(id) => navigateMyPageMemberSpecTag(id as MyPageMemberDemoTagId)}
+                style={{ top: 0, right: '3.5rem' }}
+              />
               <label className="block text-sm font-medium text-gray-900">
                 닉네임 <span className="text-red-500">(필수)</span>
               </label>
@@ -881,10 +912,14 @@ export function MyPage() {
               </button>
             </div>
 
-            {/* 내 활동 Section Title */}
-            <div className="pt-2">
-              <h3 className="text-sm font-bold text-gray-900 mb-3">내 활동</h3>
-            </div>
+            {/* M03 내 활동 (제목 + 탭 카드) */}
+            <div className="relative pt-2">
+              <SpecDemoTagChip
+                tagId="M03"
+                onNavigate={(id) => navigateMyPageMemberSpecTag(id as MyPageMemberDemoTagId)}
+                style={{ top: 0, right: 0 }}
+              />
+              <h3 className="text-sm font-bold text-gray-900 mb-3 pr-14">내 활동</h3>
 
             {/* Tab Navigation */}
             <div className="bg-white rounded-xl overflow-hidden border border-gray-200 w-full">
@@ -1190,9 +1225,15 @@ export function MyPage() {
                 )}
               </div>
             </div>
+            </div>
 
-            {/* Customer Support */}
-            <div>
+            {/* M04 고객지원 */}
+            <div className="relative pr-12">
+              <SpecDemoTagChip
+                tagId="M04"
+                onNavigate={(id) => navigateMyPageMemberSpecTag(id as MyPageMemberDemoTagId)}
+                style={{ top: 0, right: '3.5rem' }}
+              />
               <h3 className="text-sm font-bold text-gray-900 mb-3">고객지원</h3>
               <div className="space-y-2">
                 <button
@@ -1249,13 +1290,21 @@ export function MyPage() {
               </div>
             </div>
 
-            {/* Withdrawal Button */}
-            <button
-              onClick={handleWithdrawal}
-              className="w-full text-center py-3 text-sm text-gray-500 hover:text-gray-700 underline transition-colors"
-            >
-              탈퇴하기
-            </button>
+            {/* M05 탈퇴하기 */}
+            <div className="relative py-1">
+              <SpecDemoTagChip
+                tagId="M05"
+                onNavigate={(id) => navigateMyPageMemberSpecTag(id as MyPageMemberDemoTagId)}
+                style={{ top: '0.15rem', right: 0 }}
+              />
+              <button
+                type="button"
+                onClick={handleWithdrawal}
+                className="w-full text-center py-3 pr-10 text-sm text-gray-500 hover:text-gray-700 underline transition-colors"
+              >
+                탈퇴하기
+              </button>
+            </div>
           </div>
         </div>
       )}

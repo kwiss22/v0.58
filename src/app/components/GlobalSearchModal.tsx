@@ -66,8 +66,50 @@ const SEARCH_ALIASES: Record<string, string[]> = {
   '목디스크': ['디스크', '척추'],
 };
 
-function getSearchTerms(q: string): string[] {
-  return [q, ...(SEARCH_ALIASES[q] || [])];
+function getSearchTokens(q: string): string[] {
+  return q.trim().toLowerCase().split(/\s+/).filter(Boolean);
+}
+
+function doctorMatchesQuery(d: (typeof DOCTORS)[number], q: string): boolean {
+  const tokens = getSearchTokens(q);
+  if (tokens.length === 0) return false;
+  const matchTerm = (term: string) =>
+    d.name.toLowerCase().includes(term) ||
+    d.hospital.toLowerCase().includes(term) ||
+    d.specialty.toLowerCase().includes(term) ||
+    (d.diseaseArea || '').toLowerCase().includes(term) ||
+    (d.tags || []).some((t) => t.toLowerCase().includes(term));
+
+  if (tokens.length === 1) {
+    const expanded = [tokens[0], ...(SEARCH_ALIASES[tokens[0]] || [])];
+    return expanded.some(matchTerm);
+  }
+  return tokens.every(matchTerm);
+}
+
+function hospitalNameMatchesQuery(h: { name: string }, q: string): boolean {
+  const tokens = getSearchTokens(q);
+  if (tokens.length === 0) return false;
+  const n = h.name.toLowerCase();
+  if (tokens.length === 1) return n.includes(q.trim().toLowerCase());
+  return tokens.every((t) => n.includes(t));
+}
+
+function postMatchesQuery(p: CommunityPost, q: string): boolean {
+  const tokens = getSearchTokens(q);
+  if (tokens.length === 0) return false;
+  const matchTerm = (term: string) =>
+    p.title.toLowerCase().includes(term) ||
+    (postPlainBodyText(p) || '').toLowerCase().includes(term) ||
+    (p.disease || '').toLowerCase().includes(term) ||
+    p.department.toLowerCase().includes(term) ||
+    (p.relatedDoctors || []).some((name) => name.toLowerCase().includes(term));
+
+  if (tokens.length === 1) {
+    const expanded = [tokens[0], ...(SEARCH_ALIASES[tokens[0]] || [])];
+    return expanded.some(matchTerm);
+  }
+  return tokens.every(matchTerm);
 }
 
 // ─── 증상어 판별 ──────────────────────────────────────────────────────────────
@@ -206,44 +248,24 @@ export function GlobalSearchModal({
   }, [q]);
 
   // ── 검색 결과 ──
-  const searchTerms = getSearchTerms(q);
   const isSymptomQuery = detectSymptomQuery(q);
 
-  const doctorResults = useMemo(() =>
-    q && !isSymptomQuery
-      ? DOCTORS.filter((d) =>
-          searchTerms.some((term) =>
-            d.name.toLowerCase().includes(term) ||
-            d.hospital.toLowerCase().includes(term) ||
-            d.specialty.toLowerCase().includes(term) ||
-            (d.diseaseArea || '').toLowerCase().includes(term) ||
-            (d.tags || []).some((t) => t.toLowerCase().includes(term))
-          )
-        )
-      : [],
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  [q, isSymptomQuery]);
+  const doctorResults = useMemo(
+    () => (q && !isSymptomQuery ? DOCTORS.filter((d) => doctorMatchesQuery(d, q)) : []),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [q, isSymptomQuery],
+  );
 
-  const hospitalResults = useMemo(() =>
-    q && !isSymptomQuery
-      ? ALL_HOSPITALS.filter((h) => h.name.toLowerCase().includes(q))
-      : [],
-  [q, isSymptomQuery]);
+  const hospitalResults = useMemo(
+    () => (q && !isSymptomQuery ? ALL_HOSPITALS.filter((h) => hospitalNameMatchesQuery(h, q)) : []),
+    [q, isSymptomQuery],
+  );
 
-  const postResults = useMemo(() =>
-    q
-      ? communityPosts.filter((p) =>
-          searchTerms.some((term) =>
-            p.title.toLowerCase().includes(term) ||
-            (postPlainBodyText(p) || '').toLowerCase().includes(term) ||
-            (p.disease || '').toLowerCase().includes(term) ||
-            p.department.toLowerCase().includes(term) ||
-            (p.relatedDoctors || []).some((name) => name.toLowerCase().includes(term))
-          )
-        )
-      : [],
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  [q]);
+  const postResults = useMemo(
+    () => (q ? communityPosts.filter((p) => postMatchesQuery(p, q)) : []),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [q],
+  );
 
   const mergedPostResults = useMemo(
     () =>

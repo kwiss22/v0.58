@@ -2,8 +2,12 @@
 import type { ReactNode } from 'react';
 import { Pencil, Trash2, Flag } from 'lucide-react';
 import { SpecDocLink } from './SpecDocLink';
+import { useCommonSectionLivePreview } from '@/app/hooks/useCommonSectionLivePreview';
 
 export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword: string) => void }) {
+  const { previewModalsSection, previewCommunityPostSubsection, previewReviewWriteSubsection } =
+    useCommonSectionLivePreview();
+
   return (
     <div className="bg-gray-50 font-sans">
       {/* 문서 헤더 */}
@@ -27,8 +31,22 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
 
       <div className="max-w-4xl mx-auto px-6 py-10 space-y-12">
 
-        {/* ───── 1. 팝업 UI ───── */}
-        <Section id="modals" title="1. 팝업 UI (모달)" color="emerald">
+        {/* ───── 1. 팝업 UI — 섹션 대표 예시: CM01 의사 프로필 (헤더 버튼) ───── */}
+        <Section
+          id="modals"
+          title="1. 팝업 UI (모달)"
+          color="emerald"
+          headerExtra={
+            <button
+              type="button"
+              onClick={previewModalsSection}
+              className="text-xs font-semibold text-emerald-800 bg-emerald-100 hover:bg-emerald-200 border border-emerald-300 rounded-lg px-3 py-1.5 transition-colors shrink-0"
+              aria-label="왼쪽 라이브 패널에서 의사 프로필 모달 대표 예시 열기"
+            >
+              왼쪽에서 대표 예시 보기 (CM01 · 의사 프로필)
+            </button>
+          }
+        >
 
           <SubSection
             label="1"
@@ -296,7 +314,21 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
 
           </SubSection>
 
-          <SubSection label="2" title="커뮤니티 게시글 상세 팝업">
+          <SubSection
+            label="2"
+            title="커뮤니티 게시글 상세 팝업"
+            anchorId="common-tag-cm02"
+            headerExtra={
+              <button
+                type="button"
+                onClick={previewCommunityPostSubsection}
+                className="text-xs font-semibold text-emerald-800 bg-emerald-100 hover:bg-emerald-200 border border-emerald-300 rounded-lg px-3 py-1.5 transition-colors shrink-0"
+                aria-label="왼쪽 라이브 패널에서 커뮤니티 게시글 상세 대표 예시 열기"
+              >
+                왼쪽에서 대표 예시 보기 (CM02 · 게시글 상세)
+              </button>
+            }
+          >
             <div className="mb-4 bg-emerald-50 border border-emerald-200 rounded-xl p-4">
               <p className="text-sm font-bold text-emerald-800 mb-1">진입 경로별 모듈 (프로토타입 — 개발 참고)</p>
               <ul className="text-sm text-emerald-900 space-y-1 list-disc list-inside">
@@ -524,6 +556,17 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
           <SubSection
             label="3"
             title="리뷰 작성 팝업 (aiga.kormedi.com/chat 기준 — 본 문서는 변경·추가분만 기술)"
+            anchorId="common-tag-cm03"
+            headerExtra={
+              <button
+                type="button"
+                onClick={previewReviewWriteSubsection}
+                className="text-xs font-semibold text-emerald-800 bg-emerald-100 hover:bg-emerald-200 border border-emerald-300 rounded-lg px-3 py-1.5 transition-colors shrink-0"
+                aria-label="왼쪽 라이브 패널에서 리뷰 작성 팝업 대표 예시 열기"
+              >
+                왼쪽에서 대표 예시 보기 (CM03 · 리뷰 작성)
+              </button>
+            }
           >
             <p className="text-xs text-slate-700 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 mb-4 leading-relaxed">
               기본 UX·화면 구조·입력 흐름은 기존 서비스{' '}
@@ -1282,7 +1325,19 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
 
 /* ─── 재사용 컴포넌트 ─── */
 
-function Section({ id, title, color, children }: { id: string; title: string; color: string; children: React.ReactNode }) {
+function Section({
+  id,
+  title,
+  color,
+  headerExtra,
+  children,
+}: {
+  id: string;
+  title: string;
+  color: string;
+  headerExtra?: ReactNode;
+  children: React.ReactNode;
+}) {
   const borderColors: Record<string, string> = {
     emerald: 'border-emerald-500',
     amber: 'border-amber-500',
@@ -1293,20 +1348,41 @@ function Section({ id, title, color, children }: { id: string; title: string; co
   };
   return (
     <section id={id} className="scroll-mt-36">
-      <div className={`flex items-center gap-3 mb-5 pb-3 border-b-2 ${borderColors[color]}`}>
+      <div className={`flex flex-wrap items-center gap-3 mb-5 pb-3 border-b-2 ${borderColors[color]}`}>
         <h2 className={`text-lg font-black px-3 py-1 rounded-lg ${bgColors[color]}`}>{title}</h2>
+        {headerExtra}
       </div>
       <div className="space-y-6">{children}</div>
     </section>
   );
 }
 
-function SubSection({ label, title, children }: { label: string; title: string; children: React.ReactNode }) {
+function SubSection({
+  label,
+  title,
+  children,
+  anchorId,
+  headerExtra,
+}: {
+  label: string;
+  title: string;
+  children: React.ReactNode;
+  anchorId?: string;
+  headerExtra?: ReactNode;
+}) {
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-5">
-      <div className="flex items-center gap-2 mb-4">
-        <span className="bg-gray-800 text-white text-xs font-bold px-2 py-1 rounded-lg">{label}</span>
-        <h3 className="text-base font-bold text-gray-900">{title}</h3>
+    <div
+      id={anchorId}
+      className={`bg-white rounded-2xl border border-gray-200 p-5 ${anchorId ? 'scroll-mt-32' : ''}`}
+    >
+      <div
+        className={`flex flex-wrap items-start gap-2 mb-4 ${headerExtra ? 'justify-between' : ''}`}
+      >
+        <div className="flex items-center gap-2 min-w-0 flex-1">
+          <span className="bg-gray-800 text-white text-xs font-bold px-2 py-1 rounded-lg shrink-0">{label}</span>
+          <h3 className="text-base font-bold text-gray-900">{title}</h3>
+        </div>
+        {headerExtra}
       </div>
       {children}
     </div>
