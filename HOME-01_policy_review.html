@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HOME-01 Policy Review</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --text: #1b2430;
+      --muted: #5b6678;
+      --line: #dde3ec;
+      --brand: #1f6feb;
+      --ok: #0e9f6e;
+      --warn: #d97706;
+      --danger: #dc2626;
+      --tag: #eef4ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .wrap {
+      max-width: 1200px;
+      margin: 32px auto;
+      padding: 0 20px 48px;
+    }
+    .hero {
+      background: linear-gradient(135deg, #0f172a, #1d4ed8);
+      color: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .hero h1 { margin: 0 0 10px; font-size: 28px; }
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .pill {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
+    }
+    .card {
+      grid-column: span 12;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 18px;
+    }
+    .col-6 { grid-column: span 6; }
+    .col-4 { grid-column: span 4; }
+    .col-8 { grid-column: span 8; }
+    h2 {
+      margin: 0 0 10px;
+      font-size: 20px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 8px;
+    }
+    h3 { margin: 12px 0 6px; font-size: 16px; }
+    .muted { color: var(--muted); }
+    .tag {
+      display: inline-block;
+      background: var(--tag);
+      border: 1px solid #d6e4ff;
+      color: #2b4fa8;
+      font-size: 12px;
+      border-radius: 999px;
+      padding: 3px 8px;
+      margin-right: 6px;
+    }
+    ul { margin: 8px 0 0 18px; padding: 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 13px;
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #f2f5fa; }
+    .status-ok { color: var(--ok); font-weight: 600; }
+    .status-warn { color: var(--warn); font-weight: 600; }
+    .status-danger { color: var(--danger); font-weight: 700; }
+    .kpi {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .kpi .box {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
+      background: #fafcff;
+    }
+    .kpi .label { color: var(--muted); font-size: 12px; }
+    .kpi .value { font-size: 18px; font-weight: 700; margin-top: 4px; }
+    .callout {
+      border-left: 4px solid var(--brand);
+      background: #eff6ff;
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-top: 10px;
+      font-size: 13px;
+    }
+    .foot {
+      margin-top: 20px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: right;
+    }
+    @media (max-width: 960px) {
+      .col-6, .col-4, .col-8 { grid-column: span 12; }
+      .kpi { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>HOME-01 | 홈 화면 SB + 정책서 (Review Draft)</h1>
+      <p>데모 화면을 기준으로 한 학습용 End-to-End 문서. 화면 동작 정의부터 정책/분기/예외, API 계약, DBA 체크까지 한 문서에서 검토합니다.</p>
+      <div class="meta">
+        <span class="pill">문서 ID: HOME-01-POLICY-REVIEW</span>
+        <span class="pill">버전: v0.9</span>
+        <span class="pill">상태: Review</span>
+        <span class="pill">작성 목적: 개인 학습/시뮬레이션</span>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section class="card col-6">
+        <h2>1) 문서 범위</h2>
+        <p><span class="tag">In Scope</span></p>
+        <ul>
+          <li>홈 화면 IA, 사용자 행동 플로우(SB)</li>
+          <li>Guest/Member 권한 정책</li>
+          <li>분기/예외 처리 규칙</li>
+          <li>API 계약 초안 + 에러 코드 사전</li>
+          <li>DBA 관점의 모델/인덱스/보관정책</li>
+        </ul>
+        <p><span class="tag">Out of Scope</span></p>
+        <ul>
+          <li>실제 배포/실데이터 연동</li>
+          <li>디자인 픽셀 완성도 검증</li>
+          <li>법무 확정 문구</li>
+        </ul>
+      </section>
+
+      <section class="card col-6">
+        <h2>2) 목표 / 성공 지표</h2>
+        <ul>
+          <li>홈 진입 후 핵심 행동(챗봇/명의/커뮤니티/기사) 유도</li>
+          <li>비회원의 상호작용 시 로그인 전환 경로 명확화</li>
+          <li>추천글/명의 섹션의 비즈니스 규칙 문서화</li>
+        </ul>
+        <div class="kpi">
+          <div class="box">
+            <div class="label">home_action_ctr</div>
+            <div class="value">TBD%</div>
+          </div>
+          <div class="box">
+            <div class="label">guest_to_login</div>
+            <div class="value">TBD%</div>
+          </div>
+          <div class="box">
+            <div class="label">home_api_p95</div>
+            <div class="value">&lt; 500ms</div>
+          </div>
+          <div class="box">
+            <div class="label">error_rate</div>
+            <div class="value">&lt; 1%</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>3) SB (스토리보드) 시나리오</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>SB ID</th>
+              <th>트리거</th>
+              <th>시스템 동작</th>
+              <th>권한/분기</th>
+              <th>예외</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>SB-01</td>
+              <td>홈 진입</td>
+              <td>헤더, 챗봇, 명의, 추천글, 건강정보 섹션 렌더</td>
+              <td>Guest/Member 공통 열람</td>
+              <td>섹션 일부 실패 시 부분 오류 UI</td>
+            </tr>
+            <tr>
+              <td>SB-02</td>
+              <td>우상단 검색 클릭</td>
+              <td>통합검색 모달 오픈, 닫기 시 위치 복귀</td>
+              <td>권한 무관</td>
+              <td>검색 API 실패 시 최근 검색만 표시</td>
+            </tr>
+            <tr>
+              <td>SB-03</td>
+              <td>챗봇 배너 클릭</td>
+              <td>챗봇 탭 이동</td>
+              <td>권한 무관</td>
+              <td>탭 이동 실패 시 재시도 토스트</td>
+            </tr>
+            <tr>
+              <td>SB-04</td>
+              <td>질환 탭 선택</td>
+              <td>해당 질환 명의 리스트 로딩/교체</td>
+              <td>권한 무관</td>
+              <td>0건이면 준비중 카드</td>
+            </tr>
+            <tr>
+              <td>SB-05</td>
+              <td>추천글 카드 클릭</td>
+              <td>게시글 상세 팝업 열기</td>
+              <td>Guest 읽기만 / Member 상호작용 가능</td>
+              <td>3초 미만 체류 시 조회수 미집계</td>
+            </tr>
+            <tr>
+              <td>SB-06</td>
+              <td>건강기사 클릭</td>
+              <td>외부 링크 새 탭 열기</td>
+              <td>권한 무관</td>
+              <td>링크 실패 시 URL 복사 CTA</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="card col-6">
+        <h2>4) 권한 매트릭스 (RBAC)</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>기능</th>
+              <th>Guest</th>
+              <th>Member</th>
+              <th>비고</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>홈 콘텐츠 열람</td><td>허용</td><td>허용</td><td>공통</td></tr>
+            <tr><td>의사 상세 열람</td><td>허용</td><td>허용</td><td>공통</td></tr>
+            <tr><td>의사 북마크</td><td>차단</td><td>허용</td><td>Guest 로그인 유도</td></tr>
+            <tr><td>게시글 공감</td><td>차단</td><td>허용</td><td>Member 토글</td></tr>
+            <tr><td>댓글/답글</td><td>차단</td><td>허용</td><td>입력 검증 필요</td></tr>
+            <tr><td>신고</td><td>차단</td><td>허용</td><td>Rate limit 권장</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="card col-6">
+        <h2>5) 추천글 정책</h2>
+        <ul>
+          <li>대상: 최근 3개월 게시글</li>
+          <li>점수식: <code>likes*10 + comments*3 + views*1</code></li>
+          <li>후보군: 상위 20~30개</li>
+          <li>노출: 후보군에서 랜덤 5개</li>
+          <li>조회수 정책: 3초 체류 + 24시간 중복 제외 시 +1</li>
+          <li>홈 카드에는 조회수 미노출(백엔드 집계 전용)</li>
+        </ul>
+        <div class="callout">
+          Assumption: 개인 학습 목적상 “세션 내 랜덤 시드 고정” 정책을 채택한다.
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>6) 분기 결정표 (Decision Table)</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>케이스</th>
+              <th>조건</th>
+              <th>결과</th>
+              <th>사용자 안내</th>
+              <th>코드</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>D-01</td>
+              <td>Guest + 게시글 공감 클릭</td>
+              <td>액션 차단</td>
+              <td>로그인 후 이용 가능</td>
+              <td>401 LOGIN_REQUIRED</td>
+            </tr>
+            <tr>
+              <td>D-02</td>
+              <td>Member + 공감 클릭</td>
+              <td>공감 토글 반영</td>
+              <td>문구 없음(즉시 반영)</td>
+              <td>200 OK</td>
+            </tr>
+            <tr>
+              <td>D-03</td>
+              <td>상세 체류 &lt; 3초</td>
+              <td>조회수 미집계</td>
+              <td>문구 없음</td>
+              <td>200 IGNORED</td>
+            </tr>
+            <tr>
+              <td>D-04</td>
+              <td>상세 체류 >= 3초 + 24h 미중복</td>
+              <td>조회수 +1 집계</td>
+              <td>문구 없음</td>
+              <td>200 COUNTED</td>
+            </tr>
+            <tr>
+              <td>D-05</td>
+              <td>커뮤니티 후보 0건</td>
+              <td>빈상태 카드 노출</td>
+              <td>첫 글 작성 유도</td>
+              <td>200 EMPTY</td>
+            </tr>
+            <tr>
+              <td>D-06</td>
+              <td>질환 탭 데이터 0건</td>
+              <td>준비중 카드 노출</td>
+              <td>다른 질환 확인 유도</td>
+              <td>200 EMPTY</td>
+            </tr>
+            <tr>
+              <td>D-07</td>
+              <td>외부기사 링크 실패</td>
+              <td>fallback 처리</td>
+              <td>외부 페이지 이동 실패</td>
+              <td>502 EXTERNAL_LINK_FAILED</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="card col-8">
+        <h2>7) 예외 카탈로그</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>예외 ID</th>
+              <th>상황</th>
+              <th>정책</th>
+              <th>리스크</th>
+              <th>상태</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>EX-01</td>
+              <td>오픈 초기 커뮤니티 0건</td>
+              <td>섹션 숨김 금지, 작성 유도 카드</td>
+              <td>섹션 공백으로 이탈 증가</td>
+              <td class="status-ok">확정</td>
+            </tr>
+            <tr>
+              <td>EX-02</td>
+              <td>질환별 명의 0건</td>
+              <td>준비중 문구 + 대체 CTA</td>
+              <td>신뢰도 저하</td>
+              <td class="status-warn">문구 미확정</td>
+            </tr>
+            <tr>
+              <td>EX-03</td>
+              <td>위치 기반 병원 정책</td>
+              <td>권한 요청 vs 지역검색 선택 필요</td>
+              <td>개인정보/UX 충돌</td>
+              <td class="status-danger">미결정</td>
+            </tr>
+            <tr>
+              <td>EX-04</td>
+              <td>오프라인 상태</td>
+              <td>인라인 배너 + 재시도 버튼</td>
+              <td>무반응 오인</td>
+              <td class="status-warn">정책안</td>
+            </tr>
+            <tr>
+              <td>EX-08</td>
+              <td>외부 기사 차단</td>
+              <td>새탭 fallback + URL 복사</td>
+              <td>컨텐츠 미열람</td>
+              <td class="status-warn">확정 필요</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="card col-4">
+        <h2>8) 에러 코드 사전</h2>
+        <table>
+          <thead>
+            <tr><th>코드</th><th>HTTP</th><th>설명</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>LOGIN_REQUIRED</td><td>401</td><td>인증 필요</td></tr>
+            <tr><td>FORBIDDEN_ACTION</td><td>403</td><td>권한 없음</td></tr>
+            <tr><td>TOO_MANY_REQUESTS</td><td>429</td><td>요청 과다</td></tr>
+            <tr><td>CONTENT_UNAVAILABLE</td><td>404</td><td>콘텐츠 없음</td></tr>
+            <tr><td>EXTERNAL_LINK_FAILED</td><td>502</td><td>외부 링크 실패</td></tr>
+            <tr><td>INTERNAL_ERROR</td><td>500</td><td>서버 오류</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="card">
+        <h2>9) API 계약 (학습용 초안)</h2>
+        <h3>GET /v1/home</h3>
+        <ul>
+          <li>목적: 홈 전체 섹션 데이터 반환</li>
+          <li>query: <code>region?</code>, <code>disease_code?</code></li>
+          <li>response: hero, doctor_section, community_section, health_section, policy_flags</li>
+        </ul>
+
+        <h3>POST /v1/community/posts/{postId}/view-events</h3>
+        <ul>
+          <li>body: <code>view_duration_ms</code>, <code>session_id</code>, <code>device_id</code></li>
+          <li>규칙: 3000ms 미만 discard, 24h dedupe</li>
+        </ul>
+
+        <h3>POST /v1/community/posts/{postId}/likes/toggle</h3>
+        <ul>
+          <li>auth: Member required</li>
+          <li>idempotency key 권장</li>
+          <li>response: liked(boolean), like_count(number)</li>
+        </ul>
+      </section>
+
+      <section class="card col-6">
+        <h2>10) UI ↔ API ↔ DB 매핑</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>UI 필드</th>
+              <th>API 필드</th>
+              <th>DB 컬럼(예시)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>추천글 제목</td><td>community_picks[].title</td><td>posts.title</td></tr>
+            <tr><td>추천글 요약</td><td>community_picks[].excerpt</td><td>posts.excerpt</td></tr>
+            <tr><td>공감수</td><td>community_picks[].like_count</td><td>post_stats.like_count</td></tr>
+            <tr><td>댓글수</td><td>community_picks[].comment_count</td><td>post_stats.comment_count</td></tr>
+            <tr><td>조회 이벤트</td><td>view-events payload</td><td>post_view_events.*</td></tr>
+            <tr><td>명의 이름</td><td>doctor_cards[].name</td><td>doctor_profiles.name</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="card col-6">
+        <h2>11) DBA 체크 (핵심)</h2>
+        <ul>
+          <li>조회 이벤트 dedupe 키 설계: <code>(post_id, actor_hash, date_bucket)</code></li>
+          <li>인덱스:
+            <ul>
+              <li><code>post_stats(score desc, updated_at desc)</code></li>
+              <li><code>post_view_events(post_id, actor_hash, viewed_date)</code></li>
+              <li><code>doctor_rankings(disease_code, rank_score desc)</code></li>
+            </ul>
+          </li>
+          <li>보관정책:
+            <ul>
+              <li>raw 이벤트: 90일</li>
+              <li>일집계: 2년</li>
+            </ul>
+          </li>
+          <li>민감정보 정책: actor는 해시로 저장, 원문 식별자 금지</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>12) QA 시나리오 체크리스트</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>테스트</th>
+              <th>기대 결과</th>
+              <th>상태</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>TC-01</td><td>Guest 공감 클릭</td><td>로그인 유도</td><td>⬜</td></tr>
+            <tr><td>TC-02</td><td>Member 공감 토글</td><td>수치/상태 반영</td><td>⬜</td></tr>
+            <tr><td>TC-03</td><td>2.9초 체류 종료</td><td>조회수 미집계</td><td>⬜</td></tr>
+            <tr><td>TC-04</td><td>3.1초 체류 종료</td><td>조회수 집계</td><td>⬜</td></tr>
+            <tr><td>TC-05</td><td>24시간 내 재열람</td><td>중복 미집계</td><td>⬜</td></tr>
+            <tr><td>TC-06</td><td>질환 0건</td><td>준비중 카드</td><td>⬜</td></tr>
+            <tr><td>TC-07</td><td>커뮤니티 0건</td><td>작성 유도 카드</td><td>⬜</td></tr>
+            <tr><td>TC-08</td><td>외부링크 실패</td><td>fallback 안내</td><td>⬜</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="card">
+        <h2>13) 최종 검토 체크 (노션 이관 전)</h2>
+        <ul>
+          <li>[ ] 용어 통일: 화면명/필드명/코드명 일치</li>
+          <li>[ ] 미결정 항목(EX-03/08) A/B안 선택 완료</li>
+          <li>[ ] 정책 표와 API 계약 간 충돌 없음</li>
+          <li>[ ] API 필드와 DB 컬럼 매핑 누락 없음</li>
+          <li>[ ] QA 케이스가 분기/예외를 모두 커버</li>
+        </ul>
+        <div class="callout">
+          이 문서가 만족되면, 다음 단계에서 노션용 마크다운 버전으로 변환하여 최종본을 생성한다.
+        </div>
+      </section>
+    </div>
+
+    <div class="foot">
+      Generated for study workflow · HOME-01 Review Draft
+    </div>
+  </div>
+</body>
+</html>
