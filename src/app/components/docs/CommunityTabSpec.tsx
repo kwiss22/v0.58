@@ -46,7 +46,7 @@ export function CommunityTabSpec() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span>✅</span>
-                  <span><strong>전문성</strong>: 의사 인증 배지로 의료진의 조언 표시</span>
+                  <span><strong>전문성</strong>: 의사 인증 배지로 의료진 표시</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span>🔒</span>
@@ -341,39 +341,10 @@ export function CommunityTabSpec() {
               </div>
 
               <div className="bg-white border border-gray-200 rounded-lg p-4">
-                <div className="font-medium text-gray-900 mb-2 text-sm">버튼 구성 (역할별 분기)</div>
-                <div className="overflow-x-auto">
-                  <table className="w-full min-w-[680px] text-xs border-collapse">
-                    <thead>
-                      <tr className="bg-gray-50 border-b border-gray-200">
-                        <th className="px-2.5 py-2 text-left font-bold text-gray-700">버튼</th>
-                        <th className="px-2.5 py-2 text-left font-bold text-gray-700">일반 (비회원·회원 공통)</th>
-                        <th className="px-2.5 py-2 text-left font-bold text-gray-700">회원(본인)</th>
-                        <th className="px-2.5 py-2 text-left font-bold text-gray-700">의사 회원 (추후 논의 후 적용)</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className="border-b border-gray-100">
-                        <td className="px-2.5 py-2 text-gray-900 font-medium">이 사용자 글만 보기</td>
-                        <td className="px-2.5 py-2 text-gray-700">✅ 활성</td>
-                        <td className="px-2.5 py-2 text-gray-700">미노출</td>
-                        <td className="px-2.5 py-2 text-gray-700">✅ 활성</td>
-                      </tr>
-                      <tr className="border-b border-gray-100 bg-gray-50/50">
-                        <td className="px-2.5 py-2 text-gray-900 font-medium">마이페이지로 이동</td>
-                        <td className="px-2.5 py-2 text-gray-700">미노출</td>
-                        <td className="px-2.5 py-2 text-gray-700">✅ 활성</td>
-                        <td className="px-2.5 py-2 text-gray-700">미노출</td>
-                      </tr>
-                      <tr>
-                        <td className="px-2.5 py-2 text-gray-900 font-medium">의사 프로필 보기</td>
-                        <td className="px-2.5 py-2 text-gray-700">미노출</td>
-                        <td className="px-2.5 py-2 text-gray-700">미노출</td>
-                        <td className="px-2.5 py-2 text-gray-700">✅ 활성</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+                <div className="font-medium text-gray-900 mb-2 text-sm">버튼 구성</div>
+                <ul className="space-y-1 text-xs text-gray-700">
+                  <li>• <strong>이 사용자 글만 보기</strong>: 모든 사용자(비회원·회원 공통) 노출</li>
+                </ul>
               </div>
 
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -385,22 +356,6 @@ export function CommunityTabSpec() {
                   <li>• 피드 목록은 해당 유저의 게시글만 필터링, 상단 총 건수 즉시 갱신</li>
                   <li>• 카테고리 필터(질병별/진료과별) 자동 숨김</li>
                   <li>• X 버튼 클릭 시 유저 필터 해제 → 전체 피드 복귀</li>
-                </ul>
-              </div>
-
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                <div className="font-medium text-gray-900 mb-2 text-sm">동작 — 마이페이지로 이동</div>
-                <ul className="space-y-1 text-xs text-gray-700">
-                  <li>• 본인 프로필 아이콘 클릭 시에만 표시</li>
-                  <li>• 클릭 → 마이페이지 탭으로 이동</li>
-                </ul>
-              </div>
-
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                <div className="font-medium text-amber-900 mb-2 text-sm">동작 — 의사 프로필 보기 (추후 논의 후 적용)</div>
-                <ul className="space-y-1 text-xs text-amber-900">
-                  <li>• 의사 인증 배지가 있는 작성자 클릭 시에만 표시</li>
-                  <li>• 클릭 → 해당 의사의 프로필 상세 팝업 표시 (공통 탭 1절 의사 프로필 상세 팝업과 동일)</li>
                 </ul>
               </div>
 
@@ -604,19 +559,7 @@ export function CommunityTabSpec() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-green-600 font-bold">•</span>
-                  <span><strong>인증 방법</strong>: 의사 면허번호 입력 + OCR 자동 인식 검증 후 승인 (향후 기능)</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-600 font-bold">•</span>
                   <span><strong>표시 위치</strong>: 게시글, 댓글, 리뷰 모두 표시</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-600 font-bold">•</span>
-                  <span><strong>제약</strong>: 리뷰는 1개만 작성 가능 (본인 소속 병원 제외)</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-600 font-bold">•</span>
-                  <span><strong>UI</strong>: 초록색 배경 + 체크 아이콘 + "의사 인증" 텍스트</span>
                 </li>
               </ul>
             </div>

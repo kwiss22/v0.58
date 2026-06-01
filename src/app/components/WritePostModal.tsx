@@ -1162,10 +1162,10 @@ export function WritePostModal({ onClose, onSubmit, initialData, isEditMode = fa
                   />
                   <div className="flex-1">
                     <p className="text-sm font-bold text-gray-900">
-                      🏥 병원 방문 인증하고 신뢰 배지 받기
+                      🏥 병원 진료 인증하고 신뢰 배지 받기
                     </p>
                     <p className="text-xs text-gray-500 mt-0.5">
-                      실제 방문 증빙 시 신뢰도가 높아지고 더 많은 용자에게 노출됩니다
+                      실제 진료 증빙 시 신뢰도가 높아지고 더 많은 용자에게 노출됩니다
                     </p>
                   </div>
                   {requestVerification && verificationData && (

@@ -446,7 +446,7 @@ export function ReviewWriteModal({ doctorName, hospital, doctorId, onClose, onSu
             {/* Hospital Visit Verification - OPTIONAL */}
             <div>
               <label className="block text-sm font-bold text-gray-900 mb-2">
-                🏥 병원 방문 인증 <span className="text-gray-500">(선택)</span>
+                🏥 병원 진료 인증 <span className="text-gray-500">(선택)</span>
               </label>
               <div
                 className={`border-2 rounded-lg p-4 transition-all ${
@@ -477,7 +477,7 @@ export function ReviewWriteModal({ doctorName, hospital, doctorId, onClose, onSu
                 ) : (
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-bold text-gray-900">실제 방문 증빙이 필요합니다</p>
+                      <p className="text-sm font-bold text-gray-900">실제 진료 증빙이 필요합니다</p>
                       <p className="text-xs text-gray-600 mt-1">
                         진료 영수증, 처방전 등으로 인증하면 리뷰 작성이 가능합니다
                       </p>

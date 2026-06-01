@@ -38,7 +38,7 @@ export function SpecDocReferencePriority() {
                   <strong className="text-gray-800">공통(통합검색) 정의서</strong> — 통합검색 진입·결과·한도 등 검색 전반
                 </li>
                 <li>
-                  <strong className="text-gray-800">공통 UI 컴포넌트 정의서</strong> — 모달·팝업·알림 등 공통 컴포넌트 구조 (게시글 상세·리뷰 모달 내 병원 방문 인증 플로우 포함)
+                  <strong className="text-gray-800">공통 UI 컴포넌트 정의서</strong> — 모달·팝업·알림 등 공통 컴포넌트 구조 (게시글 상세·리뷰 모달 내 병원 진료 인증 플로우 포함)
                 </li>
                 <li>
                   <strong className="text-gray-800">마이페이지 화면정의서</strong> — 로그인·회원가입 플로우 참조

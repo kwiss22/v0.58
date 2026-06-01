@@ -42,7 +42,7 @@ export function VerificationRequestModal({ onClose, onVerificationData }: Verifi
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <h2 className="text-lg font-bold text-gray-900">
-            {step === 'upload' && '병원 방문 인증'}
+            {step === 'upload' && '병원 진료 인증'}
             {step === 'success' && '인증 요청 완료'}
           </h2>
           <button
@@ -60,7 +60,7 @@ export function VerificationRequestModal({ onClose, onVerificationData }: Verifi
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-2">
                 <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-blue-700">
-                  실제 병원 방문 후기임을 인증하면 <span className="font-bold">검증 배지</span>가 부여되고 더 많은 사용자에게 노출됩니다.
+                  실제 병원 진료 후기임을 인증하면 <span className="font-bold">검증 배지</span>가 부여되고 더 많은 사용자에게 노출됩니다.
                 </p>
               </div>
 

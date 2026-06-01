@@ -417,7 +417,7 @@ export function CommonComponentsSpec({ onTestSearch }: { onTestSearch?: (keyword
                 <div className="font-medium text-gray-900 mb-3 text-sm">화면 구성</div>
                 <ul className="space-y-2 text-xs text-gray-700">
                   <li>• <strong>헤더</strong>: <span className="text-red-600 font-bold">"게시글" 텍스트(좌)</span> + ⋮ 더보기 메뉴 + <span className="text-red-600 font-bold">X 닫기 버튼(우)</span> — ← 뒤로가기 버튼 없음</li>
-                  <li>• <strong>작성자 정보</strong>: 프로필 아이콘 + "익명XX" + 작성일 + (수정됨)</li>
+                  <li>• <strong>작성자 정보</strong>: 프로필 아이콘 + "익명XX" + 작성일 + (수정됨) <span className="text-amber-700">— 표시 전용. <strong>상세/댓글/대댓글의 작성자 프로필 클릭 → 작성자 프로필 창</strong> 연결은 추후 일괄 적용(이번 범위 제외). 목록(피드) 카드의 프로필 클릭만 현재 연결됨</span></li>
                   <li>• <strong>본문</strong>: 제목 + 전체 내용 + 질환 태그 + 첨부 이미지 (탭 → 사진 크게 보기 확대 뷰어)</li>
                   <li>• <strong>액션 바</strong>: <span className="text-red-600 font-bold">공감해요 버튼 + 댓글 수 — 2가지만 존재 (AI상담하기·명의찾기 버튼 없음)</span></li>
                   <li>• <strong>병원 미니카드</strong> (조건부): 글에 병원 정보가 붙어 있을 때 액션 바 아래 표시. 병원명·별점·거리·진료과 + &quot;병원 정보&quot; 버튼. 배경은 연한 파랑~남색 그라데이션</li>

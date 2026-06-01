@@ -382,6 +382,19 @@ export function PostDetailModal({
         <div className="flex-1 overflow-y-auto">
           {/* Post Content */}
           <div className="p-4 border-b border-gray-200">
+            {/* 작성자 프로필 */}
+            <div className="flex items-center gap-2 mb-3">
+              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white">
+                <User className="w-5 h-5" />
+              </div>
+              <div className="min-w-0">
+                <span className="block text-sm font-bold text-gray-900 truncate">
+                  {`익명${post.userId.slice(-2)}`}
+                </span>
+                <span className="text-xs text-gray-400">{post.timeAgo}</span>
+              </div>
+            </div>
+
             {/* Title */}
             <div className="flex items-start gap-2 mb-3">
               <h3 className="flex-1 text-lg font-bold text-gray-900 leading-tight">
@@ -401,10 +414,9 @@ export function PostDetailModal({
               </div>
             )}
 
-            {/* 작성 시간 + 수정됨 */}
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-xs text-gray-400">{post.timeAgo}</span>
-              {post.isEdited && (
+            {/* 수정됨 */}
+            {post.isEdited && (
+              <div className="flex items-center gap-2 mb-3">
                 <span
                   className="text-xs text-gray-400 cursor-default select-none"
                   title={post.editedAt
@@ -413,8 +425,8 @@ export function PostDetailModal({
                 >
                   (수정됨)
                 </span>
-              )}
-            </div>
+              </div>
+            )}
 
             {/* Full Content — bodySegments가 있으면 에디터 삽입 순서 유지 */}
             {post.bodySegments?.length ? (
@@ -433,14 +445,14 @@ export function PostDetailModal({
                   {post.summary}
                 </p>
                 {post.attachedImages && post.attachedImages.length > 0 && (
-                  <div className="mb-4 flex flex-wrap gap-2">
+                  <div className="mb-4 space-y-4">
                     {post.attachedImages.map((img, index) => (
                       <a
                         key={img.id}
                         href={img.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block rounded-xl overflow-hidden border border-gray-200 hover:opacity-90 transition-opacity"
+                        className="block w-full rounded-xl overflow-hidden border border-gray-200 hover:opacity-90 transition-opacity p-1"
                         style={{ maxWidth: '100%' }}
                         onClick={(e) => {
                           e.preventDefault();
@@ -451,7 +463,7 @@ export function PostDetailModal({
                         <img
                           src={img.url}
                           alt={img.name}
-                          className="max-h-72 w-auto object-contain bg-gray-50"
+                          className="max-h-80 w-full object-contain bg-gray-50 rounded-xl"
                         />
                       </a>
                     ))}

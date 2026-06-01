@@ -120,7 +120,7 @@ function MyActivityReviewCard({
             {review.visitVerified && (
               <span className="inline-flex items-center gap-0.5 shrink-0 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-green-50 text-[#15803d] border border-green-200">
                 <CheckCircle2 className="w-3 h-3 text-[#22C55E]" aria-hidden />
-                방문인증
+                진료인증
               </span>
             )}
           </div>
